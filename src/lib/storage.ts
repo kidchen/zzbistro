@@ -215,6 +215,7 @@ export const storage = {
         return newIngredient;
       } catch (error) {
         console.error('Error adding ingredient:', error);
+        console.error('Full error details:', JSON.stringify(error, null, 2));
         // Fallback to localStorage
         if (typeof window !== 'undefined') {
           const stored = localStorage.getItem('zzbistro-ingredients');

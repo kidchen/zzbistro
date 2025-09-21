@@ -66,7 +66,7 @@ export default function Home() {
       color: 'bg-purple-500'
     },
     {
-      title: "I&apos;m Feeling Lucky",
+      title: "I'm Feeling Lucky",
       description: 'Get a random meal suggestion',
       href: '/lucky',
       icon: '🎲',
