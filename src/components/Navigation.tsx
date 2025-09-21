@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 
 const Navigation = () => {
   const pathname = usePathname();
+  const { data: session } = useSession();
   
   const navItems = [
     { href: '/', label: 'Home', icon: '🏠' },
@@ -13,6 +15,10 @@ const Navigation = () => {
     { href: '/menu', label: 'Menu', icon: '🍽️' },
     { href: '/lucky', label: "I'm Feeling Lucky", icon: '🎲' },
   ];
+
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/auth/signin' });
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -23,7 +29,7 @@ const Navigation = () => {
               ZZBistro
             </Link>
           </div>
-          <div className="flex space-x-8">
+          <div className="flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -38,6 +44,20 @@ const Navigation = () => {
                 {item.label}
               </Link>
             ))}
+            
+            {session && (
+              <div className="flex items-center space-x-4 ml-6 pl-6 border-l border-gray-200">
+                <span className="text-sm text-gray-600">
+                  👋 {session.user?.name?.split(' ')[0]}
+                </span>
+                <button
+                  onClick={handleSignOut}
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

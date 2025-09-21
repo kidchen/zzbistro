@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
 
@@ -108,9 +109,9 @@ export default function LuckyPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">I'm Feeling Lucky! 🎲</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">I&apos;m Feeling Lucky! 🎲</h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Can't decide what to cook? Let us surprise you with a random recipe suggestion!
+          Can&apos;t decide what to cook? Let us surprise you with a random recipe suggestion!
         </p>
       </div>
 
@@ -198,7 +199,7 @@ export default function LuckyPage() {
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 text-center">
                 <h2 className="text-2xl font-bold mb-2">🎉 Your Lucky Pick!</h2>
-                <p className="opacity-90">Here's what the universe suggests for you today</p>
+                <p className="opacity-90">Here&apos;s what the universe suggests for you today</p>
               </div>
               
               <div className="p-8">
@@ -206,10 +207,12 @@ export default function LuckyPage() {
                   {/* Recipe Image */}
                   {suggestedRecipe.image && (
                     <div>
-                      <img
+                      <Image
                         src={suggestedRecipe.image}
                         alt={suggestedRecipe.name}
-                        className="w-full rounded-lg shadow-md"
+                        width={400}
+                        height={300}
+                        className="w-full rounded-lg shadow-md object-cover"
                       />
                     </div>
                   )}

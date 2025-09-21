@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe } from '@/types';
 
@@ -117,9 +118,11 @@ export default function RecipesPage() {
           {filteredRecipes.map((recipe) => (
             <div key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
               {recipe.image && (
-                <img
+                <Image
                   src={recipe.image}
                   alt={recipe.name}
+                  width={400}
+                  height={192}
                   className="w-full h-48 object-cover"
                 />
               )}

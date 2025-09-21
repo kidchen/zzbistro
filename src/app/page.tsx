@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { storage } from '@/lib/storage';
-import { Recipe, Ingredient } from '@/types';
 
 export default function Home() {
   const [stats, setStats] = useState({
@@ -67,7 +66,7 @@ export default function Home() {
       color: 'bg-purple-500'
     },
     {
-      title: "I'm Feeling Lucky",
+      title: "I&apos;m Feeling Lucky",
       description: 'Get a random meal suggestion',
       href: '/lucky',
       icon: '🎲',
@@ -129,13 +128,13 @@ export default function Home() {
         <div className="mt-12 bg-orange-50 border border-orange-200 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-orange-800 mb-3">🚀 Getting Started</h2>
           <p className="text-orange-700 mb-4">
-            Welcome to your new cooking companion! Here's how to get started:
+            Welcome to your new cooking companion! Here&apos;s how to get started:
           </p>
           <ol className="list-decimal list-inside text-orange-700 space-y-2">
             <li>Add some ingredients to your pantry</li>
             <li>Record your favorite recipes</li>
             <li>Use the menu to see what you can cook</li>
-            <li>Try "I'm Feeling Lucky" when you need inspiration!</li>
+            <li>Try &ldquo;I&apos;m Feeling Lucky&rdquo; when you need inspiration!</li>
           </ol>
         </div>
       )}

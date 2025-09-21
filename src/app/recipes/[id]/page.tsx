@@ -1,21 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { storage } from '@/lib/storage';
-import { Recipe, Ingredient } from '@/types';
+import { Recipe } from '@/types';
 
 export default function RecipeDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [missingIngredients, setMissingIngredients] = useState<string[]>([]);
 
   useEffect(() => {
     const loadRecipeData = async () => {
       try {
+        if (!params?.id) return;
         const recipeId = params.id as string;
         const recipes = await storage.recipes.getAll();
         const foundRecipe = recipes.find(r => r.id === recipeId);
@@ -25,7 +25,6 @@ export default function RecipeDetailPage() {
           
           // Check ingredient availability
           const allIngredients = await storage.ingredients.getAll();
-          setIngredients(allIngredients);
           
           const missing = foundRecipe.ingredients.filter(recipeIngredient => 
             !allIngredients.some(stockIngredient => 
@@ -43,7 +42,7 @@ export default function RecipeDetailPage() {
     };
 
     loadRecipeData();
-  }, [params.id]);
+  }, [params?.id]);
 
   if (!recipe) {
     return (
@@ -104,10 +103,12 @@ export default function RecipeDetailPage() {
         {/* Image */}
         {recipe.image && (
           <div className="lg:col-span-1">
-            <img
+            <Image
               src={recipe.image}
               alt={recipe.name}
-              className="w-full rounded-lg shadow-md"
+              width={400}
+              height={300}
+              className="w-full rounded-lg shadow-md object-cover"
             />
           </div>
         )}

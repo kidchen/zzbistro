@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe } from '@/types';
 
@@ -173,9 +174,11 @@ export default function NewRecipePage() {
             />
             {formData.image && (
               <div className="mt-4">
-                <img
+                <Image
                   src={formData.image}
                   alt="Recipe preview"
+                  width={128}
+                  height={128}
                   className="w-32 h-32 object-cover rounded-lg"
                 />
               </div>

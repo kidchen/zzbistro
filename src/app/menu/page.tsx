@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
 
@@ -75,7 +76,7 @@ export default function MenuPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">What's for Dinner? 🍽️</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">What&apos;s for Dinner? 🍽️</h1>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -176,9 +177,11 @@ export default function MenuPage() {
             {filteredAvailableRecipes.map((recipe) => (
               <div key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-green-200">
                 {recipe.image && (
-                  <img
+                  <Image
                     src={recipe.image}
                     alt={recipe.name}
+                    width={400}
+                    height={192}
                     className="w-full h-48 object-cover"
                   />
                 )}
@@ -229,9 +232,11 @@ export default function MenuPage() {
               {filteredPartialRecipes.map(({ recipe, missing }) => (
                 <div key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-yellow-200">
                   {recipe.image && (
-                    <img
+                    <Image
                       src={recipe.image}
                       alt={recipe.name}
+                      width={400}
+                      height={192}
                       className="w-full h-48 object-cover"
                     />
                   )}
