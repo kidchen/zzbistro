@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { storage } from '@/lib/storage';
-import { Recipe } from '@/types';
+import { Recipe, Ingredient } from '@/types';
 
 export default function NewRecipePage() {
   const router = useRouter();
+  const [availableIngredients, setAvailableIngredients] = useState<Ingredient[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     cookingTime: 30,
@@ -17,6 +18,19 @@ export default function NewRecipePage() {
     tags: '',
     image: ''
   });
+
+  useEffect(() => {
+    const loadIngredients = async () => {
+      try {
+        const ingredients = await storage.ingredients.getAll();
+        setAvailableIngredients(ingredients);
+      } catch (error) {
+        console.error('Error loading ingredients:', error);
+      }
+    };
+
+    loadIngredients();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,23 +98,72 @@ export default function NewRecipePage() {
     }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File, maxSizeMB: number = 3): Promise<string> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calculate new dimensions to maintain aspect ratio
+        const maxWidth = 1200;
+        const maxHeight = 1200;
+        let { width, height } = img;
+        
+        if (width > height) {
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Start with high quality and reduce if needed
+        let quality = 0.9;
+        let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        
+        // Reduce quality until under size limit
+        while (compressedDataUrl.length > maxSizeMB * 1024 * 1024 * 1.37 && quality > 0.1) {
+          quality -= 0.1;
+          compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        
+        resolve(compressedDataUrl);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
+      try {
+        const compressedImage = await compressImage(file, 3);
         setFormData(prev => ({
           ...prev,
-          image: e.target?.result as string
+          image: compressedImage
         }));
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        alert('Failed to process image. Please try a different image.');
+      }
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Add New Recipe 📝</h1>
+      <h1 className="text-xl md:text-3xl font-bold text-gray-900 mb-8">Add New Recipe 📝</h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Info */}
@@ -172,6 +235,9 @@ export default function NewRecipePage() {
               onChange={handleImageUpload}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Images will be automatically compressed to under 3MB
+            </p>
             {formData.image && (
               <div className="mt-4">
                 <Image
@@ -198,28 +264,41 @@ export default function NewRecipePage() {
               Add Ingredient
             </button>
           </div>
-          <div className="space-y-3">
-            {formData.ingredients.map((ingredient, index) => (
-              <div key={index} className="flex gap-2">
-                <input
-                  type="text"
-                  value={ingredient}
-                  onChange={(e) => updateIngredient(index, e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="e.g., 2 cups flour"
-                />
-                {formData.ingredients.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeIngredient(index)}
-                    className="text-red-600 hover:text-red-700 px-2"
+          
+          {availableIngredients.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <p className="mb-2">No ingredients in your pantry yet!</p>
+              <p className="text-sm">Add ingredients to your pantry first to create recipes.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {formData.ingredients.map((ingredient, index) => (
+                <div key={index} className="flex gap-2">
+                  <select
+                    value={ingredient}
+                    onChange={(e) => updateIngredient(index, e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                   >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
+                    <option value="">Select an ingredient...</option>
+                    {availableIngredients.map((ing) => (
+                      <option key={ing.id} value={ing.name}>
+                        {ing.name} ({ing.inStock ? 'In Stock' : 'Out of Stock'})
+                      </option>
+                    ))}
+                  </select>
+                  {formData.ingredients.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeIngredient(index)}
+                      className="text-red-600 hover:text-red-700 px-2"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Instructions */}

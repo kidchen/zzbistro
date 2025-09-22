@@ -78,49 +78,94 @@ export default function Home() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
           Welcome to ZZBistro! 👨‍🍳👩‍🍳
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
           Your personal cooking companion. Manage recipes, track ingredients, and discover delicious meals together.
         </p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        <div className="bg-white rounded-lg shadow p-6 text-center">
-          <div className="text-3xl font-bold text-blue-600">{stats.totalRecipes}</div>
-          <div className="text-gray-600">Total Recipes</div>
+      {/* Stats Cards - Desktop: Cards, Mobile: Table */}
+      <div className="mb-8">
+        {/* Desktop Cards */}
+        <div className="hidden md:grid md:grid-cols-4 gap-6">
+          <Link href="/recipes" className="bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+            <div className="text-3xl font-bold text-blue-600">{stats.totalRecipes}</div>
+            <div className="text-gray-600">Total Recipes</div>
+          </Link>
+          <Link href="/ingredients?filter=instock" className="bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+            <div className="text-3xl font-bold text-green-600">{stats.inStockIngredients}</div>
+            <div className="text-gray-600">In Stock</div>
+          </Link>
+          <Link href="/menu?filter=available" className="bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+            <div className="text-3xl font-bold text-purple-600">{stats.availableRecipes}</div>
+            <div className="text-gray-600">Ready to Cook</div>
+          </Link>
+          <Link href="/ingredients" className="bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+            <div className="text-3xl font-bold text-orange-600">{stats.totalIngredients}</div>
+            <div className="text-gray-600">Total Ingredients</div>
+          </Link>
         </div>
-        <div className="bg-white rounded-lg shadow p-6 text-center">
-          <div className="text-3xl font-bold text-green-600">{stats.inStockIngredients}</div>
-          <div className="text-gray-600">In Stock</div>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6 text-center">
-          <div className="text-3xl font-bold text-purple-600">{stats.availableRecipes}</div>
-          <div className="text-gray-600">Ready to Cook</div>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6 text-center">
-          <div className="text-3xl font-bold text-orange-600">{stats.totalIngredients}</div>
-          <div className="text-gray-600">Total Ingredients</div>
+
+        {/* Mobile Table */}
+        <div className="md:hidden bg-white rounded-lg shadow overflow-hidden">
+          <Link href="/recipes" className="flex justify-between items-center p-3 border-b border-gray-200 hover:bg-gray-50">
+            <span className="text-sm text-gray-600">Total Recipes</span>
+            <span className="text-lg font-bold text-blue-600">{stats.totalRecipes}</span>
+          </Link>
+          <Link href="/ingredients?filter=instock" className="flex justify-between items-center p-3 border-b border-gray-200 hover:bg-gray-50">
+            <span className="text-sm text-gray-600">In Stock</span>
+            <span className="text-lg font-bold text-green-600">{stats.inStockIngredients}</span>
+          </Link>
+          <Link href="/menu?filter=available" className="flex justify-between items-center p-3 border-b border-gray-200 hover:bg-gray-50">
+            <span className="text-sm text-gray-600">Ready to Cook</span>
+            <span className="text-lg font-bold text-purple-600">{stats.availableRecipes}</span>
+          </Link>
+          <Link href="/ingredients" className="flex justify-between items-center p-3 hover:bg-gray-50">
+            <span className="text-sm text-gray-600">Total Ingredients</span>
+            <span className="text-lg font-bold text-orange-600">{stats.totalIngredients}</span>
+          </Link>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickActions.map((action) => (
-          <Link
-            key={action.title}
-            href={action.href}
-            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center group"
-          >
-            <div className={`w-16 h-16 ${action.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
-              <span className="text-2xl">{action.icon}</span>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{action.title}</h3>
-            <p className="text-gray-600 text-sm">{action.description}</p>
-          </Link>
-        ))}
+      {/* Quick Actions - Desktop: Cards, Mobile: List */}
+      <div>
+        {/* Desktop Cards */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {quickActions.map((action) => (
+            <Link
+              key={action.title}
+              href={action.href}
+              className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center group"
+            >
+              <div className={`w-16 h-16 ${action.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                <span className="text-2xl">{action.icon}</span>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{action.title}</h3>
+              <p className="text-gray-600 text-sm">{action.description}</p>
+            </Link>
+          ))}
+        </div>
+
+        {/* Mobile List */}
+        <div className="md:hidden bg-white rounded-lg shadow overflow-hidden">
+          {quickActions.map((action, index) => (
+            <Link
+              key={action.title}
+              href={action.href}
+              className={`flex items-center p-4 hover:bg-gray-50 ${index < quickActions.length - 1 ? 'border-b border-gray-200' : ''}`}
+            >
+              <div className={`w-10 h-10 ${action.color} rounded-full flex items-center justify-center mr-4 flex-shrink-0`}>
+                <span className="text-lg">{action.icon}</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900">{action.title}</h3>
+                <p className="text-xs text-gray-600">{action.description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Getting Started */}

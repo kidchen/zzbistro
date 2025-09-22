@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
 
 export default function MenuPage() {
+  const searchParams = useSearchParams();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [availableRecipes, setAvailableRecipes] = useState<Recipe[]>([]);
@@ -24,6 +26,12 @@ export default function MenuPage() {
         
         setRecipes(allRecipes);
         setIngredients(allIngredients);
+
+        // Handle filter parameter from URL
+        const filter = searchParams.get('filter');
+        if (filter === 'available') {
+          setShowPartial(false); // Show only available recipes
+        }
 
         // Find recipes we can make completely
         const available = allRecipes.filter(recipe => 
@@ -58,7 +66,7 @@ export default function MenuPage() {
     };
 
     loadMenuData();
-  }, []);
+  }, [searchParams]);
 
   const allTags = [...new Set(recipes.flatMap(recipe => recipe.tags))];
 
@@ -76,29 +84,48 @@ export default function MenuPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">What&apos;s for Dinner? 🍽️</h1>
+      <h1 className="text-xl md:text-3xl font-bold text-gray-900 mb-8">What&apos;s for Dinner? 🍽️</h1>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-green-600">{availableRecipes.length}</div>
-          <div className="text-green-700">Ready to Cook</div>
-          <div className="text-sm text-green-600 mt-1">All ingredients available</div>
+      {/* Stats - Desktop: Cards, Mobile: Table */}
+      <div className="mb-6">
+        {/* Desktop Cards */}
+        <div className="hidden md:grid md:grid-cols-3 gap-6">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+            <div className="text-3xl font-bold text-green-600">{availableRecipes.length}</div>
+            <div className="text-green-700">Ready to Cook</div>
+            <div className="text-sm text-green-600 mt-1">All ingredients available</div>
+          </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+            <div className="text-3xl font-bold text-yellow-600">{partialRecipes.length}</div>
+            <div className="text-yellow-700">Almost Ready</div>
+            <div className="text-sm text-yellow-600 mt-1">Missing 1-3 ingredients</div>
+          </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+            <div className="text-3xl font-bold text-blue-600">{ingredients.filter(i => i.inStock).length}</div>
+            <div className="text-blue-700">Ingredients in Stock</div>
+            <div className="text-sm text-blue-600 mt-1">Ready to use</div>
+          </div>
         </div>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-yellow-600">{partialRecipes.length}</div>
-          <div className="text-yellow-700">Almost Ready</div>
-          <div className="text-sm text-yellow-600 mt-1">Missing 1-3 ingredients</div>
-        </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-blue-600">{ingredients.filter(i => i.inStock).length}</div>
-          <div className="text-blue-700">Ingredients in Stock</div>
-          <div className="text-sm text-blue-600 mt-1">Ready to use</div>
+
+        {/* Mobile Table */}
+        <div className="md:hidden bg-white rounded-lg shadow overflow-hidden">
+          <div className="flex justify-between items-center p-3 border-b border-gray-200">
+            <span className="text-sm text-gray-600">Ready to Cook</span>
+            <span className="text-lg font-bold text-green-600">{availableRecipes.length}</span>
+          </div>
+          <div className="flex justify-between items-center p-3 border-b border-gray-200">
+            <span className="text-sm text-gray-600">Almost Ready</span>
+            <span className="text-lg font-bold text-yellow-600">{partialRecipes.length}</span>
+          </div>
+          <div className="flex justify-between items-center p-3">
+            <span className="text-sm text-gray-600">Ingredients in Stock</span>
+            <span className="text-lg font-bold text-blue-600">{ingredients.filter(i => i.inStock).length}</span>
+          </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
+      <div className="bg-white rounded-lg shadow p-4 md:p-6 mb-8">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Filter Options</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
@@ -173,46 +200,97 @@ export default function MenuPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAvailableRecipes.map((recipe) => (
-              <div key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-green-200">
-                {recipe.image && (
-                  <Image
-                    src={recipe.image}
-                    alt={recipe.name}
-                    width={400}
-                    height={192}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xl font-semibold text-gray-900">{recipe.name}</h3>
-                    <span className="text-green-600 text-xl">✅</span>
+          <div>
+            {/* Desktop Cards */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAvailableRecipes.map((recipe) => (
+                <div key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-green-200">
+                  {recipe.image && (
+                    <Image
+                      src={recipe.image}
+                      alt={recipe.name}
+                      width={400}
+                      height={192}
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xl font-semibold text-gray-900">{recipe.name}</h3>
+                      <span className="text-green-600 text-xl">✅</span>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600 mb-3">
+                      <span className="mr-4">⏱️ {recipe.cookingTime} min</span>
+                      <span>👥 {recipe.servings} servings</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {recipe.tags.map(tag => (
+                        <span
+                          key={tag}
+                          className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <Link
+                      href={`/recipes/${recipe.id}`}
+                      className="block w-full text-center bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      Cook This! 🍳
+                    </Link>
                   </div>
-                  <div className="flex items-center text-sm text-gray-600 mb-3">
-                    <span className="mr-4">⏱️ {recipe.cookingTime} min</span>
-                    <span>👥 {recipe.servings} servings</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {recipe.tags.map(tag => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <Link
-                    href={`/recipes/${recipe.id}`}
-                    className="block w-full text-center bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Cook This! 🍳
-                  </Link>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Mobile List */}
+            <div className="md:hidden bg-white rounded-lg shadow overflow-hidden border-2 border-green-200">
+              {filteredAvailableRecipes.map((recipe, index) => (
+                <div key={recipe.id} className={`p-4 ${index < filteredAvailableRecipes.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                  <div className="flex gap-3">
+                    {recipe.image && (
+                      <Image
+                        src={recipe.image}
+                        alt={recipe.name}
+                        width={60}
+                        height={60}
+                        className="w-15 h-15 object-cover rounded-lg flex-shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="text-sm font-semibold text-gray-900 truncate">{recipe.name}</h3>
+                        <span className="text-green-600 text-lg ml-2">✅</span>
+                      </div>
+                      <div className="flex items-center text-xs text-gray-600 mb-2">
+                        <span className="mr-3">⏱️ {recipe.cookingTime}min</span>
+                        <span>👥 {recipe.servings}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {recipe.tags.slice(0, 2).map(tag => (
+                          <span
+                            key={tag}
+                            className="px-2 py-0.5 bg-orange-100 text-orange-800 text-xs rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                        {recipe.tags.length > 2 && (
+                          <span className="text-xs text-gray-500">+{recipe.tags.length - 2}</span>
+                        )}
+                      </div>
+                      <Link
+                        href={`/recipes/${recipe.id}`}
+                        className="inline-block bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors"
+                      >
+                        Cook This! 🍳
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -228,64 +306,128 @@ export default function MenuPage() {
               <p className="text-gray-600">All your recipes are either ready to cook or need too many ingredients.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPartialRecipes.map(({ recipe, missing }) => (
-                <div key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-yellow-200">
-                  {recipe.image && (
-                    <Image
-                      src={recipe.image}
-                      alt={recipe.name}
-                      width={400}
-                      height={192}
-                      className="w-full h-48 object-cover"
-                    />
-                  )}
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-xl font-semibold text-gray-900">{recipe.name}</h3>
-                      <span className="text-yellow-600 text-xl">⚠️</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600 mb-3">
-                      <span className="mr-4">⏱️ {recipe.cookingTime} min</span>
-                      <span>👥 {recipe.servings} servings</span>
-                    </div>
-                    <div className="mb-4">
-                      <p className="text-sm font-medium text-red-600 mb-2">
-                        Missing {missing.length} ingredient{missing.length > 1 ? 's' : ''}:
-                      </p>
-                      <ul className="text-sm text-red-700">
-                        {missing.map((ingredient, index) => (
-                          <li key={index}>• {ingredient}</li>
+            <div>
+              {/* Desktop Cards */}
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredPartialRecipes.map(({ recipe, missing }) => (
+                  <div key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-yellow-200">
+                    {recipe.image && (
+                      <Image
+                        src={recipe.image}
+                        alt={recipe.name}
+                        width={400}
+                        height={192}
+                        className="w-full h-48 object-cover"
+                      />
+                    )}
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-xl font-semibold text-gray-900">{recipe.name}</h3>
+                        <span className="text-yellow-600 text-xl">⚠️</span>
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600 mb-3">
+                        <span className="mr-4">⏱️ {recipe.cookingTime} min</span>
+                        <span>👥 {recipe.servings} servings</span>
+                      </div>
+                      <div className="mb-4">
+                        <p className="text-sm font-medium text-red-600 mb-2">
+                          Missing {missing.length} ingredient{missing.length > 1 ? 's' : ''}:
+                        </p>
+                        <ul className="text-sm text-red-700">
+                          {missing.map((ingredient, index) => (
+                            <li key={index}>• {ingredient}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {recipe.tags.map(tag => (
+                          <span
+                            key={tag}
+                            className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full"
+                          >
+                            {tag}
+                          </span>
                         ))}
-                      </ul>
-                    </div>
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {recipe.tags.map(tag => (
-                        <span
-                          key={tag}
-                          className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full"
+                      </div>
+                      <div className="space-y-2">
+                        <Link
+                          href={`/recipes/${recipe.id}`}
+                          className="block w-full text-center bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
                         >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="space-y-2">
-                      <Link
-                        href={`/recipes/${recipe.id}`}
-                        className="block w-full text-center bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
-                      >
-                        View Recipe
-                      </Link>
-                      <Link
-                        href="/ingredients"
-                        className="block w-full text-center bg-yellow-600 text-white py-1 rounded text-sm hover:bg-yellow-700 transition-colors"
-                      >
-                        Add Missing Items
-                      </Link>
+                          View Recipe
+                        </Link>
+                        <Link
+                          href="/ingredients"
+                          className="block w-full text-center bg-yellow-600 text-white py-1 rounded text-sm hover:bg-yellow-700 transition-colors"
+                        >
+                          Add Missing Items
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {/* Mobile List */}
+              <div className="md:hidden bg-white rounded-lg shadow overflow-hidden border-2 border-yellow-200">
+                {filteredPartialRecipes.map(({ recipe, missing }, index) => (
+                  <div key={recipe.id} className={`p-4 ${index < filteredPartialRecipes.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                    <div className="flex gap-3">
+                      {recipe.image && (
+                        <Image
+                          src={recipe.image}
+                          alt={recipe.name}
+                          width={60}
+                          height={60}
+                          className="w-15 h-15 object-cover rounded-lg flex-shrink-0"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="text-sm font-semibold text-gray-900 truncate">{recipe.name}</h3>
+                          <span className="text-yellow-600 text-lg ml-2">⚠️</span>
+                        </div>
+                        <div className="flex items-center text-xs text-gray-600 mb-2">
+                          <span className="mr-3">⏱️ {recipe.cookingTime}min</span>
+                          <span>👥 {recipe.servings}</span>
+                        </div>
+                        <div className="mb-2">
+                          <p className="text-xs font-medium text-red-600 mb-1">
+                            Missing {missing.length}: {missing.slice(0, 2).join(', ')}{missing.length > 2 && '...'}
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {recipe.tags.slice(0, 2).map(tag => (
+                            <span
+                              key={tag}
+                              className="px-2 py-0.5 bg-orange-100 text-orange-800 text-xs rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                          {recipe.tags.length > 2 && (
+                            <span className="text-xs text-gray-500">+{recipe.tags.length - 2}</span>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Link
+                            href={`/recipes/${recipe.id}`}
+                            className="flex-1 text-center bg-gray-600 text-white px-2 py-1 rounded text-xs hover:bg-gray-700 transition-colors"
+                          >
+                            View Recipe
+                          </Link>
+                          <Link
+                            href="/ingredients"
+                            className="flex-1 text-center bg-yellow-600 text-white px-2 py-1 rounded text-xs hover:bg-yellow-700 transition-colors"
+                          >
+                            Add Items
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
