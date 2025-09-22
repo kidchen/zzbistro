@@ -176,9 +176,10 @@ export default function IngredientsPage() {
     };
 
     try {
-      await storage.ingredients.add(ingredient);
-      const updatedIngredients = await storage.ingredients.getAll();
-      setIngredients(updatedIngredients);
+      const newIngredient = await storage.ingredients.add(ingredient);
+      if (newIngredient) {
+        setIngredients(prev => [...prev, newIngredient].sort((a, b) => a.name.localeCompare(b.name)));
+      }
       setFormData({
         name: '',
         quantity: 1,
@@ -199,8 +200,7 @@ export default function IngredientsPage() {
       const updated = { ...ingredient, inStock: !ingredient.inStock };
       try {
         await storage.ingredients.update(id, updated);
-        const updatedIngredients = await storage.ingredients.getAll();
-        setIngredients(updatedIngredients);
+        setIngredients(prev => prev.map(i => i.id === id ? updated : i));
       } catch (error) {
         console.error('Error updating ingredient:', error);
         alert('Failed to update ingredient. Please try again.');
@@ -214,8 +214,7 @@ export default function IngredientsPage() {
       const updated = { ...ingredient, category: newCategory };
       try {
         await storage.ingredients.update(id, updated);
-        const updatedIngredients = await storage.ingredients.getAll();
-        setIngredients(updatedIngredients);
+        setIngredients(prev => prev.map(i => i.id === id ? updated : i));
       } catch (error) {
         console.error('Error updating ingredient:', error);
         alert('Failed to update ingredient. Please try again.');
@@ -231,8 +230,7 @@ export default function IngredientsPage() {
       const updated = { ...ingredient, quantity: newQuantity };
       try {
         await storage.ingredients.update(id, updated);
-        const updatedIngredients = await storage.ingredients.getAll();
-        setIngredients(updatedIngredients);
+        setIngredients(prev => prev.map(i => i.id === id ? updated : i));
       } catch (error) {
         console.error('Error updating ingredient:', error);
         alert('Failed to update ingredient. Please try again.');
@@ -244,8 +242,7 @@ export default function IngredientsPage() {
     if (confirm('Are you sure you want to delete this ingredient?')) {
       try {
         await storage.ingredients.delete(id);
-        const updatedIngredients = await storage.ingredients.getAll();
-        setIngredients(updatedIngredients);
+        setIngredients(prev => prev.filter(i => i.id !== id));
       } catch (error) {
         console.error('Error deleting ingredient:', error);
         alert('Failed to delete ingredient. Please try again.');
@@ -459,21 +456,21 @@ export default function IngredientsPage() {
       <div className="bg-white rounded-lg shadow p-4 md:p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Search</label>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search ingredients..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Category</label>
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Filter by Category</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             >
               <option value="">All Categories</option>
               {categories.map(category => (

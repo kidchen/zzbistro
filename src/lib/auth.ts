@@ -16,11 +16,9 @@ export const authOptions = {
     async signIn({ user }: { user: { email?: string | null } }) {
       // Check if email is in allowed list
       if (user.email && ALLOWED_EMAILS.includes(user.email)) {
-        console.log('Authorized user signed in:', user.email)
         return true
       }
 
-      console.log('Unauthorized sign-in attempt:', user.email)
       return false // Deny access
     },
     // @ts-ignore

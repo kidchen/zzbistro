@@ -1,10 +1,18 @@
 import { Recipe, Ingredient } from '@/types';
 import { supabase } from './supabase';
+import { dataCache } from './cache';
 
-// Supabase-based storage with localStorage fallback for offline support
+// Optimized storage with caching and reduced database calls
 export const storage = {
   recipes: {
-    getAll: async (): Promise<Recipe[]> => {
+    getAll: async (useCache = true): Promise<Recipe[]> => {
+      const cacheKey = 'recipes';
+      
+      if (useCache) {
+        const cached = dataCache.get<Recipe[]>(cacheKey);
+        if (cached) return cached;
+      }
+
       try {
         const { data, error } = await supabase
           .from('recipes')
@@ -13,7 +21,7 @@ export const storage = {
 
         if (error) throw error;
 
-        return data.map(recipe => ({
+        const recipes = data.map(recipe => ({
           id: recipe.id,
           name: recipe.name,
           ingredients: recipe.ingredients,
@@ -24,9 +32,11 @@ export const storage = {
           tags: recipe.tags,
           createdAt: new Date(recipe.created_at)
         }));
+
+        dataCache.set(cacheKey, recipes);
+        return recipes;
       } catch (error) {
         console.error('Error fetching recipes:', error);
-        // Fallback to localStorage
         if (typeof window !== 'undefined') {
           const stored = localStorage.getItem('zzbistro-recipes');
           return stored ? JSON.parse(stored) : [];
@@ -65,24 +75,16 @@ export const storage = {
           createdAt: new Date(data.created_at)
         };
 
-        // Also save to localStorage as backup
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('zzbistro-recipes');
-          const recipes = stored ? JSON.parse(stored) : [];
-          recipes.push(newRecipe);
-          localStorage.setItem('zzbistro-recipes', JSON.stringify(recipes));
+        // Update cache instead of refetching
+        const cached = dataCache.get<Recipe[]>('recipes');
+        if (cached) {
+          cached.unshift(newRecipe);
+          dataCache.set('recipes', cached);
         }
 
         return newRecipe;
       } catch (error) {
         console.error('Error adding recipe:', error);
-        // Fallback to localStorage
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('zzbistro-recipes');
-          const recipes = stored ? JSON.parse(stored) : [];
-          recipes.push(recipe);
-          localStorage.setItem('zzbistro-recipes', JSON.stringify(recipes));
-        }
         return recipe;
       }
     },
@@ -104,14 +106,13 @@ export const storage = {
 
         if (error) throw error;
 
-        // Also update localStorage
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('zzbistro-recipes');
-          const recipes = stored ? JSON.parse(stored) : [];
-          const index = recipes.findIndex((r: Recipe) => r.id === id);
+        // Update cache instead of refetching
+        const cached = dataCache.get<Recipe[]>('recipes');
+        if (cached) {
+          const index = cached.findIndex(r => r.id === id);
           if (index !== -1) {
-            recipes[index] = updatedRecipe;
-            localStorage.setItem('zzbistro-recipes', JSON.stringify(recipes));
+            cached[index] = updatedRecipe;
+            dataCache.set('recipes', cached);
           }
         }
 
@@ -131,12 +132,11 @@ export const storage = {
 
         if (error) throw error;
 
-        // Also remove from localStorage
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('zzbistro-recipes');
-          const recipes = stored ? JSON.parse(stored) : [];
-          const filtered = recipes.filter((r: Recipe) => r.id !== id);
-          localStorage.setItem('zzbistro-recipes', JSON.stringify(filtered));
+        // Update cache instead of refetching
+        const cached = dataCache.get<Recipe[]>('recipes');
+        if (cached) {
+          const filtered = cached.filter(r => r.id !== id);
+          dataCache.set('recipes', filtered);
         }
 
         return true;
@@ -148,7 +148,14 @@ export const storage = {
   },
   
   ingredients: {
-    getAll: async (): Promise<Ingredient[]> => {
+    getAll: async (useCache = true): Promise<Ingredient[]> => {
+      const cacheKey = 'ingredients';
+      
+      if (useCache) {
+        const cached = dataCache.get<Ingredient[]>(cacheKey);
+        if (cached) return cached;
+      }
+
       try {
         const { data, error } = await supabase
           .from('ingredients')
@@ -157,18 +164,19 @@ export const storage = {
 
         if (error) throw error;
 
-        return data.map(ingredient => ({
+        const ingredients = data.map(ingredient => ({
           id: ingredient.id,
           name: ingredient.name,
           quantity: ingredient.quantity,
-          unit: ingredient.unit,
           category: ingredient.category,
           expiryDate: ingredient.expiry_date ? new Date(ingredient.expiry_date) : undefined,
           inStock: ingredient.in_stock
         }));
+
+        dataCache.set(cacheKey, ingredients);
+        return ingredients;
       } catch (error) {
         console.error('Error fetching ingredients:', error);
-        // Fallback to localStorage
         if (typeof window !== 'undefined') {
           const stored = localStorage.getItem('zzbistro-ingredients');
           return stored ? JSON.parse(stored) : [];
@@ -184,7 +192,6 @@ export const storage = {
           .insert({
             name: ingredient.name,
             quantity: ingredient.quantity,
-            unit: ingredient.unit,
             category: ingredient.category,
             expiry_date: ingredient.expiryDate?.toISOString().split('T')[0],
             in_stock: ingredient.inStock
@@ -198,31 +205,22 @@ export const storage = {
           id: data.id,
           name: data.name,
           quantity: data.quantity,
-          unit: data.unit,
           category: data.category,
           expiryDate: data.expiry_date ? new Date(data.expiry_date) : undefined,
           inStock: data.in_stock
         };
 
-        // Also save to localStorage as backup
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('zzbistro-ingredients');
-          const ingredients = stored ? JSON.parse(stored) : [];
-          ingredients.push(newIngredient);
-          localStorage.setItem('zzbistro-ingredients', JSON.stringify(ingredients));
+        // Update cache instead of refetching
+        const cached = dataCache.get<Ingredient[]>('ingredients');
+        if (cached) {
+          cached.push(newIngredient);
+          cached.sort((a, b) => a.name.localeCompare(b.name));
+          dataCache.set('ingredients', cached);
         }
 
         return newIngredient;
       } catch (error) {
         console.error('Error adding ingredient:', error);
-        console.error('Full error details:', JSON.stringify(error, null, 2));
-        // Fallback to localStorage
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('zzbistro-ingredients');
-          const ingredients = stored ? JSON.parse(stored) : [];
-          ingredients.push(ingredient);
-          localStorage.setItem('zzbistro-ingredients', JSON.stringify(ingredients));
-        }
         return ingredient;
       }
     },
@@ -234,7 +232,6 @@ export const storage = {
           .update({
             name: updatedIngredient.name,
             quantity: updatedIngredient.quantity,
-            unit: updatedIngredient.unit,
             category: updatedIngredient.category,
             expiry_date: updatedIngredient.expiryDate?.toISOString().split('T')[0],
             in_stock: updatedIngredient.inStock
@@ -243,14 +240,13 @@ export const storage = {
 
         if (error) throw error;
 
-        // Also update localStorage
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('zzbistro-ingredients');
-          const ingredients = stored ? JSON.parse(stored) : [];
-          const index = ingredients.findIndex((i: Ingredient) => i.id === id);
+        // Update cache instead of refetching
+        const cached = dataCache.get<Ingredient[]>('ingredients');
+        if (cached) {
+          const index = cached.findIndex(i => i.id === id);
           if (index !== -1) {
-            ingredients[index] = updatedIngredient;
-            localStorage.setItem('zzbistro-ingredients', JSON.stringify(ingredients));
+            cached[index] = updatedIngredient;
+            dataCache.set('ingredients', cached);
           }
         }
 
@@ -270,12 +266,11 @@ export const storage = {
 
         if (error) throw error;
 
-        // Also remove from localStorage
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('zzbistro-ingredients');
-          const ingredients = stored ? JSON.parse(stored) : [];
-          const filtered = ingredients.filter((i: Ingredient) => i.id !== id);
-          localStorage.setItem('zzbistro-ingredients', JSON.stringify(filtered));
+        // Update cache instead of refetching
+        const cached = dataCache.get<Ingredient[]>('ingredients');
+        if (cached) {
+          const filtered = cached.filter(i => i.id !== id);
+          dataCache.set('ingredients', filtered);
         }
 
         return true;
@@ -284,5 +279,10 @@ export const storage = {
         return false;
       }
     }
+  },
+
+  // Utility to clear all caches (useful for force refresh)
+  clearCache: () => {
+    dataCache.clear();
   }
 };

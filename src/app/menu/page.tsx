@@ -126,14 +126,14 @@ export default function MenuPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow p-4 md:p-6 mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Filter Options</h2>
+        <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-4">Filter Options</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tag</label>
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Tag</label>
             <select
               value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             >
               <option value="">All Tags</option>
               {allTags.map(tag => (
@@ -142,11 +142,11 @@ export default function MenuPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Max Cooking Time</label>
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Max Cooking Time</label>
             <select
               value={maxCookingTime}
               onChange={(e) => setMaxCookingTime(e.target.value ? parseInt(e.target.value) : '')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             >
               <option value="">Any time</option>
               <option value="15">15 minutes</option>
@@ -159,7 +159,7 @@ export default function MenuPage() {
           <div className="flex items-end">
             <button
               onClick={() => setShowPartial(!showPartial)}
-              className={`px-4 py-2 rounded-md transition-colors ${
+              className={`px-3 py-2 md:px-4 md:py-2 rounded-md transition-colors text-sm ${
                 showPartial
                   ? 'bg-orange-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'

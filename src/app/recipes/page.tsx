@@ -37,8 +37,7 @@ export default function RecipesPage() {
     if (confirm('Are you sure you want to delete this recipe?')) {
       try {
         await storage.recipes.delete(id);
-        const updatedRecipes = await storage.recipes.getAll();
-        setRecipes(updatedRecipes);
+        setRecipes(prev => prev.filter(r => r.id !== id));
       } catch (error) {
         console.error('Error deleting recipe:', error);
         alert('Failed to delete recipe. Please try again.');
@@ -62,7 +61,7 @@ export default function RecipesPage() {
       <div className="bg-white rounded-lg shadow p-4 md:p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
               Search Recipes
             </label>
             <input
@@ -70,17 +69,17 @@ export default function RecipesPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by name or ingredient..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
               Filter by Tag
             </label>
             <select
               value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             >
               <option value="">All Tags</option>
               {allTags.map(tag => (
