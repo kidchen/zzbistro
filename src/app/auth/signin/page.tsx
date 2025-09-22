@@ -34,7 +34,7 @@ export default function SignIn() {
                 <div>
                     <div className="text-center">
                         <h1 className="text-6xl mb-4">🍳</h1>
-                        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                             Welcome to ZZBistro
                         </h2>
                         <p className="text-gray-600">
@@ -43,10 +43,10 @@ export default function SignIn() {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-md p-8">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
                     <div className="space-y-6">
                         <div>
-                            <h3 className="text-lg font-medium text-gray-900 mb-4">
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                                 Sign in to access your recipes
                             </h3>
                             <p className="text-sm text-gray-600 mb-6">
@@ -57,7 +57,7 @@ export default function SignIn() {
                         <button
                             onClick={handleGoogleSignIn}
                             disabled={isLoading}
-                            className={`w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                            className={`w-full flex justify-center items-center px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
                                 }`}
                         >
                             {isLoading ? (

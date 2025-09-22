@@ -78,7 +78,7 @@ export default function Home() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Header */}
       <div className="text-center mb-12">
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
           Welcome to ZZBistro! 👨‍🍳👩‍🍳
         </h1>
         <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
@@ -90,26 +90,26 @@ export default function Home() {
       <div className="mb-8">
         {/* Desktop Cards */}
         <div className="hidden md:grid md:grid-cols-4 gap-6">
-          <Link href="/recipes" className="bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+          <Link href="/recipes" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-blue-600">{stats.totalRecipes}</div>
             <div className="text-gray-600">Total Recipes</div>
           </Link>
-          <Link href="/ingredients?filter=instock" className="bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+          <Link href="/ingredients?filter=instock" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-green-600">{stats.inStockIngredients}</div>
             <div className="text-gray-600">In Stock</div>
           </Link>
-          <Link href="/menu?filter=available" className="bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+          <Link href="/menu?filter=available" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-purple-600">{stats.availableRecipes}</div>
             <div className="text-gray-600">Ready to Cook</div>
           </Link>
-          <Link href="/ingredients" className="bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+          <Link href="/ingredients" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-orange-600">{stats.totalIngredients}</div>
             <div className="text-gray-600">Total Ingredients</div>
           </Link>
         </div>
 
         {/* Mobile Table */}
-        <div className="md:hidden bg-white rounded-lg shadow overflow-hidden">
+        <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <Link href="/recipes" className="flex justify-between items-center p-3 border-b border-gray-200 hover:bg-gray-50">
             <span className="text-sm text-gray-600">Total Recipes</span>
             <span className="text-lg font-bold text-blue-600">{stats.totalRecipes}</span>
@@ -137,19 +137,19 @@ export default function Home() {
             <Link
               key={action.title}
               href={action.href}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center group"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center group"
             >
               <div className={`w-16 h-16 ${action.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
                 <span className="text-2xl">{action.icon}</span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{action.title}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{action.title}</h3>
               <p className="text-gray-600 text-sm">{action.description}</p>
             </Link>
           ))}
         </div>
 
         {/* Mobile List */}
-        <div className="md:hidden bg-white rounded-lg shadow overflow-hidden">
+        <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           {quickActions.map((action, index) => (
             <Link
               key={action.title}
@@ -160,7 +160,7 @@ export default function Home() {
                 <span className="text-lg">{action.icon}</span>
               </div>
               <div className="flex-1">
-                <h3 className="text-sm font-semibold text-gray-900">{action.title}</h3>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{action.title}</h3>
                 <p className="text-xs text-gray-600">{action.description}</p>
               </div>
             </Link>

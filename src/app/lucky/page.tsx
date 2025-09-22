@@ -109,7 +109,7 @@ export default function LuckyPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-12">
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">I&apos;m Feeling Lucky! 🎲</h1>
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">I&apos;m Feeling Lucky! 🎲</h1>
         <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
           Can&apos;t decide what to cook? Let us surprise you with a random recipe suggestion!
         </p>
@@ -118,7 +118,7 @@ export default function LuckyPage() {
       {recipes.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📝</div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">No recipes yet!</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">No recipes yet!</h2>
           <p className="text-gray-600 mb-6">
             Add some recipes first, then come back for random suggestions.
           </p>
@@ -141,7 +141,7 @@ export default function LuckyPage() {
                   onChange={(e) => setPreferAvailable(e.target.checked)}
                   className="rounded"
                 />
-                <span className="text-gray-700">Prefer recipes I can make now</span>
+                <span className="text-gray-700 dark:text-gray-300">Prefer recipes I can make now</span>
               </label>
             </div>
             
@@ -174,7 +174,7 @@ export default function LuckyPage() {
 
           {/* Mood-based suggestions */}
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Or choose your mood...</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">Or choose your mood...</h2>
             <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
               {moodSuggestions.map((suggestion) => (
                 <button
@@ -183,12 +183,12 @@ export default function LuckyPage() {
                   disabled={isSpinning}
                   className={`p-2 md:p-4 rounded-lg border-2 transition-all ${
                     isSpinning
-                      ? 'border-gray-200 bg-gray-100 cursor-not-allowed'
-                      : 'border-orange-200 bg-white hover:border-orange-400 hover:bg-orange-50'
+                      ? 'border-gray-200 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
+                      : 'border-orange-200 bg-white dark:bg-gray-800 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   <div className="text-2xl md:text-3xl mb-1 md:mb-2">{suggestion.emoji}</div>
-                  <div className="font-medium text-gray-900 text-sm md:text-base">{suggestion.mood}</div>
+                  <div className="font-medium text-gray-900 dark:text-white text-sm md:text-base">{suggestion.mood}</div>
                 </button>
               ))}
             </div>
@@ -196,7 +196,7 @@ export default function LuckyPage() {
 
           {/* Recipe Suggestion */}
           {suggestedRecipe && (
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
               <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 text-center">
                 <h2 className="text-2xl font-bold mb-2">🎉 Your Lucky Pick!</h2>
                 <p className="opacity-90">Here&apos;s what the universe suggests for you today</p>
@@ -220,7 +220,7 @@ export default function LuckyPage() {
                   {/* Recipe Details */}
                   <div className={suggestedRecipe.image ? '' : 'lg:col-span-2'}>
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-3xl font-bold text-gray-900">{suggestedRecipe.name}</h3>
+                      <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{suggestedRecipe.name}</h3>
                       <div className={`px-4 py-2 rounded-full text-sm font-medium ${
                         canMake 
                           ? 'bg-green-100 text-green-800' 

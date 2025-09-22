@@ -259,7 +259,7 @@ export default function IngredientsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-xl md:text-3xl font-bold text-gray-900">Pantry Management 🥫</h1>
+        <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">Pantry Management 🥫</h1>
         <div className="flex gap-2">
           <button
             onClick={() => setShowCategoryManager(!showCategoryManager)}
@@ -278,8 +278,8 @@ export default function IngredientsPage() {
 
       {/* Category Manager */}
       {showCategoryManager && (
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Manage Categories</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Manage Categories</h2>
           
           {/* Add Category */}
           <div className="flex gap-2 mb-4">
@@ -288,7 +288,7 @@ export default function IngredientsPage() {
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               placeholder="New category name"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
               onKeyPress={(e) => e.key === 'Enter' && addCategory()}
             />
             <button
@@ -322,22 +322,22 @@ export default function IngredientsPage() {
       <div className="mb-6">
         {/* Desktop Cards */}
         <div className="hidden md:grid md:grid-cols-3 gap-6">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
             <div className="text-2xl font-bold text-green-600">{inStockCount}</div>
             <div className="text-green-700">In Stock</div>
           </div>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
             <div className="text-2xl font-bold text-red-600">{outOfStockCount}</div>
             <div className="text-red-700">Out of Stock</div>
           </div>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
             <div className="text-2xl font-bold text-yellow-600">{expiringCount}</div>
             <div className="text-yellow-700">Expiring Soon</div>
           </div>
         </div>
 
         {/* Mobile Table */}
-        <div className="md:hidden bg-white rounded-lg shadow overflow-hidden">
+        <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <div className="flex justify-between items-center p-3 border-b border-gray-200">
             <span className="text-sm text-gray-600">In Stock</span>
             <span className="text-lg font-bold text-green-600">{inStockCount}</span>
@@ -355,11 +355,11 @@ export default function IngredientsPage() {
 
       {/* Add Form */}
       {showAddForm && (
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Add New Ingredient</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Add New Ingredient</h2>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name *</label>
               <div className="relative">
                 <input
                   type="text"
@@ -367,14 +367,14 @@ export default function IngredientsPage() {
                   value={formData.name}
                   onChange={(e) => handleNameChange(e.target.value)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   placeholder="e.g., Tomatoes"
                 />
                 
                 {/* Auto-suggest dropdown */}
                 {showSuggestions && getSuggestions(formData.name).length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
-                    <div className="px-3 py-2 text-xs text-gray-500 bg-gray-50 border-b">
+                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+                    <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 border-b">
                       Existing ingredients (click to edit):
                     </div>
                     {getSuggestions(formData.name).map((ingredient) => (
@@ -397,22 +397,22 @@ export default function IngredientsPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantity</label>
               <input
                 type="number"
                 min="0"
                 step="0.1"
                 value={formData.quantity}
                 onChange={(e) => setFormData(prev => ({ ...prev, quantity: parseFloat(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
               <select
                 value={formData.category}
                 onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 {categories.map(category => (
                   <option key={category} value={category}>{category}</option>
@@ -420,12 +420,12 @@ export default function IngredientsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Expiry Date</label>
               <input
                 type="date"
                 value={formData.expiryDate}
                 onChange={(e) => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
             <div className="flex items-center">
@@ -436,7 +436,7 @@ export default function IngredientsPage() {
                 onChange={(e) => setFormData(prev => ({ ...prev, inStock: e.target.checked }))}
                 className="mr-2"
               />
-              <label htmlFor="inStock" className="text-sm font-medium text-gray-700">
+              <label htmlFor="inStock" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 In Stock
               </label>
             </div>
@@ -453,24 +453,24 @@ export default function IngredientsPage() {
       )}
 
       {/* Search and Filter */}
-      <div className="bg-white rounded-lg shadow p-4 md:p-6 mb-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Search</label>
+            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search ingredients..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
             />
           </div>
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Filter by Category</label>
+            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Category</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
             >
               <option value="">All Categories</option>
               {categories.map(category => (
@@ -485,7 +485,7 @@ export default function IngredientsPage() {
       {filteredIngredients.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🥫</div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
             {ingredients.length === 0 ? 'No ingredients yet!' : 'No ingredients match your search'}
           </h2>
           <p className="text-gray-600">
@@ -496,10 +496,10 @@ export default function IngredientsPage() {
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
                   <th 
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
@@ -539,15 +539,15 @@ export default function IngredientsPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredIngredients.map((ingredient) => {
                   const isExpiringSoon = ingredient.expiryDate && 
                     new Date(ingredient.expiryDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
                   
                   return (
-                    <tr key={ingredient.id} className={`${ingredient.inStock ? '' : 'bg-gray-50'} ${editingId === `${ingredient.id}-highlight` ? 'bg-yellow-100' : ''}`}>
+                    <tr key={ingredient.id} className={`${ingredient.inStock ? '' : 'bg-gray-50 dark:bg-gray-800'} ${editingId === `${ingredient.id}-highlight` ? 'bg-yellow-100 dark:bg-yellow-900/30' : ''}`}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{ingredient.name}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{ingredient.name}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {editingId === `${ingredient.id}-quantity` ? (
@@ -558,7 +558,7 @@ export default function IngredientsPage() {
                             value={ingredient.quantity}
                             onChange={(e) => updateQuantity(ingredient.id, parseFloat(e.target.value) || 0)}
                             onBlur={() => setEditingId(null)}
-                            className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                             autoFocus
                           />
                         ) : (
@@ -576,7 +576,7 @@ export default function IngredientsPage() {
                             value={ingredient.category}
                             onChange={(e) => updateCategory(ingredient.id, e.target.value)}
                             onBlur={() => setEditingId(null)}
-                            className="px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                             autoFocus
                           >
                             {categories.map(category => (
@@ -586,7 +586,7 @@ export default function IngredientsPage() {
                         ) : (
                           <button
                             onClick={() => setEditingId(`${ingredient.id}-category`)}
-                            className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200"
+                            className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200 dark:bg-gray-700"
                           >
                             {ingredient.category}
                           </button>
@@ -607,8 +607,8 @@ export default function IngredientsPage() {
                           onClick={() => toggleStock(ingredient.id)}
                           className={`px-3 py-1 text-xs font-medium rounded-full ${
                             ingredient.inStock
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
+                              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                              : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
                           }`}
                         >
                           {ingredient.inStock ? 'In Stock' : 'Out of Stock'}

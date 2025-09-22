@@ -196,7 +196,7 @@ export default function RecipeDetailPage() {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Recipe not found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recipe not found</h1>
           <Link href="/recipes" className="text-orange-600 hover:text-orange-700">
             Back to recipes
           </Link>
@@ -215,7 +215,7 @@ export default function RecipeDetailPage() {
           <Link href="/recipes" className="text-orange-600 hover:text-orange-700 mb-2 inline-block">
             ← Back to recipes
           </Link>
-          <h1 className="text-xl md:text-3xl font-bold text-gray-900">{recipe.name}</h1>
+          <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">{recipe.name}</h1>
           <div className="flex items-center text-gray-600 mt-2">
             <span className="mr-6">⏱️ {recipe.cookingTime} minutes</span>
             <span className="mr-6">👥 {recipe.servings} servings</span>
@@ -279,40 +279,40 @@ export default function RecipeDetailPage() {
           </div>
 
           {/* Basic Info */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Recipe Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Recipe Name</label>
                 <input
                   type="text"
                   value={editData.name}
                   onChange={(e) => setEditData(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Cooking Time (minutes)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cooking Time (minutes)</label>
                 <input
                   type="number"
                   value={editData.cookingTime}
                   onChange={(e) => setEditData(prev => ({ ...prev, cookingTime: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Servings</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Servings</label>
                 <input
                   type="number"
                   value={editData.servings}
                   onChange={(e) => setEditData(prev => ({ ...prev, servings: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
           </div>
 
           {/* Ingredients */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Ingredients</h3>
               <button
@@ -328,7 +328,7 @@ export default function RecipeDetailPage() {
                   <select
                     value={ingredient}
                     onChange={(e) => updateIngredient(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="">Select an ingredient...</option>
                     {availableIngredients.map((ing) => (
@@ -351,7 +351,7 @@ export default function RecipeDetailPage() {
           </div>
 
           {/* Instructions */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Instructions</h3>
               <button
@@ -368,7 +368,7 @@ export default function RecipeDetailPage() {
                   <textarea
                     value={instruction}
                     onChange={(e) => updateInstruction(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                     rows={2}
                   />
                   {editData.instructions.length > 1 && (
@@ -385,29 +385,29 @@ export default function RecipeDetailPage() {
           </div>
 
           {/* Tags */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma-separated)</label>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags (comma-separated)</label>
             <input
               type="text"
               value={editData.tags}
               onChange={(e) => setEditData(prev => ({ ...prev, tags: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               placeholder="e.g., dinner, vegetarian, quick"
             />
           </div>
 
           {/* Image Upload */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold mb-4">Recipe Photo</h3>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Upload Image
               </label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Images will be automatically compressed to under 3MB
@@ -444,8 +444,8 @@ export default function RecipeDetailPage() {
 
         {/* Ingredients */}
         <div className={`${recipe.image ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Ingredients</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Ingredients</h2>
             <ul className="space-y-2">
               {recipe.ingredients.map((ingredient, index) => {
                 const isMissing = missingIngredients.includes(ingredient);
@@ -453,7 +453,7 @@ export default function RecipeDetailPage() {
                   <li
                     key={index}
                     className={`flex items-center ${
-                      isMissing ? 'text-red-600' : 'text-gray-700'
+                      isMissing ? 'text-red-600' : 'text-gray-700 dark:text-gray-300'
                     }`}
                   >
                     <span className="mr-2">
@@ -484,15 +484,15 @@ export default function RecipeDetailPage() {
           </div>
 
           {/* Instructions */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Instructions</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Instructions</h2>
             <ol className="space-y-4">
               {recipe.instructions.map((instruction, index) => (
                 <li key={index} className="flex">
                   <span className="bg-orange-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mr-3 mt-0.5 flex-shrink-0">
                     {index + 1}
                   </span>
-                  <p className="text-gray-700">{instruction}</p>
+                  <p className="text-gray-700 dark:text-gray-300">{instruction}</p>
                 </li>
               ))}
             </ol>
