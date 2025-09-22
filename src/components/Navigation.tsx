@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 
@@ -25,8 +26,15 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center flex-shrink-0">
-            <Link href="/" className="text-2xl font-bold text-orange-600">
-              ZZBistro
+            <Link href="/" className="flex items-center space-x-2">
+              <Image
+                src="/logo-nav.png"
+                alt="ZZBistro Logo"
+                width={40}
+                height={40}
+                className="w-8 h-8 md:w-10 md:h-10"
+              />
+              <span className="text-xl md:text-2xl font-bold text-orange-600">ZZBistro</span>
             </Link>
           </div>
           
