@@ -103,7 +103,7 @@ export default function Home() {
             <div className="text-gray-600">Ready to Cook</div>
           </Link>
           <Link href="/ingredients" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
-            <div className="text-3xl font-bold text-orange-600">{stats.totalIngredients}</div>
+            <div className="text-3xl font-bold text-[#C63721]">{stats.totalIngredients}</div>
             <div className="text-gray-600">Total Ingredients</div>
           </Link>
         </div>
@@ -124,7 +124,7 @@ export default function Home() {
           </Link>
           <Link href="/ingredients" className="flex justify-between items-center p-3 hover:bg-gray-50">
             <span className="text-sm text-gray-600">Total Ingredients</span>
-            <span className="text-lg font-bold text-orange-600">{stats.totalIngredients}</span>
+            <span className="text-lg font-bold text-[#C63721]">{stats.totalIngredients}</span>
           </Link>
         </div>
       </div>

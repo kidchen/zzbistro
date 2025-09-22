@@ -197,7 +197,7 @@ export default function RecipeDetailPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recipe not found</h1>
-          <Link href="/recipes" className="text-orange-600 hover:text-orange-700">
+          <Link href="/recipes" className="text-[#C63721] hover:text-orange-700">
             Back to recipes
           </Link>
         </div>
@@ -212,7 +212,7 @@ export default function RecipeDetailPage() {
       {/* Header */}
       <div className="flex justify-between items-start mb-8">
         <div>
-          <Link href="/recipes" className="text-orange-600 hover:text-orange-700 mb-2 inline-block">
+          <Link href="/recipes" className="text-[#C63721] hover:text-orange-700 mb-2 inline-block">
             ← Back to recipes
           </Link>
           <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">{recipe.name}</h1>
@@ -237,7 +237,7 @@ export default function RecipeDetailPage() {
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="bg-orange-600 text-white px-3 py-1 md:px-4 md:py-2 rounded-lg hover:bg-orange-700 text-sm md:text-base whitespace-nowrap"
+              className="bg-[#C63721] text-white px-3 py-1 md:px-4 md:py-2 rounded-lg hover:bg-[#A52E1A] text-sm md:text-base whitespace-nowrap"
             >
               <span className="md:hidden">Edit</span>
               <span className="hidden md:inline">Edit Recipe</span>
@@ -287,7 +287,7 @@ export default function RecipeDetailPage() {
                   type="text"
                   value={editData.name}
                   onChange={(e) => setEditData(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -296,7 +296,7 @@ export default function RecipeDetailPage() {
                   type="number"
                   value={editData.cookingTime}
                   onChange={(e) => setEditData(prev => ({ ...prev, cookingTime: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -305,7 +305,7 @@ export default function RecipeDetailPage() {
                   type="number"
                   value={editData.servings}
                   onChange={(e) => setEditData(prev => ({ ...prev, servings: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
@@ -328,7 +328,7 @@ export default function RecipeDetailPage() {
                   <select
                     value={ingredient}
                     onChange={(e) => updateIngredient(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
                   >
                     <option value="">Select an ingredient...</option>
                     {availableIngredients.map((ing) => (
@@ -368,7 +368,7 @@ export default function RecipeDetailPage() {
                   <textarea
                     value={instruction}
                     onChange={(e) => updateInstruction(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
                     rows={2}
                   />
                   {editData.instructions.length > 1 && (
@@ -391,7 +391,7 @@ export default function RecipeDetailPage() {
               type="text"
               value={editData.tags}
               onChange={(e) => setEditData(prev => ({ ...prev, tags: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               placeholder="e.g., dinner, vegetarian, quick"
             />
           </div>
@@ -407,7 +407,7 @@ export default function RecipeDetailPage() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Images will be automatically compressed to under 3MB
@@ -466,9 +466,9 @@ export default function RecipeDetailPage() {
             </ul>
             
             {missingIngredients.length > 0 && (
-              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+              <div className="mt-4 p-3 bg-[#E2B210] border border-[#E2B210] rounded">
                 <p className="text-yellow-800 font-medium">Missing ingredients:</p>
-                <ul className="text-yellow-700 text-sm mt-1">
+                <ul className="text-[#B8940D] text-sm mt-1">
                   {missingIngredients.map((ingredient, index) => (
                     <li key={index}>• {ingredient}</li>
                   ))}
@@ -489,7 +489,7 @@ export default function RecipeDetailPage() {
             <ol className="space-y-4">
               {recipe.instructions.map((instruction, index) => (
                 <li key={index} className="flex">
-                  <span className="bg-orange-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mr-3 mt-0.5 flex-shrink-0">
+                  <span className="bg-[#C63721] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mr-3 mt-0.5 flex-shrink-0">
                     {index + 1}
                   </span>
                   <p className="text-gray-700 dark:text-gray-300">{instruction}</p>

@@ -51,7 +51,7 @@ export default function RecipesPage() {
         <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">Recipe Collection 📖</h1>
         <Link
           href="/recipes/new"
-          className="bg-orange-600 text-white px-3 py-1 md:px-4 md:py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm md:text-base"
+          className="bg-[#C63721] text-white px-3 py-1 md:px-4 md:py-2 rounded-lg hover:bg-[#A52E1A] transition-colors text-sm md:text-base"
         >
           Add New Recipe
         </Link>
@@ -69,7 +69,7 @@ export default function RecipesPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by name or ingredient..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
             />
           </div>
           <div>
@@ -79,7 +79,7 @@ export default function RecipesPage() {
             <select
               value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
             >
               <option value="">All Tags</option>
               {allTags.map(tag => (
@@ -106,7 +106,7 @@ export default function RecipesPage() {
           {recipes.length === 0 && (
             <Link
               href="/recipes/new"
-              className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
+              className="bg-[#C63721] text-white px-6 py-3 rounded-lg hover:bg-[#A52E1A] transition-colors"
             >
               Add Your First Recipe
             </Link>
@@ -146,7 +146,7 @@ export default function RecipesPage() {
                   <div className="flex justify-between items-center">
                     <Link
                       href={`/recipes/${recipe.id}`}
-                      className="text-orange-600 hover:text-orange-700 font-medium"
+                      className="text-[#C63721] hover:text-orange-700 font-medium"
                     >
                       View Recipe
                     </Link>
@@ -198,7 +198,7 @@ export default function RecipesPage() {
                     <div className="flex justify-between items-center">
                       <Link
                         href={`/recipes/${recipe.id}`}
-                        className="bg-orange-600 text-white px-3 py-1 rounded text-sm hover:bg-orange-700 transition-colors"
+                        className="bg-[#C63721] text-white px-3 py-1 rounded text-sm hover:bg-[#A52E1A] transition-colors"
                       >
                         View Recipe
                       </Link>

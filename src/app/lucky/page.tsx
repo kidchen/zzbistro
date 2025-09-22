@@ -124,7 +124,7 @@ export default function LuckyPage() {
           </p>
           <Link
             href="/recipes/new"
-            className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
+            className="bg-[#C63721] text-white px-6 py-3 rounded-lg hover:bg-[#A52E1A] transition-colors"
           >
             Add Your First Recipe
           </Link>
@@ -151,7 +151,7 @@ export default function LuckyPage() {
               className={`text-6xl p-8 rounded-full transition-all duration-300 ${
                 isSpinning 
                   ? 'animate-spin bg-orange-200' 
-                  : 'bg-orange-600 hover:bg-orange-700 hover:scale-110'
+                  : 'bg-[#C63721] hover:bg-[#A52E1A] hover:scale-110'
               }`}
             >
               🎲
@@ -164,7 +164,7 @@ export default function LuckyPage() {
                 className={`text-2xl font-bold px-8 py-4 rounded-lg transition-colors ${
                   isSpinning
                     ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                    : 'bg-orange-600 text-white hover:bg-orange-700'
+                    : 'bg-[#C63721] text-white hover:bg-[#A52E1A]'
                 }`}
               >
                 {isSpinning ? 'Rolling the dice...' : 'Surprise Me!'}
@@ -250,9 +250,9 @@ export default function LuckyPage() {
                     )}
                     
                     {!canMake && missingIngredients.length > 0 && (
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                      <div className="bg-[#E2B210] border border-[#E2B210] rounded-lg p-4 mb-6">
                         <h4 className="font-medium text-yellow-800 mb-2">Missing ingredients:</h4>
-                        <ul className="text-yellow-700 text-sm">
+                        <ul className="text-[#B8940D] text-sm">
                           {missingIngredients.map((ingredient, index) => (
                             <li key={index}>• {ingredient}</li>
                           ))}
@@ -266,7 +266,7 @@ export default function LuckyPage() {
                         className={`flex-1 text-center py-3 px-6 rounded-lg font-medium transition-colors ${
                           canMake
                             ? 'bg-green-600 text-white hover:bg-green-700'
-                            : 'bg-orange-600 text-white hover:bg-orange-700'
+                            : 'bg-[#C63721] text-white hover:bg-[#A52E1A]'
                         }`}
                       >
                         {canMake ? "Let's Cook This! 🍳" : 'View Recipe 📖'}

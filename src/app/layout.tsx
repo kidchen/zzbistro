@@ -20,9 +20,9 @@ export const metadata: Metadata = {
   description: "Manage recipes, track ingredients, and discover what to cook next",
   icons: {
     icon: [
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon-48x48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon-16x16-v2.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32-v2.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-48x48-v2.png', sizes: '48x48', type: 'image/png' },
     ],
     apple: [
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },

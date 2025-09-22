@@ -269,7 +269,7 @@ export default function IngredientsPage() {
           </button>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="bg-orange-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm md:text-base"
+            className="bg-[#C63721] text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-[#A52E1A] transition-colors text-sm md:text-base"
           >
             {showAddForm ? 'Cancel' : 'Add Ingredient'}
           </button>
@@ -288,7 +288,7 @@ export default function IngredientsPage() {
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               placeholder="New category name"
-              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
               onKeyPress={(e) => e.key === 'Enter' && addCategory()}
             />
             <button
@@ -307,7 +307,7 @@ export default function IngredientsPage() {
                 {category !== 'Other' && (
                   <button
                     onClick={() => removeCategory(category)}
-                    className="text-red-600 hover:text-red-800 text-sm ml-2"
+                    className="text-red-600 hover:text-white text-sm ml-2"
                   >
                     ×
                   </button>
@@ -322,17 +322,17 @@ export default function IngredientsPage() {
       <div className="mb-6">
         {/* Desktop Cards */}
         <div className="hidden md:grid md:grid-cols-3 gap-6">
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center space-x-3">
             <div className="text-2xl font-bold text-green-600">{inStockCount}</div>
             <div className="text-green-700">In Stock</div>
           </div>
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <div className="text-2xl font-bold text-red-600">{outOfStockCount}</div>
-            <div className="text-red-700">Out of Stock</div>
+          <div className="bg-[#7B1B1C]/20 dark:bg-[#7B1B1C]/20 border border-[#7B1B1C] dark:border-[#7B1B1C] rounded-lg p-4 flex items-center space-x-3">
+            <div className="text-2xl font-bold text-[#7B1B1C] dark:text-[#C63721]">{outOfStockCount}</div>
+            <div className="text-[#7B1B1C] dark:text-[#C63721]">Out of Stock</div>
           </div>
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-            <div className="text-2xl font-bold text-yellow-600">{expiringCount}</div>
-            <div className="text-yellow-700">Expiring Soon</div>
+          <div className="bg-[#E2B210]/20 dark:bg-[#E2B210]/20 border border-[#E2B210] dark:border-[#B8940D] rounded-lg p-4 flex items-center space-x-3">
+            <div className="text-2xl font-bold text-[#B8940D] dark:text-[#E2B210]">{expiringCount}</div>
+            <div className="text-[#B8940D] dark:text-[#E2B210]">Expiring Soon</div>
           </div>
         </div>
 
@@ -348,7 +348,7 @@ export default function IngredientsPage() {
           </div>
           <div className="flex justify-between items-center p-3">
             <span className="text-sm text-gray-600">Expiring Soon</span>
-            <span className="text-lg font-bold text-yellow-600">{expiringCount}</span>
+            <span className="text-lg font-bold text-[#B8940D]">{expiringCount}</span>
           </div>
         </div>
       </div>
@@ -367,7 +367,7 @@ export default function IngredientsPage() {
                   value={formData.name}
                   onChange={(e) => handleNameChange(e.target.value)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   placeholder="e.g., Tomatoes"
                 />
                 
@@ -404,7 +404,7 @@ export default function IngredientsPage() {
                 step="0.1"
                 value={formData.quantity}
                 onChange={(e) => setFormData(prev => ({ ...prev, quantity: parseFloat(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
             <div>
@@ -412,7 +412,7 @@ export default function IngredientsPage() {
               <select
                 value={formData.category}
                 onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 {categories.map(category => (
                   <option key={category} value={category}>{category}</option>
@@ -425,7 +425,7 @@ export default function IngredientsPage() {
                 type="date"
                 value={formData.expiryDate}
                 onChange={(e) => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
             <div className="flex items-center">
@@ -443,7 +443,7 @@ export default function IngredientsPage() {
             <div className="md:col-span-2">
               <button
                 type="submit"
-                className="bg-orange-600 text-white px-6 py-2 rounded-md hover:bg-orange-700"
+                className="bg-[#C63721] text-white px-6 py-2 rounded-md hover:bg-[#A52E1A]"
               >
                 Add Ingredient
               </button>
@@ -462,7 +462,7 @@ export default function IngredientsPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search ingredients..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
             />
           </div>
           <div>
@@ -470,7 +470,7 @@ export default function IngredientsPage() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
             >
               <option value="">All Categories</option>
               {categories.map(category => (
@@ -558,7 +558,7 @@ export default function IngredientsPage() {
                             value={ingredient.quantity}
                             onChange={(e) => updateQuantity(ingredient.id, parseFloat(e.target.value) || 0)}
                             onBlur={() => setEditingId(null)}
-                            className="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
                             autoFocus
                           />
                         ) : (
@@ -576,7 +576,7 @@ export default function IngredientsPage() {
                             value={ingredient.category}
                             onChange={(e) => updateCategory(ingredient.id, e.target.value)}
                             onBlur={() => setEditingId(null)}
-                            className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
                             autoFocus
                           >
                             {categories.map(category => (
@@ -608,7 +608,7 @@ export default function IngredientsPage() {
                           className={`px-3 py-1 text-xs font-medium rounded-full ${
                             ingredient.inStock
                               ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
-                              : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                              : 'bg-red-100 dark:bg-red-900/30 text-white dark:text-white'
                           }`}
                         >
                           {ingredient.inStock ? 'In Stock' : 'Out of Stock'}

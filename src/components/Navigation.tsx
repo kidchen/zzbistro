@@ -28,13 +28,13 @@ const Navigation = () => {
           <div className="flex items-center flex-shrink-0">
             <Link href="/" className="flex items-center space-x-2">
               <Image
-                src="/logo-nav.png"
+                src="/logo-nav-v2.png"
                 alt="ZZBistro Logo"
                 width={40}
                 height={40}
-                className="w-8 h-8 md:w-10 md:h-10 dark:bg-white dark:rounded-full dark:p-1"
+                className="w-8 h-8 md:w-10 md:h-10"
               />
-              <span className="text-xl md:text-2xl font-bold text-orange-600 dark:text-orange-400">ZZBistro</span>
+              <span className="text-xl md:text-2xl font-bold text-[#C63721] dark:text-[#C63721]">ZZBistro</span>
             </Link>
           </div>
           
@@ -47,7 +47,7 @@ const Navigation = () => {
                   href={item.href}
                   className={`inline-flex items-center px-2 pt-1 text-sm font-medium whitespace-nowrap flex-shrink-0 ${
                     pathname === item.href
-                      ? 'text-orange-600 dark:text-orange-400 border-b-2 border-orange-600 dark:border-orange-400'
+                      ? 'text-[#C63721] dark:text-[#C63721] border-b-2 border-[#C63721] dark:border-[#C63721]'
                       : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
                 >
@@ -60,8 +60,8 @@ const Navigation = () => {
             
           {/* User section - always on the right */}
           {session && (
-            <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-gray-200 flex-shrink-0">
-              <span className="text-sm text-gray-600 hidden sm:inline">
+            <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 flex-shrink-0">
+              <span className="text-sm text-gray-600 dark:text-gray-400 hidden sm:inline">
                 👋 {session.user?.name?.split(' ')[0]}
               </span>
               <button
