@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "../styles/colors.css";
 import SessionProvider from "@/components/SessionProvider";
 import AuthWrapper from "@/components/AuthWrapper";
-import Navigation from "@/components/Navigation";
+import ConditionalLayout from "@/components/ConditionalLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,10 +43,9 @@ export default function RootLayout({
       >
         <SessionProvider>
           <AuthWrapper>
-            <Navigation />
-            <main className="min-h-screen">
+            <ConditionalLayout>
               {children}
-            </main>
+            </ConditionalLayout>
           </AuthWrapper>
         </SessionProvider>
       </body>

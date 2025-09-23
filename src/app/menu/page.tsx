@@ -5,12 +5,12 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { storage } from '@/lib/storage';
-import { Recipe, Ingredient } from '@/types';
+import { Recipe } from '@/types';
+import CustomDropdown from '@/components/CustomDropdown';
 
 export default function MenuPage() {
   const searchParams = useSearchParams();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [availableRecipes, setAvailableRecipes] = useState<Recipe[]>([]);
   const [partialRecipes, setPartialRecipes] = useState<{ recipe: Recipe; missing: string[] }[]>([]);
   const [showPartial, setShowPartial] = useState(false);
@@ -25,7 +25,6 @@ export default function MenuPage() {
         const inStockIngredients = allIngredients.filter(i => i.inStock);
         
         setRecipes(allRecipes);
-        setIngredients(allIngredients);
 
         // Handle filter parameter from URL
         const filter = searchParams.get('filter');
@@ -93,31 +92,31 @@ export default function MenuPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tag</label>
-            <select
+            <CustomDropdown
+              options={[
+                { value: '', label: 'All Tags' },
+                ...allTags.map(tag => ({ value: tag, label: tag }))
+              ]}
               value={selectedTag}
-              onChange={(e) => setSelectedTag(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-            >
-              <option value="">All Tags</option>
-              {allTags.map(tag => (
-                <option key={tag} value={tag}>{tag}</option>
-              ))}
-            </select>
+              onChange={setSelectedTag}
+              placeholder="All Tags"
+            />
           </div>
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Cooking Time</label>
-            <select
-              value={maxCookingTime}
-              onChange={(e) => setMaxCookingTime(e.target.value ? parseInt(e.target.value) : '')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-            >
-              <option value="">Any time</option>
-              <option value="15">15 minutes</option>
-              <option value="30">30 minutes</option>
-              <option value="45">45 minutes</option>
-              <option value="60">1 hour</option>
-              <option value="120">2 hours</option>
-            </select>
+            <CustomDropdown
+              options={[
+                { value: '', label: 'Any time' },
+                { value: '15', label: '15 minutes' },
+                { value: '30', label: '30 minutes' },
+                { value: '45', label: '45 minutes' },
+                { value: '60', label: '1 hour' },
+                { value: '120', label: '2 hours' }
+              ]}
+              value={maxCookingTime.toString()}
+              onChange={(value) => setMaxCookingTime(value ? parseInt(value) : '')}
+              placeholder="Any time"
+            />
           </div>
           <div className="flex items-end">
             <button
@@ -125,7 +124,7 @@ export default function MenuPage() {
               className={`px-3 py-2 md:px-4 md:py-2 rounded-md transition-colors text-sm ${
                 showPartial
                   ? 'bg-[#C63721] text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
               {showPartial ? 'Hide' : 'Show'} Partial Matches
@@ -156,7 +155,7 @@ export default function MenuPage() {
               </Link>
               <Link
                 href="/recipes/new"
-                className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                className="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
               >
                 Add Recipe
               </Link>
@@ -167,7 +166,7 @@ export default function MenuPage() {
             {/* Desktop Cards */}
             <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAvailableRecipes.map((recipe) => (
-                <div key={recipe.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-green-200">
+                <div key={recipe.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-gray-200 dark:border-gray-600">
                   {recipe.image && (
                     <Image
                       src={recipe.image}
@@ -190,7 +189,7 @@ export default function MenuPage() {
                       {recipe.tags.map(tag => (
                         <span
                           key={tag}
-                          className="px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 text-xs rounded-full"
+                          className="px-2 py-1 bg-accent dark:bg-orange-900 text-white dark:text-white text-xs rounded-full"
                         >
                           {tag}
                         </span>
@@ -198,7 +197,7 @@ export default function MenuPage() {
                     </div>
                     <Link
                       href={`/recipes/${recipe.id}`}
-                      className="block w-full text-center bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
+                      className="block w-full text-center bg-primary text-white py-2 rounded-lg hover:bg-primary transition-colors"
                     >
                       Cook This! 🍳
                     </Link>
@@ -208,7 +207,7 @@ export default function MenuPage() {
             </div>
 
             {/* Mobile List */}
-            <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border-2 border-green-200">
+            <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border-2 border-gray-200 dark:border-gray-600">
               {filteredAvailableRecipes.map((recipe, index) => (
                 <div key={recipe.id} className={`p-4 ${index < filteredAvailableRecipes.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}>
                   <div className="flex gap-3">
@@ -234,7 +233,7 @@ export default function MenuPage() {
                         {recipe.tags.slice(0, 2).map(tag => (
                           <span
                             key={tag}
-                            className="px-2 py-0.5 bg-orange-100 text-orange-800 text-xs rounded-full"
+                            className="px-2 py-0.5 tag-accent text-xs rounded-full"
                           >
                             {tag}
                           </span>
@@ -245,7 +244,7 @@ export default function MenuPage() {
                       </div>
                       <Link
                         href={`/recipes/${recipe.id}`}
-                        className="inline-block bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors"
+                        className="inline-block bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary transition-colors"
                       >
                         Cook This! 🍳
                       </Link>
@@ -293,7 +292,7 @@ export default function MenuPage() {
                         <span>👥 {recipe.servings} servings</span>
                       </div>
                       <div className="mb-4">
-                        <p className="text-sm font-medium text-red-600 mb-2">
+                        <p className="text-sm font-medium text-error mb-2">
                           Missing {missing.length} ingredient{missing.length > 1 ? 's' : ''}:
                         </p>
                         <ul className="text-sm text-red-700">
@@ -306,7 +305,7 @@ export default function MenuPage() {
                         {recipe.tags.map(tag => (
                           <span
                             key={tag}
-                            className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full"
+                            className="px-2 py-1 tag-accent text-xs rounded-full"
                           >
                             {tag}
                           </span>
@@ -315,13 +314,13 @@ export default function MenuPage() {
                       <div className="space-y-2">
                         <Link
                           href={`/recipes/${recipe.id}`}
-                          className="block w-full text-center bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                          className="block w-full text-center bg-secondary text-white py-2 rounded-lg hover:bg-secondary transition-colors"
                         >
                           View Recipe
                         </Link>
                         <Link
                           href="/ingredients"
-                          className="block w-full text-center bg-yellow-600 text-white py-1 rounded text-sm hover:bg-yellow-700 transition-colors"
+                          className="block w-full text-center bg-warning text-white py-1 rounded text-sm hover:bg-warning transition-colors"
                         >
                           Add Missing Items
                         </Link>
@@ -355,7 +354,7 @@ export default function MenuPage() {
                           <span>👥 {recipe.servings}</span>
                         </div>
                         <div className="mb-2">
-                          <p className="text-xs font-medium text-red-600 mb-1">
+                          <p className="text-xs font-medium text-error mb-1">
                             Missing {missing.length}: {missing.slice(0, 2).join(', ')}{missing.length > 2 && '...'}
                           </p>
                         </div>
@@ -363,7 +362,7 @@ export default function MenuPage() {
                           {recipe.tags.slice(0, 2).map(tag => (
                             <span
                               key={tag}
-                              className="px-2 py-0.5 bg-orange-100 text-orange-800 text-xs rounded-full"
+                              className="px-2 py-0.5 tag-accent text-xs rounded-full"
                             >
                               {tag}
                             </span>
@@ -375,13 +374,13 @@ export default function MenuPage() {
                         <div className="flex gap-2">
                           <Link
                             href={`/recipes/${recipe.id}`}
-                            className="flex-1 text-center bg-gray-600 text-white px-2 py-1 rounded text-xs hover:bg-gray-700 transition-colors"
+                            className="flex-1 text-center bg-secondary text-white px-2 py-1 rounded text-xs hover:bg-secondary transition-colors"
                           >
                             View Recipe
                           </Link>
                           <Link
                             href="/ingredients"
-                            className="flex-1 text-center bg-yellow-600 text-white px-2 py-1 rounded text-xs hover:bg-yellow-700 transition-colors"
+                            className="flex-1 text-center bg-warning text-white px-2 py-1 rounded text-xs hover:bg-warning transition-colors"
                           >
                             Add Items
                           </Link>

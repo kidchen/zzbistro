@@ -3,6 +3,7 @@
 import { signIn, getSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function SignIn() {
     const router = useRouter();
@@ -29,16 +30,25 @@ export default function SignIn() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
+        <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+            <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-md w-full space-y-8">
                 <div>
                     <div className="text-center">
-                        <h1 className="text-6xl mb-4">🍳</h1>
+                        <div className="mb-4 flex justify-center">
+                            <Image
+                                src="/logo-nav-v2.png"
+                                alt="ZZBistro Logo"
+                                width={80}
+                                height={80}
+                                className="w-20 h-20"
+                            />
+                        </div>
                         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                             Welcome to ZZBistro
                         </h2>
-                        <p className="text-gray-600">
-                            Your personal cooking companion for you and your wife
+                        <p className="text-gray-600 dark:text-gray-300">
+                            Your personal cooking companion for your family.
                         </p>
                     </div>
                 </div>
@@ -49,7 +59,7 @@ export default function SignIn() {
                             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                                 Sign in to access your recipes
                             </h3>
-                            <p className="text-sm text-gray-600 mb-6">
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
                                 ZZBistro is a private family app. Only authorized users can access the recipe collection and pantry management.
                             </p>
                         </div>
@@ -57,11 +67,11 @@ export default function SignIn() {
                         <button
                             onClick={handleGoogleSignIn}
                             disabled={isLoading}
-                            className={`w-full flex justify-center items-center px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C63721] ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                            className={`w-full flex justify-center items-center px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C63721] ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
                                 }`}
                         >
                             {isLoading ? (
-                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900 dark:border-gray-100"></div>
                             ) : (
                                 <>
                                     <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -87,19 +97,18 @@ export default function SignIn() {
                             )}
                         </button>
 
-                        <div className="text-xs text-gray-500 text-center">
-                            By signing in, you agree to use this app responsibly as a family cooking companion.
+                        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                            By signing in, you agree to our{' '}
+                            <a 
+                                href="/terms" 
+                                className="text-primary hover:text-primary underline"
+                            >
+                                Terms of Service
+                            </a>
+                            .
                         </div>
                     </div>
                 </div>
-
-                <div className="text-center">
-                    <div className="text-sm text-gray-600">
-                        <p className="mb-2">✨ Manage recipes together</p>
-                        <p className="mb-2">🥫 Share pantry inventory</p>
-                        <p className="mb-2">🍽️ Discover what to cook</p>
-                        <p>🎲 Get random meal suggestions</p>
-                    </div>
                 </div>
             </div>
         </div>

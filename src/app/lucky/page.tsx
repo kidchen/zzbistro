@@ -223,8 +223,8 @@ export default function LuckyPage() {
                       <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{suggestedRecipe.name}</h3>
                       <div className={`px-4 py-2 rounded-full text-sm font-medium ${
                         canMake 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-success-subtle text-success' 
+                          : 'bg-warning-subtle text-warning'
                       }`}>
                         {canMake ? '✅ Ready to cook!' : `⚠️ Missing ${missingIngredients.length} items`}
                       </div>
@@ -241,7 +241,7 @@ export default function LuckyPage() {
                         {suggestedRecipe.tags.map(tag => (
                           <span
                             key={tag}
-                            className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm"
+                            className="px-3 py-1 tag-accent rounded-full text-sm"
                           >
                             {tag}
                           </span>
@@ -251,7 +251,7 @@ export default function LuckyPage() {
                     
                     {!canMake && missingIngredients.length > 0 && (
                       <div className="bg-[#E2B210] border border-[#E2B210] rounded-lg p-4 mb-6">
-                        <h4 className="font-medium text-yellow-800 mb-2">Missing ingredients:</h4>
+                        <h4 className="font-medium text-warning mb-2">Missing ingredients:</h4>
                         <ul className="text-[#B8940D] text-sm">
                           {missingIngredients.map((ingredient, index) => (
                             <li key={index}>• {ingredient}</li>
@@ -265,7 +265,7 @@ export default function LuckyPage() {
                         href={`/recipes/${suggestedRecipe.id}`}
                         className={`flex-1 text-center py-3 px-6 rounded-lg font-medium transition-colors ${
                           canMake
-                            ? 'bg-green-600 text-white hover:bg-green-700'
+                            ? 'bg-primary text-white hover:bg-primary'
                             : 'bg-[#C63721] text-white hover:bg-[#A52E1A]'
                         }`}
                       >
@@ -275,7 +275,7 @@ export default function LuckyPage() {
                       {!canMake && (
                         <Link
                           href="/ingredients"
-                          className="flex-1 text-center py-3 px-6 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-colors"
+                          className="flex-1 text-center py-3 px-6 bg-warning text-white rounded-lg font-medium hover:bg-warning transition-colors"
                         >
                           Add Missing Items 🛒
                         </Link>
@@ -283,7 +283,7 @@ export default function LuckyPage() {
                       
                       <button
                         onClick={getRandomRecipe}
-                        className="flex-1 py-3 px-6 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700 transition-colors"
+                        className="flex-1 py-3 px-6 bg-secondary text-white rounded-lg font-medium hover:bg-secondary transition-colors"
                       >
                         Try Again 🎲
                       </button>

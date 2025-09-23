@@ -278,6 +278,36 @@ export const storage = {
         console.error('Error deleting ingredient:', error);
         return false;
       }
+    },
+
+    batchUpdate: async (updates: { id: string; data: Partial<Ingredient> }[]): Promise<void> => {
+      try {
+        // Update in database
+        const promises = updates.map(({ id, data }) => 
+          supabase.from('ingredients').update({
+            name: data.name,
+            quantity: data.quantity,
+            category: data.category,
+            expiry_date: data.expiryDate?.toISOString(),
+            in_stock: data.inStock,
+            updated_at: new Date().toISOString()
+          }).eq('id', id)
+        );
+
+        await Promise.all(promises);
+        
+        // Clear cache to force refresh
+        dataCache.clear();
+        
+        // Update localStorage
+        if (typeof window !== 'undefined') {
+          const current = await storage.ingredients.getAll(false);
+          localStorage.setItem('zzbistro-ingredients', JSON.stringify(current));
+        }
+      } catch (error) {
+        console.error('Error batch updating ingredients:', error);
+        throw error;
+      }
     }
   },
 

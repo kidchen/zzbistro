@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { storage } from '@/lib/storage';
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
     totalRecipes: 0,
     totalIngredients: 0,
@@ -37,6 +38,8 @@ export default function Home() {
         });
       } catch (error) {
         console.error('Error loading data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -169,9 +172,9 @@ export default function Home() {
       </div>
 
       {/* Getting Started */}
-      {stats.totalRecipes === 0 && (
+      {!isLoading && stats.totalRecipes === 0 && (
         <div className="mt-12 bg-orange-50 border border-orange-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-orange-800 mb-3">🚀 Getting Started</h2>
+          <h2 className="text-xl font-semibold text-accent mb-3">🚀 Getting Started</h2>
           <p className="text-orange-700 mb-4">
             Welcome to your new cooking companion! Here&apos;s how to get started:
           </p>

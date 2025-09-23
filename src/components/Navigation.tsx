@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import UserDropdown from './UserDropdown';
 
 const Navigation = () => {
   const pathname = usePathname();
@@ -16,10 +17,6 @@ const Navigation = () => {
     { href: '/menu', label: 'Menu', icon: '🍽️' },
     { href: '/lucky', label: "I'm Feeling Lucky", icon: '🎲' },
   ];
-
-  const handleSignOut = () => {
-    signOut({ callbackUrl: '/auth/signin' });
-  };
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
@@ -60,17 +57,8 @@ const Navigation = () => {
             
           {/* User section - always on the right */}
           {session && (
-            <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 flex-shrink-0">
-              <span className="text-sm text-gray-600 dark:text-gray-400 hidden sm:inline">
-                👋 {session.user?.name?.split(' ')[0]}
-              </span>
-              <button
-                onClick={handleSignOut}
-                className="text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap"
-              >
-                <span className="sm:hidden">👋</span>
-                <span className="hidden sm:inline">Sign Out</span>
-              </button>
+            <div className="flex items-center ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 flex-shrink-0">
+              <UserDropdown />
             </div>
           )}
         </div>

@@ -197,7 +197,7 @@ export default function RecipeDetailPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recipe not found</h1>
-          <Link href="/recipes" className="text-[#C63721] hover:text-orange-700">
+          <Link href="/recipes" className="text-[#C63721] hover:text-primary-brand">
             Back to recipes
           </Link>
         </div>
@@ -210,30 +210,25 @@ export default function RecipeDetailPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="flex justify-between items-start mb-8">
-        <div>
-          <Link href="/recipes" className="text-[#C63721] hover:text-orange-700 mb-2 inline-block">
-            ← Back to recipes
-          </Link>
-          <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">{recipe.name}</h1>
-          <div className="flex items-center text-gray-600 mt-2">
-            <span className="mr-6">⏱️ {recipe.cookingTime} minutes</span>
-            <span className="mr-6">👥 {recipe.servings} servings</span>
-            <span>📅 {new Date(recipe.createdAt).toLocaleDateString()}</span>
+      <div className="mb-8">
+        <Link href="/recipes" className="text-[#C63721] hover:text-primary-brand mb-2 inline-block">
+          ← Back to recipes
+        </Link>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">{recipe.name}</h1>
+            {canCook ? (
+              <div className="bg-success-subtle text-success px-3 py-1 rounded-lg text-xs md:text-sm whitespace-nowrap">
+                <span className="md:hidden">✅ Ready!</span>
+                <span className="hidden md:inline">✅ Ready to cook!</span>
+              </div>
+            ) : (
+              <div className="bg-warning-subtle text-warning px-3 py-1 rounded-lg text-xs md:text-sm whitespace-nowrap">
+                <span className="md:hidden">⚠️ Missing</span>
+                <span className="hidden md:inline">⚠️ Missing ingredients</span>
+              </div>
+            )}
           </div>
-        </div>
-        <div className="flex items-center gap-2 md:gap-4">
-          {canCook ? (
-            <div className="bg-green-100 text-green-800 px-2 py-1 md:px-4 md:py-2 rounded-lg text-xs md:text-sm whitespace-nowrap">
-              <span className="md:hidden">✅ Ready!</span>
-              <span className="hidden md:inline">✅ Ready to cook!</span>
-            </div>
-          ) : (
-            <div className="bg-yellow-100 text-yellow-800 px-2 py-1 md:px-4 md:py-2 rounded-lg text-xs md:text-sm whitespace-nowrap">
-              <span className="md:hidden">⚠️ Missing</span>
-              <span className="hidden md:inline">⚠️ Missing ingredients</span>
-            </div>
-          )}
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
@@ -244,6 +239,11 @@ export default function RecipeDetailPage() {
             </button>
           )}
         </div>
+        <div className="flex items-center text-gray-600 mt-2">
+          <span className="mr-6">⏱️ {recipe.cookingTime} minutes</span>
+          <span className="mr-6">👥 {recipe.servings} servings</span>
+          <span>📅 {new Date(recipe.createdAt).toLocaleDateString()}</span>
+        </div>
       </div>
 
       {/* Tags */}
@@ -252,7 +252,7 @@ export default function RecipeDetailPage() {
           {recipe.tags.map(tag => (
             <span
               key={tag}
-              className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm"
+              className="px-3 py-1 bg-accent dark:bg-orange-900 text-white dark:text-white rounded-full text-sm"
             >
               {tag}
             </span>
@@ -266,13 +266,13 @@ export default function RecipeDetailPage() {
           <div className="flex gap-4 mb-6">
             <button
               onClick={handleSave}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+              className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary"
             >
               Save Changes
             </button>
             <button
               onClick={() => setIsEditing(false)}
-              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
+              className="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary"
             >
               Cancel
             </button>
@@ -317,7 +317,7 @@ export default function RecipeDetailPage() {
               <h3 className="text-lg font-semibold">Ingredients</h3>
               <button
                 onClick={addIngredient}
-                className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary"
               >
                 Add Ingredient
               </button>
@@ -340,7 +340,7 @@ export default function RecipeDetailPage() {
                   {editData.ingredients.length > 1 && (
                     <button
                       onClick={() => removeIngredient(index)}
-                      className="text-red-600 hover:text-red-700 px-2"
+                      className="text-error hover:text-error px-2"
                     >
                       Remove
                     </button>
@@ -356,7 +356,7 @@ export default function RecipeDetailPage() {
               <h3 className="text-lg font-semibold">Instructions</h3>
               <button
                 onClick={addInstruction}
-                className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary"
               >
                 Add Step
               </button>
@@ -374,7 +374,7 @@ export default function RecipeDetailPage() {
                   {editData.instructions.length > 1 && (
                     <button
                       onClick={() => removeInstruction(index)}
-                      className="text-red-600 hover:text-red-700 px-2"
+                      className="text-error hover:text-error px-2"
                     >
                       Remove
                     </button>
@@ -453,7 +453,7 @@ export default function RecipeDetailPage() {
                   <li
                     key={index}
                     className={`flex items-center ${
-                      isMissing ? 'text-red-600' : 'text-gray-700 dark:text-gray-300'
+                      isMissing ? 'text-error' : 'text-gray-700 dark:text-gray-300'
                     }`}
                   >
                     <span className="mr-2">
@@ -467,7 +467,7 @@ export default function RecipeDetailPage() {
             
             {missingIngredients.length > 0 && (
               <div className="mt-4 p-3 bg-[#E2B210] border border-[#E2B210] rounded">
-                <p className="text-yellow-800 font-medium">Missing ingredients:</p>
+                <p className="text-warning font-medium">Missing ingredients:</p>
                 <ul className="text-[#B8940D] text-sm mt-1">
                   {missingIngredients.map((ingredient, index) => (
                     <li key={index}>• {ingredient}</li>
@@ -475,7 +475,7 @@ export default function RecipeDetailPage() {
                 </ul>
                 <Link
                   href="/ingredients"
-                  className="text-yellow-800 underline text-sm mt-2 inline-block"
+                  className="text-warning underline text-sm mt-2 inline-block"
                 >
                   Update your pantry →
                 </Link>

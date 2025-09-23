@@ -1,0 +1,148 @@
+/* ZZBistro Color System */
+:root {
+  /* Primary Brand Colors */
+  --color-primary: #C63721;
+  --color-primary-hover: #A52E1A;
+  --color-primary-dark: #D85A45;
+  
+  /* Secondary Colors */
+  --color-secondary: #1A2F50;
+  --color-secondary-hover: #2A4060;
+  --color-secondary-light: #3D5A82;
+  
+  /* Accent Colors */
+  --color-accent: #E2B210;
+  --color-accent-dark: #B8940D;
+  
+  /* Status Colors */
+  --color-success: #16A34A;
+  --color-success-bg: #DCFCE7;
+  --color-warning: #F59E0B;
+  --color-warning-bg: #FEF3C7;
+  --color-error: #DC2626;
+  --color-error-bg: #FEE2E2;
+  --color-info: #3B82F6;
+  --color-info-bg: #EFF6FF;
+  
+  /* Light Mode Neutrals */
+  --color-bg-main: #F9FAFB;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-variant: #F3F4F6;
+  --color-border: #E5E7EB;
+  --color-divider: #F3F4F6;
+  
+  /* Light Mode Text */
+  --color-text-primary: #111827;
+  --color-text-secondary: #374151;
+  
+  /* Section Backgrounds */
+  --color-recipe-bg: #FEF2F2;
+  --color-pantry-bg: #FFFBEB;
+}
+
+[data-theme="dark"] {
+  /* Status Colors Dark Mode */
+  --color-success: #16A34A;
+  --color-success-bg: #064E3B;
+  --color-warning: #FBBF24;
+  --color-warning-bg: #78350F;
+  --color-error: #EF4444;
+  --color-error-bg: #7F1D1D;
+  --color-info: #60A5FA;
+  --color-info-bg: #1E3A8A;
+  
+  /* Dark Mode Neutrals */
+  --color-bg-main: #111827;
+  --color-bg-surface: #1F2937;
+  --color-bg-surface-variant: #283548;
+  --color-border: #374151;
+  --color-divider: #283548;
+  
+  /* Dark Mode Text */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #D1D5DB;
+  
+  /* Section Backgrounds Dark */
+  --color-recipe-bg: #2D1B1F;
+  --color-pantry-bg: #292218;
+}
+
+/* Utility Classes */
+.bg-primary { 
+  background-color: var(--color-primary) !important; 
+}
+.bg-primary:hover { 
+  background-color: var(--color-primary-hover) !important; 
+}
+
+.bg-secondary { 
+  background-color: var(--color-secondary) !important; 
+}
+.bg-secondary:hover { 
+  background-color: var(--color-secondary-hover) !important; 
+}
+
+.bg-accent { 
+  background-color: var(--color-accent) !important; 
+}
+
+.text-primary-brand { 
+  color: var(--color-primary) !important; 
+}
+.text-secondary-brand { 
+  color: var(--color-secondary) !important; 
+}
+.text-accent { 
+  color: var(--color-accent) !important; 
+}
+
+.text-success { 
+  color: var(--color-success) !important; 
+}
+.text-warning { 
+  color: var(--color-warning) !important; 
+}
+.text-error { 
+  color: var(--color-error) !important; 
+}
+.text-info { 
+  color: var(--color-info) !important; 
+}
+
+.bg-success-subtle { 
+  background-color: var(--color-success-bg) !important; 
+}
+.bg-warning-subtle { 
+  background-color: var(--color-warning-bg) !important; 
+}
+.bg-error { 
+  background-color: var(--color-error) !important; 
+}
+.bg-error-subtle { 
+  background-color: var(--color-error-bg) !important; 
+}
+.bg-info-subtle { 
+  background-color: var(--color-info-bg) !important; 
+}
+
+.border-primary { 
+  border-color: var(--color-primary) !important; 
+}
+.border-secondary { 
+  border-color: var(--color-secondary) !important; 
+}
+.border-success { 
+  border-color: var(--color-success) !important; 
+}
+.border-warning { 
+  border-color: var(--color-warning) !important; 
+}
+.border-error { 
+  border-color: var(--color-error) !important; 
+}
+.border-info { 
+  border-color: var(--color-info) !important; 
+}
+.border-standard { 
+  border-color: var(--color-border) !important; 
+}

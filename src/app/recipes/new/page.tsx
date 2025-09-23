@@ -222,36 +222,6 @@ export default function NewRecipePage() {
           </div>
         </div>
 
-        {/* Image Upload */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recipe Photo</h2>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Upload Image
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Images will be automatically compressed to under 3MB
-            </p>
-            {formData.image && (
-              <div className="mt-4">
-                <Image
-                  src={formData.image}
-                  alt="Recipe preview"
-                  width={128}
-                  height={128}
-                  className="w-32 h-32 object-cover rounded-lg"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Ingredients */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-4">
@@ -259,7 +229,7 @@ export default function NewRecipePage() {
             <button
               type="button"
               onClick={addIngredient}
-              className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+              className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary"
             >
               Add Ingredient
             </button>
@@ -290,7 +260,7 @@ export default function NewRecipePage() {
                     <button
                       type="button"
                       onClick={() => removeIngredient(index)}
-                      className="text-red-600 hover:text-red-700 px-2"
+                      className="text-error hover:text-error px-2"
                     >
                       Remove
                     </button>
@@ -308,7 +278,7 @@ export default function NewRecipePage() {
             <button
               type="button"
               onClick={addInstruction}
-              className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+              className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary"
             >
               Add Step
             </button>
@@ -330,13 +300,43 @@ export default function NewRecipePage() {
                   <button
                     type="button"
                     onClick={() => removeInstruction(index)}
-                    className="text-red-600 hover:text-red-700 px-2"
+                    className="text-error hover:text-error px-2"
                   >
                     Remove
                   </button>
                 )}
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Image Upload */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recipe Photo</h2>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Upload Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Images will be automatically compressed to under 3MB
+            </p>
+            {formData.image && (
+              <div className="mt-4">
+                <Image
+                  src={formData.image}
+                  alt="Recipe preview"
+                  width={128}
+                  height={128}
+                  className="w-32 h-32 object-cover rounded-lg"
+                />
+              </div>
+            )}
           </div>
         </div>
 
