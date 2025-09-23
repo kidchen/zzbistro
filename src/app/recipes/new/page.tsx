@@ -100,7 +100,13 @@ export default function NewRecipePage() {
   };
 
   const compressImage = (file: File, maxSizeMB: number = 3): Promise<string> => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      // Validate file type before processing
+      if (!file.type.startsWith('image/')) {
+        reject(new Error('Invalid file type'));
+        return;
+      }
+
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
       const img = document.createElement('img');
@@ -142,7 +148,17 @@ export default function NewRecipePage() {
         resolve(compressedDataUrl);
       };
       
-      img.src = URL.createObjectURL(file);
+      const objectUrl = URL.createObjectURL(file);
+      img.src = objectUrl;
+      
+      // Clean up object URL after use
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('Failed to load image'));
+      };
     });
   };
 
