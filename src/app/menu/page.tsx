@@ -85,8 +85,8 @@ export default function MenuPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">What&apos;s for Dinner? 🍽️</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-8">What&apos;s for Dinner? 🍽️</h1>
 
       {isLoading ? (
         <div className="text-center py-12">
@@ -97,7 +97,7 @@ export default function MenuPage() {
         <div>
           {/* Stats - Desktop: Cards, Mobile: Table */}
           {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 mb-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-8">
         <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-4">Filter Options</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
@@ -159,13 +159,13 @@ export default function MenuPage() {
             <div className="space-x-4">
               <Link
                 href="/ingredients"
-                className="bg-[#C63721] text-white px-4 py-2 rounded-lg hover:bg-[#A52E1A] transition-colors"
+                className="bg-[#C63721] text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-[#A52E1A] transition-colors text-sm md:text-base"
               >
                 Update Pantry
               </Link>
               <Link
                 href="/recipes/new"
-                className="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
+                className="bg-secondary text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-secondary transition-colors text-sm md:text-base"
               >
                 Add Recipe
               </Link>
@@ -176,7 +176,7 @@ export default function MenuPage() {
             {/* Desktop Cards */}
             <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAvailableRecipes.map((recipe) => (
-                <div key={recipe.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-gray-200 dark:border-gray-600">
+                <div key={recipe.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-green-500 dark:border-green-400">
                   {recipe.image && (
                     <Image
                       src={recipe.image}
@@ -194,7 +194,7 @@ export default function MenuPage() {
                       </div>
                       <Link
                         href={`/recipes/${recipe.id}`}
-                        className="bg-success text-white px-3 py-1 rounded text-sm hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 transition-colors cursor-pointer"
+                        className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 transition-colors cursor-pointer"
                       >
                         View Recipe
                       </Link>
@@ -224,7 +224,7 @@ export default function MenuPage() {
             </div>
 
             {/* Mobile List */}
-            <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border-2 border-gray-200 dark:border-gray-600">
+            <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border-2 border-green-500 dark:border-green-400">
               {filteredAvailableRecipes.map((recipe, index) => (
                 <div key={recipe.id} className={`p-4 ${index < filteredAvailableRecipes.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}>
                   <div className="flex gap-3">
@@ -245,7 +245,7 @@ export default function MenuPage() {
                         </div>
                         <Link
                           href={`/recipes/${recipe.id}`}
-                          className="bg-success text-white px-2 py-1 rounded text-xs hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 transition-colors ml-2 flex-shrink-0 cursor-pointer"
+                          className="bg-green-600 text-white px-2 py-1 rounded text-xs hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 transition-colors ml-2 flex-shrink-0 cursor-pointer"
                         >
                           View
                         </Link>
@@ -316,7 +316,7 @@ export default function MenuPage() {
                           href={`/recipes/${recipe.id}`}
                           className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary transition-colors"
                         >
-                          Cook This
+                          View Recipe
                         </Link>
                       </div>
                       <div className="flex items-center text-sm text-gray-600 mb-3">
@@ -377,7 +377,7 @@ export default function MenuPage() {
                             href={`/recipes/${recipe.id}`}
                             className="bg-primary text-white px-2 py-1 rounded text-xs hover:bg-primary transition-colors ml-2 flex-shrink-0"
                           >
-                            Cook
+                            View
                           </Link>
                         </div>
                         <div className="flex items-center text-xs text-gray-600 mb-2">

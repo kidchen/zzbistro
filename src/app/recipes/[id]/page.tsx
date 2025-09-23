@@ -257,7 +257,7 @@ export default function RecipeDetailPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-4 sm:mb-8">
         <Link href="/recipes" className="text-[#C63721] hover:text-primary-brand mb-2 inline-block">
           ← Back to recipes
         </Link>
@@ -295,7 +295,7 @@ export default function RecipeDetailPage() {
 
       {/* Tags */}
       {!isEditing && recipe.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-2 mb-4 sm:mb-8">
           {recipe.tags.map(tag => (
             <span
               key={tag}
@@ -314,20 +314,20 @@ export default function RecipeDetailPage() {
             <div className="flex gap-4">
               <button
                 onClick={handleSave}
-                className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary cursor-pointer"
+                className="bg-primary text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-primary cursor-pointer text-sm md:text-base"
               >
                 Save Changes
               </button>
               <button
                 onClick={() => setIsEditing(false)}
-                className="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary cursor-pointer"
+                className="bg-secondary text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-secondary cursor-pointer text-sm md:text-base"
               >
                 Cancel
               </button>
             </div>
             <button
               onClick={handleDelete}
-              className="bg-error text-white px-4 py-2 rounded-lg hover:bg-red-700 cursor-pointer"
+              className="bg-error text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-red-700 cursor-pointer text-sm md:text-base"
             >
               Delete Recipe
             </button>
@@ -372,7 +372,7 @@ export default function RecipeDetailPage() {
               <h3 className="text-lg font-semibold">Ingredients</h3>
               <button
                 onClick={addIngredient}
-                className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary cursor-pointer"
+                className="bg-primary text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm hover:bg-primary cursor-pointer"
               >
                 Add Ingredient
               </button>
@@ -412,7 +412,7 @@ export default function RecipeDetailPage() {
               <h3 className="text-lg font-semibold">Instructions</h3>
               <button
                 onClick={addInstruction}
-                className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary cursor-pointer"
+                className="bg-primary text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm hover:bg-primary cursor-pointer"
               >
                 Add Step
               </button>

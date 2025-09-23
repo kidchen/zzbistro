@@ -26,7 +26,7 @@ export default function FeedbackPage() {
               href={githubIssuesUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary transition-colors font-medium"
+              className="inline-block bg-primary text-white px-4 py-2 md:px-6 md:py-3 rounded-lg hover:bg-primary transition-colors font-medium text-sm md:text-base"
             >
               Open GitHub Issues 🚀
             </a>

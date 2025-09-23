@@ -110,7 +110,7 @@ export default function LuckyPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <div className="text-center mb-12">
         <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">I&apos;m Feeling Lucky! 🎲</h1>
         <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
@@ -182,7 +182,7 @@ export default function LuckyPage() {
 
           {/* Mood-based suggestions */}
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">Or choose your mood...</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-4 sm:mb-8">Or choose your mood...</h2>
             <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
               {moodSuggestions.map((suggestion) => (
                 <button

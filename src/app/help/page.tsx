@@ -44,7 +44,7 @@ export default function HelpPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Need More Help?</h2>
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            If you need additional assistance, please <Link href="/feedback" className="text-primary hover:underline">contact the application administrator</Link>.
+            If you need additional assistance, please <Link href="/feedback" className="text-primary underline hover:no-underline">contact the application administrator</Link>.
           </p>
         </section>
       </div>

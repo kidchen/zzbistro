@@ -36,7 +36,12 @@ export const storage = {
           createdAt: new Date(recipe.created_at)
         }));
 
-        dataCache.set(cacheKey, recipes, 10 * 60 * 1000); // 10 min for full data
+        // Update cache with fresh data if this was a background refresh
+        if (useCache) {
+          dataCache.refresh(cacheKey, recipes);
+        } else {
+          dataCache.set(cacheKey, recipes, 30 * 60 * 1000); // 30 min for recipes (static content)
+        }
         return recipes;
       } catch (error) {
         console.error('Error fetching recipes:', error);

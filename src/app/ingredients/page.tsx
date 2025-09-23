@@ -412,16 +412,16 @@ export default function IngredientsPage() {
   ).length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex justify-between items-center mb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-8">
         <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">Pantry Management 🥫</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto justify-end sm:justify-start">
           <button
             onClick={toggleBulkEdit}
-            className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base cursor-pointer ${
+            className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium cursor-pointer whitespace-nowrap min-w-[90px] ${
               isBulkEdit 
-                ? 'bg-success text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700' 
-                : 'bg-secondary text-white hover:bg-secondary-hover'
+                ? 'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700' 
+                : 'bg-secondary text-white hover:bg-secondary'
             }`}
           >
             {isBulkEdit ? 'Save All' : 'Edit/Manage'}
@@ -429,7 +429,7 @@ export default function IngredientsPage() {
           {isBulkEdit && (
             <button
               onClick={cancelBulkEdit}
-              className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm md:text-base cursor-pointer"
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm font-medium cursor-pointer whitespace-nowrap min-w-[90px]"
             >
               Cancel
             </button>
@@ -438,7 +438,7 @@ export default function IngredientsPage() {
       </div>
 
       {/* Stats - Desktop: Cards, Mobile: Table */}
-      <div className="mb-6">
+      <div className="mb-3 sm:mb-6">
         {/* Desktop Cards */}
         <div className="hidden md:grid md:grid-cols-3 gap-6">
           <button
@@ -495,7 +495,7 @@ export default function IngredientsPage() {
 
       {/* Category Manager */}
       {showCategoryManager && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-4 sm:mb-8">
           <button
             onClick={() => setCategoryPanelExpanded(!categoryPanelExpanded)}
             className={`w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${categoryPanelExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
@@ -525,7 +525,7 @@ export default function IngredientsPage() {
                   />
                   <button
                     onClick={addCategory}
-                    className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary cursor-pointer"
+                    className="bg-primary text-white px-3 py-1.5 md:px-4 md:py-2 rounded-md hover:bg-primary cursor-pointer text-sm md:text-base"
                   >
                     Add
                   </button>
@@ -555,7 +555,7 @@ export default function IngredientsPage() {
 
       {/* Add Form */}
       {showAddForm && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-4 sm:mb-8">
           <button
             onClick={() => setAddFormExpanded(!addFormExpanded)}
             className={`w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${addFormExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
@@ -663,7 +663,7 @@ export default function IngredientsPage() {
             <div className="md:col-span-2">
               <button
                 type="submit"
-                className="bg-[#C63721] text-white px-6 py-2 rounded-md hover:bg-[#A52E1A] cursor-pointer"
+                className="bg-[#C63721] text-white px-4 py-1.5 md:px-6 md:py-2 rounded-md hover:bg-[#A52E1A] cursor-pointer text-sm md:text-base"
               >
                 Add Ingredient
               </button>
@@ -676,7 +676,7 @@ export default function IngredientsPage() {
       )}
 
       {/* Search and Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 mb-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>

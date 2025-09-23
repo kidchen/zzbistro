@@ -205,8 +205,8 @@ src/
 
 ### Caching Strategy
 - **Multi-layer Cache** - In-memory cache with localStorage fallback
-- **TTL Management** - Automatic cache expiration (5-10 minutes)
-- **Stale-while-revalidate** - Serve cached data while refreshing in background
+- **TTL Management** - Automatic cache expiration (5-30 minutes depending on data type)
+- **Stale-while-revalidate** - Serve cached data when stale, refresh on next request (2 minutes stale threshold)
 - **Cache Statistics** - Monitor cache performance and hit rates
 
 ### Expected Performance Gains

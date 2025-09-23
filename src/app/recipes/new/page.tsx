@@ -163,8 +163,8 @@ export default function NewRecipePage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">Add New Recipe 📝</h1>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-8">Add New Recipe 📝</h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Info */}
@@ -344,7 +344,7 @@ export default function NewRecipePage() {
           </button>
           <button
             type="submit"
-            className="px-6 py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52E1A]"
+            className="px-4 py-1.5 md:px-6 md:py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52E1A] text-sm md:text-base"
           >
             Save Recipe
           </button>

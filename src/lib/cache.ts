@@ -27,33 +27,31 @@ class DataCache {
     const isExpired = age > entry.ttl;
     const isStale = age > this.STALE_WHILE_REVALIDATE;
 
-    if (isExpired) {
-      this.cache.delete(key);
-      return null;
-    }
-
-    // Return stale data but mark for background refresh
-    if (isStale && !entry.refreshing) {
+    // Always return data if we have it, even if expired
+    // This prevents empty content flashes for existing users
+    if (isExpired && !entry.refreshing) {
       entry.refreshing = true;
-      this.triggerBackgroundRefresh(key);
+      // Background refresh will be handled by the storage layer
+    } else if (isStale && !entry.refreshing) {
+      entry.refreshing = true;
+      // Background refresh will be handled by the storage layer
     }
 
     return entry.data as T;
   }
 
-  private triggerBackgroundRefresh(key: string): void {
-    // This would be implemented by the storage layer
-    // to refresh data in the background
-    setTimeout(() => {
-      const entry = this.cache.get(key);
-      if (entry) {
-        entry.refreshing = false;
-      }
-    }, 30000); // Reset refresh flag after 30s
-  }
-
   invalidate(key: string): void {
     this.cache.delete(key);
+  }
+
+  // Update existing cache entry with fresh data
+  refresh<T>(key: string, data: T): void {
+    const entry = this.cache.get(key);
+    if (entry) {
+      entry.data = data;
+      entry.timestamp = Date.now();
+      entry.refreshing = false;
+    }
   }
 
   clear(): void {
