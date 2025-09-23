@@ -9,6 +9,7 @@ import CustomDropdown from '@/components/CustomDropdown';
 
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
 
@@ -19,6 +20,8 @@ export default function RecipesPage() {
         setRecipes(recipesData);
       } catch (error) {
         console.error('Error loading recipes:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -33,18 +36,6 @@ export default function RecipesPage() {
   });
 
   const allTags = [...new Set(recipes.flatMap(recipe => recipe.tags))];
-
-  const deleteRecipe = async (id: string) => {
-    if (confirm('Are you sure you want to delete this recipe?')) {
-      try {
-        await storage.recipes.delete(id);
-        setRecipes(prev => prev.filter(r => r.id !== id));
-      } catch (error) {
-        console.error('Error deleting recipe:', error);
-        alert('Failed to delete recipe. Please try again.');
-      }
-    }
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -91,7 +82,12 @@ export default function RecipesPage() {
       </div>
 
       {/* Recipes Grid */}
-      {filteredRecipes.length === 0 ? (
+      {isLoading ? (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">Loading recipes...</p>
+        </div>
+      ) : filteredRecipes.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🍳</div>
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -127,35 +123,34 @@ export default function RecipesPage() {
                     className="w-full h-48 object-cover"
                   />
                 )}
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{recipe.name}</h3>
-                  <div className="flex items-center text-sm text-gray-600 mb-3">
-                    <span className="mr-4">⏱️ {recipe.cookingTime} min</span>
-                    <span>👥 {recipe.servings} servings</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {recipe.tags.map(tag => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 bg-accent dark:bg-orange-900 text-white dark:text-white text-xs rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex justify-between items-center">
+                <div className="p-4">
+                  <div className="flex justify-between items-center mb-1">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{recipe.name}</h3>
                     <Link
                       href={`/recipes/${recipe.id}`}
                       className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary-brand transition-colors"
                     >
                       View Recipe
                     </Link>
-                    <button
-                      onClick={() => deleteRecipe(recipe.id)}
-                      className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary-brand transition-colors"
-                    >
-                      Delete
-                    </button>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600 mb-2">
+                    <span className="mr-4">⏱️ {recipe.cookingTime} min</span>
+                    <span>👥 {recipe.servings} servings</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {recipe.tags.map(tag => (
+                      <button
+                        key={tag}
+                        onClick={() => setSelectedTag(tag === selectedTag ? '' : tag)}
+                        className={`px-2 py-1 text-xs rounded-full transition-colors hover:opacity-80 cursor-pointer ${
+                          selectedTag === tag 
+                            ? 'bg-primary text-white' 
+                            : 'bg-accent dark:bg-orange-900 text-white dark:text-white'
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -165,7 +160,7 @@ export default function RecipesPage() {
           {/* Mobile List */}
           <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border-2 border-gray-200 dark:border-gray-600">
             {filteredRecipes.map((recipe, index) => (
-              <div key={recipe.id} className={`p-4 ${index < filteredRecipes.length - 1 ? 'border-b border-gray-200' : ''}`}>
+              <div key={recipe.id} className={`p-3 ${index < filteredRecipes.length - 1 ? 'border-b border-gray-200' : ''}`}>
                 <div className="flex gap-3">
                   {recipe.image && (
                     <Image
@@ -177,37 +172,36 @@ export default function RecipesPage() {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1 truncate">{recipe.name}</h3>
-                    <div className="flex items-center text-xs text-gray-600 mb-2">
+                    <div className="flex justify-between items-center mb-1">
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{recipe.name}</h3>
+                      <Link
+                        href={`/recipes/${recipe.id}`}
+                        className="bg-primary text-white px-2 py-1 rounded text-xs hover:bg-primary-brand transition-colors ml-2 flex-shrink-0"
+                      >
+                        View
+                      </Link>
+                    </div>
+                    <div className="flex items-center text-xs text-gray-600 mb-1">
                       <span className="mr-3">⏱️ {recipe.cookingTime}min</span>
                       <span>👥 {recipe.servings}</span>
                     </div>
-                    <div className="flex flex-wrap gap-1 mb-2">
+                    <div className="flex flex-wrap gap-1">
                       {recipe.tags.slice(0, 2).map(tag => (
-                        <span
+                        <button
                           key={tag}
-                          className="px-2 py-0.5 bg-accent dark:bg-orange-900 text-white dark:text-white text-xs rounded-full"
+                          onClick={() => setSelectedTag(tag === selectedTag ? '' : tag)}
+                          className={`px-2 py-0.5 text-xs rounded-full transition-colors hover:opacity-80 cursor-pointer ${
+                            selectedTag === tag 
+                              ? 'bg-primary text-white' 
+                              : 'bg-accent dark:bg-orange-900 text-white dark:text-white'
+                          }`}
                         >
                           {tag}
-                        </span>
+                        </button>
                       ))}
                       {recipe.tags.length > 2 && (
                         <span className="text-xs text-gray-500">+{recipe.tags.length - 2}</span>
                       )}
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <Link
-                        href={`/recipes/${recipe.id}`}
-                        className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary-brand transition-colors"
-                      >
-                        View Recipe
-                      </Link>
-                      <button
-                        onClick={() => deleteRecipe(recipe.id)}
-                        className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary-brand transition-colors"
-                      >
-                        Delete
-                      </button>
                     </div>
                   </div>
                 </div>

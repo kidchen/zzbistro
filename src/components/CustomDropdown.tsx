@@ -37,7 +37,7 @@ export default function CustomDropdown({ options, value, onChange, placeholder =
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-3 py-2 text-left bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm text-gray-900 dark:text-white"
+        className="w-full px-3 py-2 text-left bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm text-gray-900 dark:text-white cursor-pointer"
       >
         <span className="block truncate">
           {selectedOption ? selectedOption.label : placeholder}
@@ -59,7 +59,7 @@ export default function CustomDropdown({ options, value, onChange, placeholder =
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+              className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${
                 value === option.value 
                   ? 'bg-primary text-white' 
                   : 'text-gray-900 dark:text-white'

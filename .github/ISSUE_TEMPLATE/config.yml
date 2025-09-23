@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 General Discussion
+    url: https://github.com/kidchen/zzbistro/discussions
+    about: For general questions and discussions about ZZBistro
+  - name: 📖 Documentation
+    url: https://github.com/kidchen/zzbistro/blob/main/README.md
+    about: Check the README for setup and usage instructions

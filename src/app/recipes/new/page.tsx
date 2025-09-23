@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
+import TagManager from '@/components/TagManager';
 
 export default function NewRecipePage() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function NewRecipePage() {
     servings: 4,
     ingredients: [''],
     instructions: [''],
-    tags: '',
+    tags: [] as string[],
     image: ''
   });
 
@@ -43,7 +44,7 @@ export default function NewRecipePage() {
       image: formData.image || undefined,
       cookingTime: formData.cookingTime,
       servings: formData.servings,
-      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
+      tags: formData.tags,
       createdAt: new Date()
     };
 
@@ -183,18 +184,10 @@ export default function NewRecipePage() {
                 placeholder="e.g., Spaghetti Carbonara"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Tags (comma-separated)
-              </label>
-              <input
-                type="text"
-                value={formData.tags}
-                onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="e.g., Italian, Pasta, Quick"
-              />
-            </div>
+            <TagManager
+              selectedTags={formData.tags}
+              onChange={(tags) => setFormData(prev => ({ ...prev, tags }))}
+            />
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Cooking Time (minutes)
@@ -321,7 +314,7 @@ export default function NewRecipePage() {
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
             />
             <p className="text-xs text-gray-500 mt-1">
               Images will be automatically compressed to under 3MB

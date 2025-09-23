@@ -16,8 +16,9 @@ export default function AuthWrapper({ children }: Props) {
   useEffect(() => {
     if (status === 'loading') return; // Still loading
 
-    // Don't redirect if already on sign-in page
-    if (pathname === '/auth/signin') return;
+    // Don't redirect if already on sign-in page or footer pages
+    const publicPaths = ['/auth/signin', '/help', '/feedback', '/privacy', '/terms'];
+    if (publicPaths.includes(pathname)) return;
 
     if (!session) {
       router.push('/auth/signin');
@@ -36,8 +37,9 @@ export default function AuthWrapper({ children }: Props) {
     );
   }
 
-  // Allow sign-in page to render without authentication
-  if (pathname === '/auth/signin') {
+  // Allow sign-in page and footer pages to render without authentication
+  const publicPaths = ['/auth/signin', '/help', '/feedback', '/privacy', '/terms'];
+  if (publicPaths.includes(pathname)) {
     return <>{children}</>;
   }
 

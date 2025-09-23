@@ -9,6 +9,7 @@ import CustomDropdown from '@/components/CustomDropdown';
 export default function IngredientsPage() {
   const searchParams = useSearchParams();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [isBulkEdit, setIsBulkEdit] = useState(false);
   const [selectedForDelete, setSelectedForDelete] = useState<Set<string>>(new Set());
@@ -49,6 +50,8 @@ export default function IngredientsPage() {
         }
       } catch (error) {
         console.error('Error loading ingredients:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -415,7 +418,7 @@ export default function IngredientsPage() {
         <div className="flex gap-2">
           <button
             onClick={toggleBulkEdit}
-            className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base ${
+            className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base cursor-pointer ${
               isBulkEdit 
                 ? 'bg-success text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700' 
                 : 'bg-secondary text-white hover:bg-secondary-hover'
@@ -426,7 +429,7 @@ export default function IngredientsPage() {
           {isBulkEdit && (
             <button
               onClick={cancelBulkEdit}
-              className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm md:text-base"
+              className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm md:text-base cursor-pointer"
             >
               Cancel
             </button>
@@ -440,7 +443,7 @@ export default function IngredientsPage() {
         <div className="hidden md:grid md:grid-cols-3 gap-6">
           <button
             onClick={() => setActiveFilter(activeFilter === 'instock' ? null : 'instock')}
-            className={`bg-success-subtle dark:bg-green-900/50 border rounded-lg p-3 flex items-center space-x-3 transition-all hover:shadow-md ${
+            className={`bg-success-subtle dark:bg-green-900/50 border rounded-lg p-3 flex items-center space-x-3 transition-all hover:shadow-md cursor-pointer ${
               activeFilter === 'instock' 
                 ? 'border-success ring-2 ring-success/20 shadow-md' 
                 : 'border-success hover:border-green-400'
@@ -451,7 +454,7 @@ export default function IngredientsPage() {
           </button>
           <button
             onClick={() => setActiveFilter(activeFilter === 'outofstock' ? null : 'outofstock')}
-            className={`bg-error-subtle dark:bg-red-900/50 border rounded-lg p-3 flex items-center space-x-3 transition-all hover:shadow-md ${
+            className={`bg-error-subtle dark:bg-red-900/50 border rounded-lg p-3 flex items-center space-x-3 transition-all hover:shadow-md cursor-pointer ${
               activeFilter === 'outofstock' 
                 ? 'border-error ring-2 ring-error/20 shadow-md' 
                 : 'border-error hover:border-red-400'
@@ -462,7 +465,7 @@ export default function IngredientsPage() {
           </button>
           <button
             onClick={() => setActiveFilter(activeFilter === 'expiring' ? null : 'expiring')}
-            className={`bg-warning-subtle dark:bg-orange-900/50 border rounded-lg p-3 flex items-center space-x-3 transition-all hover:shadow-md ${
+            className={`bg-warning-subtle dark:bg-orange-900/50 border rounded-lg p-3 flex items-center space-x-3 transition-all hover:shadow-md cursor-pointer ${
               activeFilter === 'expiring' 
                 ? 'border-warning ring-2 ring-warning/20 shadow-md' 
                 : 'border-warning hover:border-orange-400'
@@ -495,7 +498,7 @@ export default function IngredientsPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
           <button
             onClick={() => setCategoryPanelExpanded(!categoryPanelExpanded)}
-            className={`w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${categoryPanelExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
+            className={`w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${categoryPanelExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
           >
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Manage Categories</h2>
             <svg 
@@ -522,7 +525,7 @@ export default function IngredientsPage() {
                   />
                   <button
                     onClick={addCategory}
-                    className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary"
+                    className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary cursor-pointer"
                   >
                     Add
                   </button>
@@ -536,7 +539,7 @@ export default function IngredientsPage() {
                       {category !== 'Other' && (
                         <button
                           onClick={() => removeCategory(category)}
-                          className="text-error hover:text-white text-sm ml-2"
+                          className="text-error hover:text-white text-sm ml-2 cursor-pointer"
                         >
                           ×
                         </button>
@@ -555,7 +558,7 @@ export default function IngredientsPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
           <button
             onClick={() => setAddFormExpanded(!addFormExpanded)}
-            className={`w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${addFormExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
+            className={`w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${addFormExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
           >
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Add New Ingredient</h2>
             <svg 
@@ -595,7 +598,7 @@ export default function IngredientsPage() {
                         key={ingredient.id}
                         type="button"
                         onClick={() => selectSuggestion()}
-                        className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                        className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 cursor-pointer"
                       >
                         <div className="flex justify-between items-center">
                           <span className="font-medium">{ingredient.name}</span>
@@ -660,7 +663,7 @@ export default function IngredientsPage() {
             <div className="md:col-span-2">
               <button
                 type="submit"
-                className="bg-[#C63721] text-white px-6 py-2 rounded-md hover:bg-[#A52E1A]"
+                className="bg-[#C63721] text-white px-6 py-2 rounded-md hover:bg-[#A52E1A] cursor-pointer"
               >
                 Add Ingredient
               </button>
@@ -700,8 +703,13 @@ export default function IngredientsPage() {
         </div>
       </div>
 
-      {/* Ingredients List */}
-      {filteredIngredients.length === 0 ? (
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">Loading pantry...</p>
+        </div>
+      ) : filteredIngredients.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🥫</div>
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -862,7 +870,7 @@ export default function IngredientsPage() {
                             className={`px-3 py-1 text-xs font-medium rounded-full ${
                               currentData.inStock
                                 ? 'bg-success-subtle dark:bg-green-900/30 text-success dark:text-green-300'
-                                : 'bg-error-subtle dark:bg-red-900/30 text-white dark:text-white'
+                                : 'bg-error-subtle dark:bg-red-900/30 text-error dark:text-red-300'
                             }`}
                           >
                             {currentData.inStock ? 'In Stock' : 'Out of Stock'}

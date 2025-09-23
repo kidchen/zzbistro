@@ -1,15 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
+import CustomDropdown from '@/components/CustomDropdown';
+import TagManager from '@/components/TagManager';
 
 export default function RecipeDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [missingIngredients, setMissingIngredients] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [availableIngredients, setAvailableIngredients] = useState<Ingredient[]>([]);
@@ -19,7 +23,7 @@ export default function RecipeDetailPage() {
     servings: 4,
     ingredients: [''],
     instructions: [''],
-    tags: '',
+    tags: [] as string[],
     image: ''
   });
 
@@ -41,7 +45,7 @@ export default function RecipeDetailPage() {
             servings: foundRecipe.servings,
             ingredients: foundRecipe.ingredients,
             instructions: foundRecipe.instructions,
-            tags: foundRecipe.tags.join(', '),
+            tags: foundRecipe.tags,
             image: foundRecipe.image || ''
           });
           
@@ -62,6 +66,8 @@ export default function RecipeDetailPage() {
         }
       } catch (error) {
         console.error('Error loading recipe data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -71,6 +77,22 @@ export default function RecipeDetailPage() {
   const handleSave = async () => {
     if (!recipe) return;
     
+    // Check if there are any changes
+    const hasChanges = (
+      editData.name !== recipe.name ||
+      editData.cookingTime !== recipe.cookingTime ||
+      editData.servings !== recipe.servings ||
+      JSON.stringify(editData.ingredients.filter(ing => ing.trim() !== '')) !== JSON.stringify(recipe.ingredients) ||
+      JSON.stringify(editData.instructions.filter(inst => inst.trim() !== '')) !== JSON.stringify(recipe.instructions) ||
+      JSON.stringify(editData.tags) !== JSON.stringify(recipe.tags) ||
+      editData.image !== recipe.image
+    );
+
+    if (!hasChanges) {
+      setIsEditing(false);
+      return;
+    }
+    
     const updatedRecipe: Recipe = {
       ...recipe,
       name: editData.name,
@@ -78,7 +100,7 @@ export default function RecipeDetailPage() {
       servings: editData.servings,
       ingredients: editData.ingredients.filter(ing => ing.trim() !== ''),
       instructions: editData.instructions.filter(inst => inst.trim() !== ''),
-      tags: editData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
+      tags: editData.tags,
       image: editData.image || undefined
     };
 
@@ -89,6 +111,20 @@ export default function RecipeDetailPage() {
     } catch (error) {
       console.error('Error updating recipe:', error);
       alert('Failed to update recipe. Please try again.');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!recipe) return;
+    
+    if (confirm('Are you sure you want to delete this recipe? This action cannot be undone.')) {
+      try {
+        await storage.recipes.delete(recipe.id);
+        router.push('/recipes');
+      } catch (error) {
+        console.error('Error deleting recipe:', error);
+        alert('Failed to delete recipe. Please try again.');
+      }
     }
   };
 
@@ -192,6 +228,17 @@ export default function RecipeDetailPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">Loading recipe...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!recipe) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -232,7 +279,7 @@ export default function RecipeDetailPage() {
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="bg-[#C63721] text-white px-3 py-1 md:px-4 md:py-2 rounded-lg hover:bg-[#A52E1A] text-sm md:text-base whitespace-nowrap"
+              className="bg-[#C63721] text-white px-3 py-1 md:px-4 md:py-2 rounded-lg hover:bg-[#A52E1A] text-sm md:text-base whitespace-nowrap cursor-pointer"
             >
               <span className="md:hidden">Edit</span>
               <span className="hidden md:inline">Edit Recipe</span>
@@ -263,18 +310,26 @@ export default function RecipeDetailPage() {
       {/* Edit Form */}
       {isEditing ? (
         <div className="space-y-6">
-          <div className="flex gap-4 mb-6">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex gap-4">
+              <button
+                onClick={handleSave}
+                className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary cursor-pointer"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
             <button
-              onClick={handleSave}
-              className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary"
+              onClick={handleDelete}
+              className="bg-error text-white px-4 py-2 rounded-lg hover:bg-red-700 cursor-pointer"
             >
-              Save Changes
-            </button>
-            <button
-              onClick={() => setIsEditing(false)}
-              className="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary"
-            >
-              Cancel
+              Delete Recipe
             </button>
           </div>
 
@@ -317,7 +372,7 @@ export default function RecipeDetailPage() {
               <h3 className="text-lg font-semibold">Ingredients</h3>
               <button
                 onClick={addIngredient}
-                className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary"
+                className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary cursor-pointer"
               >
                 Add Ingredient
               </button>
@@ -325,18 +380,19 @@ export default function RecipeDetailPage() {
             <div className="space-y-3">
               {editData.ingredients.map((ingredient, index) => (
                 <div key={index} className="flex gap-2">
-                  <select
+                  <CustomDropdown
+                    options={[
+                      { value: '', label: 'Select an ingredient...' },
+                      ...availableIngredients.map((ing) => ({
+                        value: ing.name,
+                        label: `${ing.name} (${ing.inStock ? 'In Stock' : 'Out of Stock'})`
+                      }))
+                    ]}
                     value={ingredient}
-                    onChange={(e) => updateIngredient(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
-                  >
-                    <option value="">Select an ingredient...</option>
-                    {availableIngredients.map((ing) => (
-                      <option key={ing.id} value={ing.name}>
-                        {ing.name} ({ing.inStock ? 'In Stock' : 'Out of Stock'})
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) => updateIngredient(index, value)}
+                    placeholder="Select an ingredient..."
+                    className="flex-1"
+                  />
                   {editData.ingredients.length > 1 && (
                     <button
                       onClick={() => removeIngredient(index)}
@@ -356,7 +412,7 @@ export default function RecipeDetailPage() {
               <h3 className="text-lg font-semibold">Instructions</h3>
               <button
                 onClick={addInstruction}
-                className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary"
+                className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary cursor-pointer"
               >
                 Add Step
               </button>
@@ -386,13 +442,9 @@ export default function RecipeDetailPage() {
 
           {/* Tags */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags (comma-separated)</label>
-            <input
-              type="text"
-              value={editData.tags}
-              onChange={(e) => setEditData(prev => ({ ...prev, tags: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              placeholder="e.g., dinner, vegetarian, quick"
+            <TagManager
+              selectedTags={editData.tags}
+              onChange={(tags) => setEditData(prev => ({ ...prev, tags }))}
             />
           </div>
 
@@ -407,7 +459,7 @@ export default function RecipeDetailPage() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Images will be automatically compressed to under 3MB
@@ -466,16 +518,16 @@ export default function RecipeDetailPage() {
             </ul>
             
             {missingIngredients.length > 0 && (
-              <div className="mt-4 p-3 bg-[#E2B210] border border-[#E2B210] rounded">
+              <div className="mt-4 p-3 bg-warning-subtle border border-warning rounded">
                 <p className="text-warning font-medium">Missing ingredients:</p>
-                <ul className="text-[#B8940D] text-sm mt-1">
+                <ul className="text-warning text-sm mt-1">
                   {missingIngredients.map((ingredient, index) => (
                     <li key={index}>• {ingredient}</li>
                   ))}
                 </ul>
                 <Link
                   href="/ingredients"
-                  className="text-warning underline text-sm mt-2 inline-block"
+                  className="text-warning underline text-sm mt-2 inline-block hover:text-warning"
                 >
                   Update your pantry →
                 </Link>

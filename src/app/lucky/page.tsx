@@ -8,6 +8,7 @@ import { Recipe, Ingredient } from '@/types';
 
 export default function LuckyPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [suggestedRecipe, setSuggestedRecipe] = useState<Recipe | null>(null);
   const [canMake, setCanMake] = useState(false);
@@ -25,6 +26,8 @@ export default function LuckyPage() {
         setIngredients(allIngredients);
       } catch (error) {
         console.error('Error loading lucky data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -115,7 +118,12 @@ export default function LuckyPage() {
         </p>
       </div>
 
-      {recipes.length === 0 ? (
+      {isLoading ? (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">Loading recipes...</p>
+        </div>
+      ) : recipes.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📝</div>
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">No recipes yet!</h2>
@@ -124,7 +132,7 @@ export default function LuckyPage() {
           </p>
           <Link
             href="/recipes/new"
-            className="bg-[#C63721] text-white px-6 py-3 rounded-lg hover:bg-[#A52E1A] transition-colors"
+            className="bg-[#C63721] text-white px-6 py-3 rounded-lg hover:bg-[#A52E1A] transition-colors cursor-pointer"
           >
             Add Your First Recipe
           </Link>
@@ -164,7 +172,7 @@ export default function LuckyPage() {
                 className={`text-2xl font-bold px-8 py-4 rounded-lg transition-colors ${
                   isSpinning
                     ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                    : 'bg-[#C63721] text-white hover:bg-[#A52E1A]'
+                    : 'bg-[#C63721] text-white hover:bg-[#A52E1A] cursor-pointer'
                 }`}
               >
                 {isSpinning ? 'Rolling the dice...' : 'Surprise Me!'}
@@ -184,7 +192,7 @@ export default function LuckyPage() {
                   className={`p-2 md:p-4 rounded-lg border-2 transition-all ${
                     isSpinning
                       ? 'border-gray-200 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
-                      : 'border-orange-200 bg-white dark:bg-gray-800 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-gray-700'
+                      : 'border-orange-200 bg-white dark:bg-gray-800 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-gray-700 cursor-pointer'
                   }`}
                 >
                   <div className="text-2xl md:text-3xl mb-1 md:mb-2">{suggestion.emoji}</div>
@@ -241,7 +249,7 @@ export default function LuckyPage() {
                         {suggestedRecipe.tags.map(tag => (
                           <span
                             key={tag}
-                            className="px-3 py-1 tag-accent rounded-full text-sm"
+                            className="px-3 py-1 bg-accent dark:bg-orange-900 text-white dark:text-white rounded-full text-sm"
                           >
                             {tag}
                           </span>
@@ -275,7 +283,7 @@ export default function LuckyPage() {
                       {!canMake && (
                         <Link
                           href="/ingredients"
-                          className="flex-1 text-center py-3 px-6 bg-warning text-white rounded-lg font-medium hover:bg-warning transition-colors"
+                          className="flex-1 text-center py-3 px-6 bg-warning text-white rounded-lg font-medium hover:bg-warning transition-colors cursor-pointer"
                         >
                           Add Missing Items 🛒
                         </Link>
@@ -283,7 +291,7 @@ export default function LuckyPage() {
                       
                       <button
                         onClick={getRandomRecipe}
-                        className="flex-1 py-3 px-6 bg-secondary text-white rounded-lg font-medium hover:bg-secondary transition-colors"
+                        className="flex-1 py-3 px-6 bg-primary text-white rounded-lg font-medium hover:bg-primary transition-colors cursor-pointer"
                       >
                         Try Again 🎲
                       </button>
