@@ -85,8 +85,8 @@ export default function MenuPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-8">What&apos;s for Dinner? 🍽️</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">What&apos;s for Dinner? 🍽️</h1>
 
       {isLoading ? (
         <div className="text-center py-12">
@@ -97,8 +97,8 @@ export default function MenuPage() {
         <div>
           {/* Stats - Desktop: Cards, Mobile: Table */}
           {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-8">
-        <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-4">Filter Options</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tag</label>
@@ -186,8 +186,8 @@ export default function MenuPage() {
                       className="w-full h-48 object-cover"
                     />
                   )}
-                  <div className="p-6">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-1">
                       <div className="flex items-center gap-2">
                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{recipe.name}</h3>
                         <span className="text-green-600 text-xl">✅</span>
@@ -306,8 +306,8 @@ export default function MenuPage() {
                         className="w-full h-48 object-cover"
                       />
                     )}
-                    <div className="p-6">
-                      <div className="flex justify-between items-center mb-2">
+                    <div className="p-4">
+                      <div className="flex justify-between items-center mb-1">
                         <div className="flex items-center gap-2">
                           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{recipe.name}</h3>
                           <span className="text-[#B8940D] text-xl">⚠️</span>

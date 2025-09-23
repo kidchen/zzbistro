@@ -163,8 +163,8 @@ export default function NewRecipePage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-8">Add New Recipe 📝</h1>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Add New Recipe 📝</h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Info */}

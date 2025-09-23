@@ -19,14 +19,49 @@ export default function IngredientsPage() {
   const [activeFilter, setActiveFilter] = useState<'instock' | 'outofstock' | 'expiring' | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 25;
-  const [categories, setCategories] = useState(['Vegetables', 'Fruits', 'Meat', 'Dairy', 'Grains', 'Spices', 'Condiments', 'Other']);
+  const [categories, setCategories] = useState([
+    'Vegetables', 'Fruits', 'Meat', 'Poultry', 'Seafood', 'Dairy', 
+    'Grains', 'Spices', 'Herbs', 'Condiments', 'Canned', 'Frozen', 
+    'Beverages', 'Snacks', 'Baking', 'Oil', 'Sauce', 'Pasta', 
+    'Rice', 'Beans', 'Nuts', 'Other'
+  ]);
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [newCategory, setNewCategory] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [categoryPanelExpanded, setCategoryPanelExpanded] = useState(false);
   const [addFormExpanded, setAddFormExpanded] = useState(false);
-  const [sortBy, setSortBy] = useState<'name' | 'expiryDate' | 'inStock' | null>(null);
+  const [sortBy, setSortBy] = useState<'name' | 'quantity' | 'category' | 'expiryDate' | 'inStock' | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  // Category emoji mapping
+  const getCategoryEmoji = (category: string): string => {
+    const emojiMap: { [key: string]: string } = {
+      'Vegetables': '🥬',
+      'Fruits': '🍎', 
+      'Meat': '🥩',
+      'Poultry': '🐔',
+      'Seafood': '🐟',
+      'Dairy': '🧀',
+      'Grains': '🌾',
+      'Spices': '🧂',
+      'Herbs': '🌿',
+      'Condiments': '🍯',
+      'Canned': '🥫',
+      'Frozen': '🧊',
+      'Beverages': '🥤',
+      'Snacks': '🍿',
+      'Baking': '🍞',
+      'Oil': '🫒',
+      'Sauce': '🍅',
+      'Pasta': '🍝',
+      'Rice': '🍚',
+      'Beans': '🫘',
+      'Nuts': '🥜',
+      'Other': '📦'
+    };
+    return emojiMap[category] || '📦';
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     quantity: 1,
@@ -77,7 +112,7 @@ export default function IngredientsPage() {
     setCategories(categories.filter(cat => cat !== categoryToRemove));
   };
 
-  const handleSort = (column: 'name' | 'expiryDate' | 'inStock') => {
+  const handleSort = (column: 'name' | 'quantity' | 'category' | 'expiryDate' | 'inStock') => {
     if (sortBy === column) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
@@ -86,7 +121,7 @@ export default function IngredientsPage() {
     }
   };
 
-  const getSortIcon = (column: 'name' | 'expiryDate' | 'inStock') => {
+  const getSortIcon = (column: 'name' | 'quantity' | 'category' | 'expiryDate' | 'inStock') => {
     if (sortBy !== column) return '↕️';
     return sortOrder === 'asc' ? '↑' : '↓';
   };
@@ -122,7 +157,20 @@ export default function IngredientsPage() {
     let comparison = 0;
     
     if (sortBy === 'name') {
-      comparison = a.name.localeCompare(b.name);
+      // Use Chinese pinyin sorting for better Chinese character support
+      comparison = a.name.localeCompare(b.name, 'zh-CN', { 
+        numeric: true, 
+        sensitivity: 'base',
+        ignorePunctuation: true 
+      });
+    } else if (sortBy === 'quantity') {
+      comparison = a.quantity - b.quantity;
+    } else if (sortBy === 'category') {
+      comparison = a.category.localeCompare(b.category, 'zh-CN', { 
+        numeric: true, 
+        sensitivity: 'base',
+        ignorePunctuation: true 
+      });
     } else if (sortBy === 'expiryDate') {
       const aDate = a.expiryDate ? new Date(a.expiryDate).getTime() : Infinity;
       const bDate = b.expiryDate ? new Date(b.expiryDate).getTime() : Infinity;
@@ -412,13 +460,13 @@ export default function IngredientsPage() {
   ).length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
         <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">Pantry Management 🥫</h1>
         <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto justify-end sm:justify-start">
           <button
             onClick={toggleBulkEdit}
-            className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium cursor-pointer whitespace-nowrap min-w-[90px] ${
+            className={`px-3 py-1 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base font-medium cursor-pointer whitespace-nowrap min-w-[90px] ${
               isBulkEdit 
                 ? 'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700' 
                 : 'bg-secondary text-white hover:bg-secondary'
@@ -429,7 +477,7 @@ export default function IngredientsPage() {
           {isBulkEdit && (
             <button
               onClick={cancelBulkEdit}
-              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm font-medium cursor-pointer whitespace-nowrap min-w-[90px]"
+              className="px-3 py-1 md:px-4 md:py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm md:text-base font-medium cursor-pointer whitespace-nowrap min-w-[90px]"
             >
               Cancel
             </button>
@@ -438,7 +486,8 @@ export default function IngredientsPage() {
       </div>
 
       {/* Stats - Desktop: Cards, Mobile: Table */}
-      <div className="mb-3 sm:mb-6">
+      {!isBulkEdit && (
+        <div className="mb-3 sm:mb-4">
         {/* Desktop Cards */}
         <div className="hidden md:grid md:grid-cols-3 gap-6">
           <button
@@ -492,13 +541,14 @@ export default function IngredientsPage() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Category Manager */}
       {showCategoryManager && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-4 sm:mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-4 sm:mb-6">
           <button
             onClick={() => setCategoryPanelExpanded(!categoryPanelExpanded)}
-            className={`w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${categoryPanelExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
+            className={`w-full px-4 py-2 md:px-6 md:py-3 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${categoryPanelExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
           >
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Manage Categories</h2>
             <svg 
@@ -511,10 +561,10 @@ export default function IngredientsPage() {
           </button>
           
           {categoryPanelExpanded && (
-            <div className="px-6 pb-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="pt-4">
+            <div className="px-4 pb-4 md:px-6 md:pb-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-2 md:pt-4">
                 {/* Add Category */}
-                <div className="flex gap-2 mb-4">
+                <div className="flex gap-2 mb-2 md:mb-4">
                   <input
                     type="text"
                     value={newCategory}
@@ -532,19 +582,19 @@ export default function IngredientsPage() {
                 </div>
                 
                 {/* Category List */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div className="flex flex-wrap gap-2">
                   {categories.map(category => (
-                    <div key={category} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-md">
-                      <span className="text-sm text-gray-900 dark:text-white">{category}</span>
+                    <span key={category} className="inline-flex items-center px-3 py-1 bg-accent dark:bg-orange-900 text-white dark:text-white rounded-full text-sm">
+                      {getCategoryEmoji(category)} {category}
                       {category !== 'Other' && (
                         <button
                           onClick={() => removeCategory(category)}
-                          className="text-error hover:text-white text-sm ml-2 cursor-pointer"
+                          className="ml-2 hover:text-gray-300 cursor-pointer"
                         >
                           ×
                         </button>
                       )}
-                    </div>
+                    </span>
                   ))}
                 </div>
               </div>
@@ -555,10 +605,10 @@ export default function IngredientsPage() {
 
       {/* Add Form */}
       {showAddForm && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-4 sm:mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-4 sm:mb-6">
           <button
             onClick={() => setAddFormExpanded(!addFormExpanded)}
-            className={`w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${addFormExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
+            className={`w-full px-4 py-2 md:px-6 md:py-3 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${addFormExpanded ? 'rounded-t-lg' : 'rounded-lg'}`}
           >
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Add New Ingredient</h2>
             <svg 
@@ -571,9 +621,9 @@ export default function IngredientsPage() {
           </button>
           
           {addFormExpanded && (
-            <div className="px-6 pb-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="pt-4">
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="px-4 pb-4 md:px-6 md:pb-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-2 md:pt-4">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name *</label>
               <div className="relative">
@@ -633,7 +683,7 @@ export default function IngredientsPage() {
                 className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                  <option key={category} value={category}>{getCategoryEmoji(category)} {category}</option>
                 ))}
               </select>
             </div>
@@ -648,19 +698,19 @@ export default function IngredientsPage() {
                 className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
               />
             </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="inStock"
-                checked={formData.inStock}
-                onChange={(e) => setFormData(prev => ({ ...prev, inStock: e.target.checked }))}
-                className="mr-2"
-              />
-              <label htmlFor="inStock" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                In Stock
-              </label>
-            </div>
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="inStock"
+                  checked={formData.inStock}
+                  onChange={(e) => setFormData(prev => ({ ...prev, inStock: e.target.checked }))}
+                  className="mr-2"
+                />
+                <label htmlFor="inStock" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  In Stock
+                </label>
+              </div>
               <button
                 type="submit"
                 className="bg-[#C63721] text-white px-4 py-1.5 md:px-6 md:py-2 rounded-md hover:bg-[#A52E1A] cursor-pointer text-sm md:text-base"
@@ -676,7 +726,7 @@ export default function IngredientsPage() {
       )}
 
       {/* Search and Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
@@ -693,7 +743,7 @@ export default function IngredientsPage() {
             <CustomDropdown
               options={[
                 { value: '', label: 'All Categories' },
-                ...categories.map(category => ({ value: category, label: category }))
+                ...categories.map(category => ({ value: category, label: `${getCategoryEmoji(category)} ${category}` }))
               ]}
               value={selectedCategory}
               onChange={setSelectedCategory}
@@ -726,15 +776,19 @@ export default function IngredientsPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+              <thead className="isolate bg-secondary dark:bg-secondary/60">
                 <tr>
                   {isBulkEdit && (
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th 
+                      className="px-6 py-2 text-center text-xs font-bold text-white dark:text-white uppercase tracking-wider hover:bg-white/10 dark:hover:bg-white/5 transition-colors duration-150"
+                      style={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}
+                    >
                       Delete
                     </th>
                   )}
                   <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
+                    className="px-6 py-2 text-left text-xs font-bold text-white dark:text-white uppercase tracking-wider cursor-pointer hover:bg-white/10 dark:hover:bg-white/5 transition-colors duration-150"
+                    style={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}
                     onClick={() => handleSort('name')}
                   >
                     <div className="flex items-center gap-1">
@@ -742,14 +796,29 @@ export default function IngredientsPage() {
                       <span className="text-sm">{getSortIcon('name')}</span>
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Quantity
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
+                  <th 
+                    className="px-6 py-2 text-left text-xs font-bold text-white dark:text-white uppercase tracking-wider cursor-pointer hover:bg-white/10 dark:hover:bg-white/5 transition-colors duration-150"
+                    style={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}
+                    onClick={() => handleSort('quantity')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Quantity
+                      <span className="text-sm">{getSortIcon('quantity')}</span>
+                    </div>
                   </th>
                   <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
+                    className="px-6 py-2 text-left text-xs font-bold text-white dark:text-white uppercase tracking-wider cursor-pointer hover:bg-white/10 dark:hover:bg-white/5 transition-colors duration-150"
+                    style={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}
+                    onClick={() => handleSort('category')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Category
+                      <span className="text-sm">{getSortIcon('category')}</span>
+                    </div>
+                  </th>
+                  <th 
+                    className="px-6 py-2 text-left text-xs font-bold text-white dark:text-white uppercase tracking-wider cursor-pointer hover:bg-white/10 dark:hover:bg-white/5 transition-colors duration-150"
+                    style={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}
                     onClick={() => handleSort('expiryDate')}
                   >
                     <div className="flex items-center gap-1">
@@ -758,7 +827,7 @@ export default function IngredientsPage() {
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
+                    className="px-6 py-2 text-left text-xs font-bold text-white dark:text-white uppercase tracking-wider cursor-pointer hover:bg-white/10 dark:hover:bg-white/5 transition-colors duration-150"
                     onClick={() => handleSort('inStock')}
                   >
                     <div className="flex items-center gap-1">
@@ -778,7 +847,7 @@ export default function IngredientsPage() {
                   return (
                     <tr key={ingredient.id} className={`${ingredient.inStock ? '' : 'bg-gray-50 dark:bg-gray-800'} ${isSelected ? 'line-through opacity-60' : ''}`}>
                       {isBulkEdit && (
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <td className="px-6 py-2 whitespace-nowrap text-center">
                           <input
                             type="checkbox"
                             checked={isSelected}
@@ -787,10 +856,10 @@ export default function IngredientsPage() {
                           />
                         </td>
                       )}
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-2 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900 dark:text-white">{currentData.name}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-500">
                         {isBulkEdit && currentData.inStock ? (
                           <input
                             type="number"
@@ -811,7 +880,7 @@ export default function IngredientsPage() {
                           <span>{currentData.quantity}</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-2 whitespace-nowrap">
                         {isBulkEdit ? (
                           <select
                             value={currentData.category}
@@ -819,16 +888,16 @@ export default function IngredientsPage() {
                             className="px-2 py-1 text-xs border-2 border-dotted border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                           >
                             {categories.map(category => (
-                              <option key={category} value={category}>{category}</option>
+                              <option key={category} value={category}>{getCategoryEmoji(category)} {category}</option>
                             ))}
                           </select>
                         ) : (
                           <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full dark:bg-gray-700 dark:text-gray-200">
-                            {currentData.category}
+                            {getCategoryEmoji(currentData.category)} {currentData.category}
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-500">
                         {isBulkEdit && currentData.inStock ? (
                           <input
                             type="date"
@@ -854,7 +923,7 @@ export default function IngredientsPage() {
                           )
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-2 whitespace-nowrap">
                         {isBulkEdit ? (
                           <label className="flex items-center">
                             <input

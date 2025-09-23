@@ -257,7 +257,7 @@ export default function RecipeDetailPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="mb-4 sm:mb-8">
+      <div className="mb-4 sm:mb-6">
         <Link href="/recipes" className="text-[#C63721] hover:text-primary-brand mb-2 inline-block">
           ← Back to recipes
         </Link>
@@ -295,7 +295,7 @@ export default function RecipeDetailPage() {
 
       {/* Tags */}
       {!isEditing && recipe.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4 sm:mb-8">
+        <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
           {recipe.tags.map(tag => (
             <span
               key={tag}

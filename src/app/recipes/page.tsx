@@ -38,8 +38,8 @@ export default function RecipesPage() {
   const allTags = [...new Set(recipes.flatMap(recipe => recipe.tags))];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
         <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">Recipe Collection 📖</h1>
         <Link
           href="/recipes/new"
@@ -50,7 +50,7 @@ export default function RecipesPage() {
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
