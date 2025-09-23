@@ -1,19 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 
 export default function FeedbackPage() {
   const githubIssuesUrl = 'https://github.com/kidchen/zzbistro/issues';
-
-  useEffect(() => {
-    // Auto-redirect after 3 seconds
-    const timer = setTimeout(() => {
-      window.open(githubIssuesUrl, '_blank');
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [githubIssuesUrl]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -28,7 +18,7 @@ export default function FeedbackPage() {
             Found a bug or have a suggestion?
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            We'd love to hear from you! Report issues or suggest new features on our GitHub repository.
+            We&apos;d love to hear from you! Report issues or suggest new features on our GitHub repository.
           </p>
           
           <div className="space-y-4">
@@ -40,10 +30,6 @@ export default function FeedbackPage() {
             >
               Open GitHub Issues 🚀
             </a>
-            
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              You'll be redirected automatically in 3 seconds...
-            </p>
           </div>
         </div>
 

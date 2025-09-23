@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function TermsPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -38,7 +40,7 @@ export default function TermsPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Contact</h2>
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            If you have any questions about these Terms of Service, please contact the application administrator.
+            If you have any questions about these Terms of Service, please <Link href="/feedback" className="text-primary hover:underline">contact the application administrator</Link>.
           </p>
         </section>
 

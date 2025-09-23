@@ -5,8 +5,8 @@ import { dataCache } from './cache';
 // Optimized storage with caching and reduced database calls
 export const storage = {
   recipes: {
-    getAll: async (useCache = true): Promise<Recipe[]> => {
-      const cacheKey = 'recipes';
+    getAll: async (useCache = true, fields?: string[]): Promise<Recipe[]> => {
+      const cacheKey = `recipes${fields ? `-${fields.join(',')}` : ''}`;
       
       if (useCache) {
         const cached = dataCache.get<Recipe[]>(cacheKey);
@@ -14,14 +14,17 @@ export const storage = {
       }
 
       try {
+        const selectFields = fields?.join(',') || '*';
         const { data, error } = await supabase
           .from('recipes')
-          .select('*')
+          .select(selectFields)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
+        if (!data) return [];
 
-        const recipes = data.map(recipe => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const recipes = (data as any[]).map((recipe) => ({
           id: recipe.id,
           name: recipe.name,
           ingredients: recipe.ingredients,
@@ -33,7 +36,7 @@ export const storage = {
           createdAt: new Date(recipe.created_at)
         }));
 
-        dataCache.set(cacheKey, recipes);
+        dataCache.set(cacheKey, recipes, 10 * 60 * 1000); // 10 min for full data
         return recipes;
       } catch (error) {
         console.error('Error fetching recipes:', error);
@@ -43,6 +46,13 @@ export const storage = {
         }
         return [];
       }
+    },
+
+    // Get recipe summaries for list views (lighter payload)
+    getSummaries: async (useCache = true): Promise<Partial<Recipe>[]> => {
+      return storage.recipes.getAll(useCache, [
+        'id', 'name', 'image', 'cooking_time', 'servings', 'tags', 'created_at'
+      ]);
     },
     
     add: async (recipe: Recipe): Promise<Recipe | null> => {
@@ -75,12 +85,14 @@ export const storage = {
           createdAt: new Date(data.created_at)
         };
 
-        // Update cache instead of refetching
-        const cached = dataCache.get<Recipe[]>('recipes');
-        if (cached) {
-          cached.unshift(newRecipe);
-          dataCache.set('recipes', cached);
-        }
+        // Update all recipe caches
+        ['recipes', 'recipes-id,name,image,cooking_time,servings,tags,created_at'].forEach(key => {
+          const cached = dataCache.get<Recipe[]>(key);
+          if (cached) {
+            cached.unshift(newRecipe);
+            dataCache.set(key, cached);
+          }
+        });
 
         return newRecipe;
       } catch (error) {
@@ -106,15 +118,17 @@ export const storage = {
 
         if (error) throw error;
 
-        // Update cache instead of refetching
-        const cached = dataCache.get<Recipe[]>('recipes');
-        if (cached) {
-          const index = cached.findIndex(r => r.id === id);
-          if (index !== -1) {
-            cached[index] = updatedRecipe;
-            dataCache.set('recipes', cached);
+        // Update all recipe caches
+        ['recipes', 'recipes-id,name,image,cooking_time,servings,tags,created_at'].forEach(key => {
+          const cached = dataCache.get<Recipe[]>(key);
+          if (cached) {
+            const index = cached.findIndex(r => r.id === id);
+            if (index !== -1) {
+              cached[index] = updatedRecipe;
+              dataCache.set(key, cached);
+            }
           }
-        }
+        });
 
         return true;
       } catch (error) {
@@ -132,12 +146,14 @@ export const storage = {
 
         if (error) throw error;
 
-        // Update cache instead of refetching
-        const cached = dataCache.get<Recipe[]>('recipes');
-        if (cached) {
-          const filtered = cached.filter(r => r.id !== id);
-          dataCache.set('recipes', filtered);
-        }
+        // Update all recipe caches
+        ['recipes', 'recipes-id,name,image,cooking_time,servings,tags,created_at'].forEach(key => {
+          const cached = dataCache.get<Recipe[]>(key);
+          if (cached) {
+            const filtered = cached.filter(r => r.id !== id);
+            dataCache.set(key, filtered);
+          }
+        });
 
         return true;
       } catch (error) {
@@ -282,28 +298,36 @@ export const storage = {
 
     batchUpdate: async (updates: { id: string; data: Partial<Ingredient> }[]): Promise<void> => {
       try {
-        // Update in database
-        const promises = updates.map(({ id, data }) => 
-          supabase.from('ingredients').update({
+        // Use single transaction for better performance
+        const { error } = await supabase.rpc('batch_update_ingredients', {
+          updates: updates.map(({ id, data }) => ({
+            id,
             name: data.name,
             quantity: data.quantity,
             category: data.category,
-            expiry_date: data.expiryDate?.toISOString(),
-            in_stock: data.inStock,
-            updated_at: new Date().toISOString()
-          }).eq('id', id)
-        );
+            expiry_date: data.expiryDate?.toISOString().split('T')[0],
+            in_stock: data.inStock
+          }))
+        });
 
-        await Promise.all(promises);
+        if (error) {
+          // Fallback to individual updates if RPC not available
+          const promises = updates.map(({ id, data }) => 
+            supabase.from('ingredients').update({
+              name: data.name,
+              quantity: data.quantity,
+              category: data.category,
+              expiry_date: data.expiryDate?.toISOString().split('T')[0],
+              in_stock: data.inStock,
+              updated_at: new Date().toISOString()
+            }).eq('id', id)
+          );
+          await Promise.all(promises);
+        }
         
         // Clear cache to force refresh
-        dataCache.clear();
+        dataCache.invalidate('ingredients');
         
-        // Update localStorage
-        if (typeof window !== 'undefined') {
-          const current = await storage.ingredients.getAll(false);
-          localStorage.setItem('zzbistro-ingredients', JSON.stringify(current));
-        }
       } catch (error) {
         console.error('Error batch updating ingredients:', error);
         throw error;
@@ -314,5 +338,10 @@ export const storage = {
   // Utility to clear all caches (useful for force refresh)
   clearCache: () => {
     dataCache.clear();
+  },
+
+  // Get cache statistics
+  getCacheStats: () => {
+    return dataCache.getStats();
   }
 };
