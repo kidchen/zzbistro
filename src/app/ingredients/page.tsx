@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { storage } from '@/lib/storage';
 import { Ingredient } from '@/types';
@@ -126,7 +126,7 @@ export default function IngredientsPage() {
     return sortOrder === 'asc' ? '↑' : '↓';
   };
 
-  const filteredIngredients = (() => {
+  const filteredIngredients = useMemo(() => {
     // Combine original ingredients with new ones from bulk edit
     let allIngredients = ingredients;
     if (isBulkEdit) {
@@ -134,7 +134,7 @@ export default function IngredientsPage() {
       allIngredients = [...ingredients, ...newIngredients];
     }
     
-    return allIngredients.filter(ingredient => {
+    const filtered = allIngredients.filter(ingredient => {
       const matchesSearch = ingredient.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = !selectedCategory || ingredient.category === selectedCategory;
       
@@ -151,18 +151,19 @@ export default function IngredientsPage() {
       
       return matchesSearch && matchesCategory && matchesFilter && matchesCardFilter;
     });
-  })().sort((a, b) => {
-    if (!sortBy) return 0;
-    
-    let comparison = 0;
-    
-    if (sortBy === 'name') {
-      // Use Chinese pinyin sorting for better Chinese character support
-      comparison = a.name.localeCompare(b.name, 'zh-CN', { 
-        numeric: true, 
-        sensitivity: 'base',
-        ignorePunctuation: true 
-      });
+
+    return filtered.sort((a, b) => {
+      if (!sortBy) return 0;
+      
+      let comparison = 0;
+      
+      if (sortBy === 'name') {
+        // Use Chinese pinyin sorting for better Chinese character support
+        comparison = a.name.localeCompare(b.name, 'zh-CN', { 
+          numeric: true, 
+          sensitivity: 'base',
+          ignorePunctuation: true 
+        });
     } else if (sortBy === 'quantity') {
       comparison = a.quantity - b.quantity;
     } else if (sortBy === 'category') {
@@ -180,7 +181,8 @@ export default function IngredientsPage() {
     }
     
     return sortOrder === 'asc' ? comparison : -comparison;
-  });
+    });
+  }, [ingredients, isBulkEdit, bulkEditData, searchTerm, selectedCategory, searchParams, activeFilter, sortBy, sortOrder]);
 
   // Pagination
   const totalPages = Math.ceil(filteredIngredients.length / itemsPerPage);

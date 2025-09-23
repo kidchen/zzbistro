@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -70,19 +70,25 @@ export default function MenuPage() {
     loadMenuData();
   }, [searchParams]);
 
-  const allTags = [...new Set(recipes.flatMap(recipe => recipe.tags))];
+  const allTags = useMemo(() => {
+    return [...new Set(recipes.flatMap(recipe => recipe.tags))];
+  }, [recipes]);
 
-  const filteredAvailableRecipes = availableRecipes.filter(recipe => {
-    const matchesTag = !selectedTag || recipe.tags.includes(selectedTag);
-    const matchesTime = !maxCookingTime || recipe.cookingTime <= maxCookingTime;
-    return matchesTag && matchesTime;
-  });
+  const filteredAvailableRecipes = useMemo(() => {
+    return availableRecipes.filter(recipe => {
+      const matchesTag = !selectedTag || recipe.tags.includes(selectedTag);
+      const matchesTime = !maxCookingTime || recipe.cookingTime <= maxCookingTime;
+      return matchesTag && matchesTime;
+    });
+  }, [availableRecipes, selectedTag, maxCookingTime]);
 
-  const filteredPartialRecipes = partialRecipes.filter(({ recipe }) => {
-    const matchesTag = !selectedTag || recipe.tags.includes(selectedTag);
-    const matchesTime = !maxCookingTime || recipe.cookingTime <= maxCookingTime;
-    return matchesTag && matchesTime;
-  });
+  const filteredPartialRecipes = useMemo(() => {
+    return partialRecipes.filter(({ recipe }) => {
+      const matchesTag = !selectedTag || recipe.tags.includes(selectedTag);
+      const matchesTime = !maxCookingTime || recipe.cookingTime <= maxCookingTime;
+      return matchesTag && matchesTime;
+    });
+  }, [partialRecipes, selectedTag, maxCookingTime]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">

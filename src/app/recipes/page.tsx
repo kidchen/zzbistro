@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { storage } from '@/lib/storage';
@@ -28,14 +28,18 @@ export default function RecipesPage() {
     loadRecipes();
   }, []);
 
-  const filteredRecipes = recipes.filter(recipe => {
-    const matchesSearch = recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesTag = !selectedTag || recipe.tags.includes(selectedTag);
-    return matchesSearch && matchesTag;
-  });
+  const filteredRecipes = useMemo(() => {
+    return recipes.filter(recipe => {
+      const matchesSearch = recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesTag = !selectedTag || recipe.tags.includes(selectedTag);
+      return matchesSearch && matchesTag;
+    });
+  }, [recipes, searchTerm, selectedTag]);
 
-  const allTags = [...new Set(recipes.flatMap(recipe => recipe.tags))];
+  const allTags = useMemo(() => {
+    return [...new Set(recipes.flatMap(recipe => recipe.tags))];
+  }, [recipes]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
