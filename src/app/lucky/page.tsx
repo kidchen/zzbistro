@@ -113,7 +113,7 @@ export default function LuckyPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
       <div className="text-center mb-12">
         <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">I&apos;m Feeling Lucky! 🎲</h1>
-        <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-base md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           Can&apos;t decide what to cook? Let us surprise you with a random recipe suggestion!
         </p>
       </div>
@@ -238,7 +238,7 @@ export default function LuckyPage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center text-gray-600 mb-6">
+                    <div className="flex items-center text-gray-600 dark:text-gray-300 mb-6">
                       <span className="mr-6">⏱️ {suggestedRecipe.cookingTime} minutes</span>
                       <span className="mr-6">👥 {suggestedRecipe.servings} servings</span>
                       <span>📅 Added {new Date(suggestedRecipe.createdAt).toLocaleDateString()}</span>

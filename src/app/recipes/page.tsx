@@ -43,13 +43,14 @@ export default function RecipesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+      <div className="flex justify-between items-center mb-4 sm:mb-6">
         <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">Recipe Collection 📖</h1>
         <Link
           href="/recipes/new"
-          className="bg-[#C63721] text-white px-3 py-1 md:px-4 md:py-2 rounded-lg hover:bg-[#A52E1A] transition-colors text-sm md:text-base"
+          className="bg-[#C63721] text-white px-3 py-1 md:px-4 md:py-2 rounded-lg hover:bg-[#A52E1A] transition-colors text-sm md:text-base flex-shrink-0"
         >
-          Add New Recipe
+          <span className="hidden sm:inline">Add New Recipe</span>
+          <span className="sm:hidden">+ Add</span>
         </Link>
       </div>
 
@@ -137,7 +138,7 @@ export default function RecipesPage() {
                       View Recipe
                     </Link>
                   </div>
-                  <div className="flex items-center text-sm text-gray-600 mb-2">
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-2">
                     <span className="mr-4">⏱️ {recipe.cookingTime} min</span>
                     <span>👥 {recipe.servings} servings</span>
                   </div>
@@ -185,7 +186,7 @@ export default function RecipesPage() {
                         View
                       </Link>
                     </div>
-                    <div className="flex items-center text-xs text-gray-600 mb-1">
+                    <div className="flex items-center text-xs text-gray-600 dark:text-gray-300 mb-1">
                       <span className="mr-3">⏱️ {recipe.cookingTime}min</span>
                       <span>👥 {recipe.servings}</span>
                     </div>

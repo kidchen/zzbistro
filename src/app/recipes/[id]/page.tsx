@@ -215,7 +215,16 @@ export default function RecipeDetailPage() {
       };
       
       const objectUrl = URL.createObjectURL(file);
-      img.src = objectUrl;
+      
+      // Validate the object URL format for security
+      if (!objectUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('Invalid object URL'));
+        return;
+      }
+      
+      // Use setAttribute for safer URL assignment
+      img.setAttribute('src', objectUrl);
       
       // Clean up object URL after use
       img.onload = () => {
@@ -242,6 +251,29 @@ export default function RecipeDetailPage() {
         alert('Failed to process image. Please try a different image.');
       }
     }
+  };
+
+  // Function to convert URLs in text to clickable links
+  const linkifyText = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    
+    return parts.map((part, index) => {
+      if (urlRegex.test(part)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300"
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
   };
 
   if (isLoading) {
@@ -302,7 +334,7 @@ export default function RecipeDetailPage() {
             </button>
           )}
         </div>
-        <div className="flex items-center text-gray-600 mt-2">
+        <div className="flex items-center text-gray-600 dark:text-gray-300 mt-2">
           <span className="mr-6">⏱️ {recipe.cookingTime} minutes</span>
           <span className="mr-6">👥 {recipe.servings} servings</span>
           <span>📅 {new Date(recipe.createdAt).toLocaleDateString()}</span>
@@ -325,7 +357,7 @@ export default function RecipeDetailPage() {
 
       {/* Edit Form */}
       {isEditing ? (
-        <div className="space-y-6">
+        <div className="space-y-3">
           <div className="flex justify-between items-center mb-6">
             <div className="flex gap-4">
               <button
@@ -343,14 +375,14 @@ export default function RecipeDetailPage() {
             </div>
             <button
               onClick={handleDelete}
-              className="bg-error text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-red-700 cursor-pointer text-sm md:text-base"
+              className="bg-[#1A2F50] text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-[#C63721] cursor-pointer text-sm md:text-base transition-colors"
             >
               Delete Recipe
             </button>
           </div>
 
           {/* Basic Info */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Recipe Name</label>
@@ -358,7 +390,7 @@ export default function RecipeDetailPage() {
                   type="text"
                   value={editData.name}
                   onChange={(e) => setEditData(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -367,7 +399,7 @@ export default function RecipeDetailPage() {
                   type="number"
                   value={editData.cookingTime}
                   onChange={(e) => setEditData(prev => ({ ...prev, cookingTime: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -376,14 +408,14 @@ export default function RecipeDetailPage() {
                   type="number"
                   value={editData.servings}
                   onChange={(e) => setEditData(prev => ({ ...prev, servings: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
           </div>
 
           {/* Ingredients */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Ingredients</h3>
               <button
@@ -423,7 +455,7 @@ export default function RecipeDetailPage() {
           </div>
 
           {/* Instructions */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Instructions</h3>
               <button
@@ -440,7 +472,7 @@ export default function RecipeDetailPage() {
                   <textarea
                     value={instruction}
                     onChange={(e) => updateInstruction(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
+                    className="flex-1 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
                     rows={2}
                   />
                   {editData.instructions.length > 1 && (
@@ -457,7 +489,7 @@ export default function RecipeDetailPage() {
           </div>
 
           {/* Tags */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
             <TagManager
               selectedTags={editData.tags}
               onChange={(tags) => setEditData(prev => ({ ...prev, tags }))}
@@ -465,7 +497,7 @@ export default function RecipeDetailPage() {
           </div>
 
           {/* Image Upload */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
             <h3 className="text-lg font-semibold mb-4">Recipe Photo</h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -475,7 +507,7 @@ export default function RecipeDetailPage() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
+                className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Images will be automatically compressed to under 3MB
@@ -512,7 +544,7 @@ export default function RecipeDetailPage() {
 
         {/* Ingredients */}
         <div className={`${recipe.image ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6 mb-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Ingredients</h2>
             <ul className="space-y-2">
               {recipe.ingredients.map((ingredient, index) => {
@@ -532,27 +564,10 @@ export default function RecipeDetailPage() {
                 );
               })}
             </ul>
-            
-            {missingIngredients.length > 0 && (
-              <div className="mt-4 p-3 bg-warning-subtle border border-warning rounded">
-                <p className="text-warning font-medium">Missing ingredients:</p>
-                <ul className="text-warning text-sm mt-1">
-                  {missingIngredients.map((ingredient, index) => (
-                    <li key={index}>• {ingredient}</li>
-                  ))}
-                </ul>
-                <Link
-                  href="/ingredients"
-                  className="text-warning underline text-sm mt-2 inline-block hover:text-warning"
-                >
-                  Update your pantry →
-                </Link>
-              </div>
-            )}
           </div>
 
           {/* Instructions */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Instructions</h2>
             <ol className="space-y-4">
               {recipe.instructions.map((instruction, index) => (
@@ -560,7 +575,7 @@ export default function RecipeDetailPage() {
                   <span className="bg-[#C63721] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mr-3 mt-0.5 flex-shrink-0">
                     {index + 1}
                   </span>
-                  <p className="text-gray-700 dark:text-gray-300">{instruction}</p>
+                  <p className="text-gray-700 dark:text-gray-300">{linkifyText(instruction)}</p>
                 </li>
               ))}
             </ol>

@@ -84,7 +84,7 @@ export default function Home() {
         <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
           Welcome to ZZBistro! 👨‍🍳👩‍🍳
         </h1>
-        <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-base md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           Your personal cooking companion. Manage recipes, track ingredients, and discover delicious meals together.
         </p>
       </div>
@@ -95,39 +95,39 @@ export default function Home() {
         <div className="hidden md:grid md:grid-cols-4 gap-6">
           <Link href="/recipes" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-blue-600">{stats.totalRecipes}</div>
-            <div className="text-gray-600">Total Recipes</div>
+            <div className="text-gray-600 dark:text-gray-300">Total Recipes</div>
           </Link>
           <Link href="/ingredients?filter=instock" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-green-600">{stats.inStockIngredients}</div>
-            <div className="text-gray-600">In Stock</div>
+            <div className="text-gray-600 dark:text-gray-300">In Stock</div>
           </Link>
           <Link href="/menu?filter=available" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-purple-600">{stats.availableRecipes}</div>
-            <div className="text-gray-600">Ready to Cook</div>
+            <div className="text-gray-600 dark:text-gray-300">Ready to Cook</div>
           </Link>
           <Link href="/ingredients" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-[#C63721]">{stats.totalIngredients}</div>
-            <div className="text-gray-600">Total Ingredients</div>
+            <div className="text-gray-600 dark:text-gray-300">Total Ingredients</div>
           </Link>
         </div>
 
-        {/* Mobile Table */}
-        <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-          <Link href="/recipes" className="flex justify-between items-center p-3 border-b border-gray-200 hover:bg-gray-50">
-            <span className="text-sm text-gray-600">Total Recipes</span>
-            <span className="text-lg font-bold text-blue-600">{stats.totalRecipes}</span>
+        {/* Mobile Grid - 4 individual columns */}
+        <div className="md:hidden grid grid-cols-4 gap-2">
+          <Link href="/recipes" className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 text-center hover:shadow-lg transition-shadow">
+            <div className="text-lg font-bold text-blue-600">{stats.totalRecipes}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Recipes</div>
           </Link>
-          <Link href="/ingredients?filter=instock" className="flex justify-between items-center p-3 border-b border-gray-200 hover:bg-gray-50">
-            <span className="text-sm text-gray-600">In Stock</span>
-            <span className="text-lg font-bold text-green-600">{stats.inStockIngredients}</span>
+          <Link href="/ingredients?filter=instock" className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 text-center hover:shadow-lg transition-shadow">
+            <div className="text-lg font-bold text-green-600">{stats.inStockIngredients}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">In Stock</div>
           </Link>
-          <Link href="/menu?filter=available" className="flex justify-between items-center p-3 border-b border-gray-200 hover:bg-gray-50">
-            <span className="text-sm text-gray-600">Ready to Cook</span>
-            <span className="text-lg font-bold text-purple-600">{stats.availableRecipes}</span>
+          <Link href="/menu?filter=available" className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 text-center hover:shadow-lg transition-shadow">
+            <div className="text-lg font-bold text-purple-600">{stats.availableRecipes}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Ready</div>
           </Link>
-          <Link href="/ingredients" className="flex justify-between items-center p-3 hover:bg-gray-50">
-            <span className="text-sm text-gray-600">Total Ingredients</span>
-            <span className="text-lg font-bold text-[#C63721]">{stats.totalIngredients}</span>
+          <Link href="/ingredients" className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 text-center hover:shadow-lg transition-shadow">
+            <div className="text-lg font-bold text-[#C63721]">{stats.totalIngredients}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Total</div>
           </Link>
         </div>
       </div>
@@ -146,7 +146,7 @@ export default function Home() {
                 <span className="text-2xl">{action.icon}</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{action.title}</h3>
-              <p className="text-gray-600 text-sm">{action.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">{action.description}</p>
             </Link>
           ))}
         </div>
@@ -157,14 +157,14 @@ export default function Home() {
             <Link
               key={action.title}
               href={action.href}
-              className={`flex items-center p-4 hover:bg-gray-50 ${index < quickActions.length - 1 ? 'border-b border-gray-200' : ''}`}
+              className={`flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700 ${index < quickActions.length - 1 ? 'border-b border-gray-200 dark:border-gray-600' : ''}`}
             >
               <div className={`w-10 h-10 ${action.color} rounded-full flex items-center justify-center mr-4 flex-shrink-0`}>
                 <span className="text-lg">{action.icon}</span>
               </div>
               <div className="flex-1">
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{action.title}</h3>
-                <p className="text-xs text-gray-600">{action.description}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">{action.description}</p>
               </div>
             </Link>
           ))}

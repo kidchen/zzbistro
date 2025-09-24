@@ -463,25 +463,36 @@ export default function IngredientsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+      <div className="flex justify-between items-center mb-4 sm:mb-6">
         <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">Pantry Management 🥫</h1>
-        <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto justify-end sm:justify-start">
+        <div className="flex gap-2 flex-shrink-0">
           <button
             onClick={toggleBulkEdit}
-            className={`px-3 py-1 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base font-medium cursor-pointer whitespace-nowrap min-w-[90px] ${
+            className={`px-2 py-1 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base font-medium cursor-pointer whitespace-nowrap ${
               isBulkEdit 
                 ? 'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700' 
-                : 'bg-secondary text-white hover:bg-secondary'
+                : 'bg-[#C63721] text-white hover:bg-[#A52E1A]'
             }`}
           >
-            {isBulkEdit ? 'Save All' : 'Edit/Manage'}
+            {isBulkEdit ? (
+              <>
+                <span className="hidden sm:inline">Save All</span>
+                <span className="sm:hidden">Save</span>
+              </>
+            ) : (
+              <>
+                <span className="hidden sm:inline">Edit/Manage</span>
+                <span className="sm:hidden">Edit</span>
+              </>
+            )}
           </button>
           {isBulkEdit && (
             <button
               onClick={cancelBulkEdit}
-              className="px-3 py-1 md:px-4 md:py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm md:text-base font-medium cursor-pointer whitespace-nowrap min-w-[90px]"
+              className="px-2 py-1 md:px-4 md:py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm md:text-base font-medium cursor-pointer whitespace-nowrap"
             >
-              Cancel
+              <span className="hidden sm:inline">Cancel</span>
+              <span className="sm:hidden">✕</span>
             </button>
           )}
         </div>
@@ -527,20 +538,41 @@ export default function IngredientsPage() {
           </button>
         </div>
 
-        {/* Mobile Table */}
-        <div className="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-          <div className="flex justify-between items-center p-3 border-b border-gray-200">
-            <span className="text-sm text-gray-600">In Stock</span>
-            <span className="text-lg font-bold text-green-600">{inStockCount}</span>
-          </div>
-          <div className="flex justify-between items-center p-3 border-b border-gray-200">
-            <span className="text-sm text-gray-600">Out of Stock</span>
-            <span className="text-lg font-bold text-error">{outOfStockCount}</span>
-          </div>
-          <div className="flex justify-between items-center p-3">
-            <span className="text-sm text-gray-600">Expiring Soon</span>
-            <span className="text-lg font-bold text-[#B8940D]">{expiringCount}</span>
-          </div>
+        {/* Mobile Grid - 3 individual columns */}
+        <div className="md:hidden grid grid-cols-3 gap-2">
+          <button
+            onClick={() => setActiveFilter(activeFilter === 'instock' ? null : 'instock')}
+            className={`bg-white dark:bg-gray-800 rounded-lg shadow p-2 text-center hover:shadow-lg transition-shadow ${
+              activeFilter === 'instock' 
+                ? 'ring-2 ring-green-500/20 shadow-md' 
+                : ''
+            }`}
+          >
+            <div className="text-lg font-bold text-green-600">{inStockCount}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">In Stock</div>
+          </button>
+          <button
+            onClick={() => setActiveFilter(activeFilter === 'outofstock' ? null : 'outofstock')}
+            className={`bg-white dark:bg-gray-800 rounded-lg shadow p-2 text-center hover:shadow-lg transition-shadow ${
+              activeFilter === 'outofstock' 
+                ? 'ring-2 ring-red-500/20 shadow-md' 
+                : ''
+            }`}
+          >
+            <div className="text-lg font-bold text-error">{outOfStockCount}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Out of Stock</div>
+          </button>
+          <button
+            onClick={() => setActiveFilter(activeFilter === 'expiring' ? null : 'expiring')}
+            className={`bg-white dark:bg-gray-800 rounded-lg shadow p-2 text-center hover:shadow-lg transition-shadow ${
+              activeFilter === 'expiring' 
+                ? 'ring-2 ring-orange-500/20 shadow-md' 
+                : ''
+            }`}
+          >
+            <div className="text-lg font-bold text-[#B8940D]">{expiringCount}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Expiring</div>
+          </button>
         </div>
       </div>
       )}
@@ -654,7 +686,7 @@ export default function IngredientsPage() {
                       >
                         <div className="flex justify-between items-center">
                           <span className="font-medium">{ingredient.name}</span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-gray-300">
                             {ingredient.quantity} • {ingredient.category}
                           </span>
                         </div>
@@ -861,7 +893,7 @@ export default function IngredientsPage() {
                       <td className="px-6 py-2 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900 dark:text-white">{currentData.name}</div>
                       </td>
-                      <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                         {isBulkEdit && currentData.inStock ? (
                           <input
                             type="number"
@@ -899,7 +931,7 @@ export default function IngredientsPage() {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                         {isBulkEdit && currentData.inStock ? (
                           <input
                             type="date"

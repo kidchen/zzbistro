@@ -205,7 +205,7 @@ export default function MenuPage() {
                         View Recipe
                       </Link>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600 mb-3">
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-3">
                       <span className="mr-4">⏱️ {recipe.cookingTime} min</span>
                       <span>👥 {recipe.servings} servings</span>
                     </div>
@@ -256,7 +256,7 @@ export default function MenuPage() {
                           View
                         </Link>
                       </div>
-                      <div className="flex items-center text-xs text-gray-600 mb-2">
+                      <div className="flex items-center text-xs text-gray-600 dark:text-gray-300 mb-2">
                         <span className="mr-3">⏱️ {recipe.cookingTime}min</span>
                         <span>👥 {recipe.servings}</span>
                       </div>
@@ -325,7 +325,7 @@ export default function MenuPage() {
                           View Recipe
                         </Link>
                       </div>
-                      <div className="flex items-center text-sm text-gray-600 mb-3">
+                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-3">
                         <span className="mr-4">⏱️ {recipe.cookingTime} min</span>
                         <span>👥 {recipe.servings} servings</span>
                       </div>
@@ -386,7 +386,7 @@ export default function MenuPage() {
                             View
                           </Link>
                         </div>
-                        <div className="flex items-center text-xs text-gray-600 mb-2">
+                        <div className="flex items-center text-xs text-gray-600 dark:text-gray-300 mb-2">
                           <span className="mr-3">⏱️ {recipe.cookingTime}min</span>
                           <span>👥 {recipe.servings}</span>
                         </div>

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
 import TagManager from '@/components/TagManager';
+import CustomDropdown from '@/components/CustomDropdown';
 
 export default function NewRecipePage() {
   const router = useRouter();
@@ -149,7 +150,16 @@ export default function NewRecipePage() {
       };
       
       const objectUrl = URL.createObjectURL(file);
-      img.src = objectUrl;
+      
+      // Validate the object URL format for security
+      if (!objectUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('Invalid object URL'));
+        return;
+      }
+      
+      // Use setAttribute for safer URL assignment
+      img.setAttribute('src', objectUrl);
       
       // Clean up object URL after use
       img.onload = () => {
@@ -182,13 +192,13 @@ export default function NewRecipePage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
       <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Add New Recipe 📝</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Basic Info */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Basic Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Basic Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Recipe Name *
               </label>
               <input
@@ -196,7 +206,7 @@ export default function NewRecipePage() {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="e.g., Spaghetti Carbonara"
               />
             </div>
@@ -205,7 +215,7 @@ export default function NewRecipePage() {
               onChange={(tags) => setFormData(prev => ({ ...prev, tags }))}
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Cooking Time (minutes)
               </label>
               <input
@@ -213,11 +223,11 @@ export default function NewRecipePage() {
                 min="1"
                 value={formData.cookingTime}
                 onChange={(e) => setFormData(prev => ({ ...prev, cookingTime: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Servings
               </label>
               <input
@@ -225,16 +235,16 @@ export default function NewRecipePage() {
                 min="1"
                 value={formData.servings}
                 onChange={(e) => setFormData(prev => ({ ...prev, servings: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
           </div>
         </div>
 
         {/* Ingredients */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Ingredients</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Ingredients</h2>
             <button
               type="button"
               onClick={addIngredient}
@@ -245,26 +255,24 @@ export default function NewRecipePage() {
           </div>
           
           {availableIngredients.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-6 text-gray-500">
               <p className="mb-2">No ingredients in your pantry yet!</p>
               <p className="text-sm">Add ingredients to your pantry first to create recipes.</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {formData.ingredients.map((ingredient, index) => (
                 <div key={index} className="flex gap-2">
-                  <select
+                  <CustomDropdown
                     value={ingredient}
-                    onChange={(e) => updateIngredient(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
-                  >
-                    <option value="">Select an ingredient...</option>
-                    {availableIngredients.map((ing) => (
-                      <option key={ing.id} value={ing.name}>
-                        {ing.name} ({ing.inStock ? 'In Stock' : 'Out of Stock'})
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) => updateIngredient(index, value)}
+                    options={availableIngredients.map((ing) => ({
+                      value: ing.name,
+                      label: `${ing.name} (${ing.inStock ? 'In Stock' : 'Out of Stock'})`
+                    }))}
+                    placeholder="Select an ingredient..."
+                    className="flex-1"
+                  />
                   {formData.ingredients.length > 1 && (
                     <button
                       type="button"
@@ -281,9 +289,9 @@ export default function NewRecipePage() {
         </div>
 
         {/* Instructions */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Instructions</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Instructions</h2>
             <button
               type="button"
               onClick={addInstruction}
@@ -292,16 +300,16 @@ export default function NewRecipePage() {
               Add Step
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {formData.instructions.map((instruction, index) => (
               <div key={index} className="flex gap-2">
-                <span className="text-gray-500 font-medium pt-2 min-w-[2rem]">
+                <span className="text-gray-500 font-medium pt-1.5 min-w-[2rem]">
                   {index + 1}.
                 </span>
                 <textarea
                   value={instruction}
                   onChange={(e) => updateInstruction(index, e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
+                  className="flex-1 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721]"
                   placeholder="Describe this step..."
                   rows={2}
                 />
@@ -320,23 +328,23 @@ export default function NewRecipePage() {
         </div>
 
         {/* Image Upload */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recipe Photo</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recipe Photo</h2>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Upload Image
             </label>
             <input
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
             />
             <p className="text-xs text-gray-500 mt-1">
               Images will be automatically compressed to under 3MB
             </p>
             {formData.image && (
-              <div className="mt-4">
+              <div className="mt-3">
                 <Image
                   src={formData.image}
                   alt="Recipe preview"
@@ -350,17 +358,17 @@ export default function NewRecipePage() {
         </div>
 
         {/* Submit */}
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-end space-x-2">
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50"
+            className="px-3 py-1 md:px-6 md:py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 text-sm md:text-base"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-1.5 md:px-6 md:py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52E1A] text-sm md:text-base"
+            className="px-3 py-1 md:px-6 md:py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52E1A] text-sm md:text-base"
           >
             Save Recipe
           </button>
