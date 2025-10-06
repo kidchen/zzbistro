@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
@@ -10,7 +11,9 @@ import CustomDropdown from '@/components/CustomDropdown';
 
 export default function NewRecipePage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [availableIngredients, setAvailableIngredients] = useState<Ingredient[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     cookingTime: 30,
@@ -18,7 +21,8 @@ export default function NewRecipePage() {
     ingredients: [''],
     instructions: [''],
     tags: [] as string[],
-    image: ''
+    image_path: '',
+    image_preview: '' // For showing preview during upload
   });
 
   useEffect(() => {
@@ -42,7 +46,8 @@ export default function NewRecipePage() {
       name: formData.name,
       ingredients: formData.ingredients.filter(ing => ing.trim() !== ''),
       instructions: formData.instructions.filter(inst => inst.trim() !== ''),
-      image: formData.image || undefined,
+      image_path: formData.image_path || undefined,
+      image_version: formData.image_path ? Date.now().toString() : undefined,
       cookingTime: formData.cookingTime,
       servings: formData.servings,
       tags: formData.tags,
@@ -100,91 +105,55 @@ export default function NewRecipePage() {
     }));
   };
 
-  const compressImage = (file: File, maxSizeMB: number = 3): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      // Validate file type before processing
-      if (!file.type.startsWith('image/')) {
-        reject(new Error('Invalid file type'));
-        return;
-      }
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d')!;
-      const img = document.createElement('img');
-      
-      img.onload = () => {
-        // Calculate new dimensions to maintain aspect ratio
-        const maxWidth = 1200;
-        const maxHeight = 1200;
-        let { width, height } = img;
-        
-        if (width > height) {
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width = (width * maxHeight) / height;
-            height = maxHeight;
-          }
-        }
-        
-        canvas.width = width;
-        canvas.height = height;
-        
-        // Draw and compress
-        ctx.drawImage(img, 0, 0, width, height);
-        
-        // Start with high quality and reduce if needed
-        let quality = 0.9;
-        let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        
-        // Reduce quality until under size limit
-        while (compressedDataUrl.length > maxSizeMB * 1024 * 1024 * 1.37 && quality > 0.1) {
-          quality -= 0.1;
-          compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        }
-        
-        resolve(compressedDataUrl);
-      };
-      
-      const objectUrl = URL.createObjectURL(file);
-      
-      // Validate the object URL format for security
-      if (!objectUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(objectUrl);
-        reject(new Error('Invalid object URL'));
-        return;
-      }
-      
-      // Use setAttribute for safer URL assignment
-      img.setAttribute('src', objectUrl);
-      
-      // Clean up object URL after use
-      img.onload = () => {
-        URL.revokeObjectURL(objectUrl);
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(objectUrl);
-        reject(new Error('Failed to load image'));
-      };
-    });
-  };
-
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      try {
-        const compressedImage = await compressImage(file, 3);
-        setFormData(prev => ({
-          ...prev,
-          image: compressedImage
-        }));
-      } catch (error) {
-        console.error('Error compressing image:', error);
-        alert('Failed to process image. Please try a different image.');
-      }
+    console.log('File selected:', file?.name, file?.size);
+    console.log('Session:', session);
+    console.log('User email:', session?.user?.email);
+    
+    if (!file) {
+      console.log('No file selected');
+      return;
+    }
+    
+    if (!session?.user?.email) {
+      console.log('No session or email found');
+      alert('Please sign in to upload images');
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+      console.log('Starting upload...');
+      
+      // Dynamic import to reduce initial bundle size
+      const { uploadRecipeImage } = await import('@/lib/imageUpload');
+      
+      // Create temporary recipe ID for upload
+      const tempRecipeId = crypto.randomUUID();
+      console.log('Temp recipe ID:', tempRecipeId);
+      
+      // Upload to Supabase
+      const result = await uploadRecipeImage(
+        file, 
+        tempRecipeId, 
+        session.user.email
+      );
+      
+      console.log('Upload result:', result);
+      
+      setFormData(prev => ({
+        ...prev,
+        image_path: result.imagePath,
+        image_preview: result.imageUrl
+      }));
+      
+      console.log('Form data updated');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image: ' + error);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -338,15 +307,16 @@ export default function NewRecipePage() {
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
+              disabled={uploadingImage}
+              className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer disabled:opacity-50"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Images will be automatically compressed to under 3MB
+              {uploadingImage ? 'Uploading and compressing...' : 'Images will be automatically compressed to 400x400 and stored securely'}
             </p>
-            {formData.image && (
+            {formData.image_preview && (
               <div className="mt-3">
                 <Image
-                  src={formData.image}
+                  src={formData.image_preview}
                   alt="Recipe preview"
                   width={128}
                   height={128}

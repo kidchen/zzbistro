@@ -29,7 +29,8 @@ export const storage = {
           name: recipe.name,
           ingredients: recipe.ingredients,
           instructions: recipe.instructions,
-          image: recipe.image,
+          image_path: recipe.image_path,
+          image_version: recipe.image_version,
           cookingTime: recipe.cooking_time,
           servings: recipe.servings,
           tags: recipe.tags,
@@ -56,7 +57,7 @@ export const storage = {
     // Get recipe summaries for list views (lighter payload)
     getSummaries: async (useCache = true): Promise<Partial<Recipe>[]> => {
       return storage.recipes.getAll(useCache, [
-        'id', 'name', 'image', 'cooking_time', 'servings', 'tags', 'created_at'
+        'id', 'name', 'image_path', 'image_version', 'cooking_time', 'servings', 'tags', 'created_at'
       ]);
     },
     
@@ -68,7 +69,8 @@ export const storage = {
             name: recipe.name,
             ingredients: recipe.ingredients,
             instructions: recipe.instructions,
-            image: recipe.image,
+            image_path: recipe.image_path,
+            image_version: recipe.image_version,
             cooking_time: recipe.cookingTime,
             servings: recipe.servings,
             tags: recipe.tags
@@ -83,7 +85,8 @@ export const storage = {
           name: data.name,
           ingredients: data.ingredients,
           instructions: data.instructions,
-          image: data.image,
+          image_path: data.image_path,
+          image_version: data.image_version,
           cookingTime: data.cooking_time,
           servings: data.servings,
           tags: data.tags,
@@ -91,7 +94,7 @@ export const storage = {
         };
 
         // Update all recipe caches
-        ['recipes', 'recipes-id,name,image,cooking_time,servings,tags,created_at'].forEach(key => {
+        ['recipes', 'recipes-id,name,image_path,image_version,cooking_time,servings,tags,created_at'].forEach(key => {
           const cached = dataCache.get<Recipe[]>(key);
           if (cached) {
             cached.unshift(newRecipe);
@@ -114,7 +117,8 @@ export const storage = {
             name: updatedRecipe.name,
             ingredients: updatedRecipe.ingredients,
             instructions: updatedRecipe.instructions,
-            image: updatedRecipe.image,
+            image_path: updatedRecipe.image_path,
+            image_version: updatedRecipe.image_version,
             cooking_time: updatedRecipe.cookingTime,
             servings: updatedRecipe.servings,
             tags: updatedRecipe.tags
@@ -124,7 +128,7 @@ export const storage = {
         if (error) throw error;
 
         // Update all recipe caches
-        ['recipes', 'recipes-id,name,image,cooking_time,servings,tags,created_at'].forEach(key => {
+        ['recipes', 'recipes-id,name,image_path,image_version,cooking_time,servings,tags,created_at'].forEach(key => {
           const cached = dataCache.get<Recipe[]>(key);
           if (cached) {
             const index = cached.findIndex(r => r.id === id);
@@ -152,7 +156,7 @@ export const storage = {
         if (error) throw error;
 
         // Update all recipe caches
-        ['recipes', 'recipes-id,name,image,cooking_time,servings,tags,created_at'].forEach(key => {
+        ['recipes', 'recipes-id,name,image_path,image_version,cooking_time,servings,tags,created_at'].forEach(key => {
           const cached = dataCache.get<Recipe[]>(key);
           if (cached) {
             const filtered = cached.filter(r => r.id !== id);

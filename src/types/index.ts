@@ -3,7 +3,8 @@ export interface Recipe {
   name: string;
   ingredients: string[];
   instructions: string[];
-  image?: string;
+  image_path?: string; // Supabase storage path
+  image_version?: string; // For cache invalidation
   cookingTime: number; // in minutes
   servings: number;
   tags: string[];

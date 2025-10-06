@@ -8,9 +8,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     schema: 'public',
   },
   auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
+    autoRefreshToken: false, // Disable since we're using NextAuth
+    persistSession: false,   // Disable since we're using NextAuth
+    detectSessionInUrl: false
   },
   global: {
     headers: { 'x-my-custom-header': 'zzbistro' },

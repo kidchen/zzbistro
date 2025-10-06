@@ -3,10 +3,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe } from '@/types';
 import CustomDropdown from '@/components/CustomDropdown';
+import CachedImage from '@/components/CachedImage';
 
 export default function MenuPage() {
   const searchParams = useSearchParams();
@@ -183,9 +183,9 @@ export default function MenuPage() {
             <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAvailableRecipes.map((recipe) => (
                 <div key={recipe.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-green-500 dark:border-green-400">
-                  {recipe.image && (
-                    <Image
-                      src={recipe.image}
+                  {recipe.image_path && (
+                    <CachedImage
+                      imagePath={recipe.image_path}
                       alt={recipe.name}
                       width={400}
                       height={192}
@@ -234,9 +234,9 @@ export default function MenuPage() {
               {filteredAvailableRecipes.map((recipe, index) => (
                 <div key={recipe.id} className={`p-4 ${index < filteredAvailableRecipes.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}>
                   <div className="flex gap-3">
-                    {recipe.image && (
-                      <Image
-                        src={recipe.image}
+                    {recipe.image_path && (
+                      <CachedImage
+                        imagePath={recipe.image_path}
                         alt={recipe.name}
                         width={60}
                         height={60}
@@ -303,9 +303,9 @@ export default function MenuPage() {
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredPartialRecipes.map(({ recipe, missing }) => (
                   <div key={recipe.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-[#E2B210]">
-                    {recipe.image && (
-                      <Image
-                        src={recipe.image}
+                    {recipe.image_path && (
+                      <CachedImage
+                        imagePath={recipe.image_path}
                         alt={recipe.name}
                         width={400}
                         height={192}
@@ -364,9 +364,9 @@ export default function MenuPage() {
                 {filteredPartialRecipes.map(({ recipe, missing }, index) => (
                   <div key={recipe.id} className={`p-4 ${index < filteredPartialRecipes.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}>
                     <div className="flex gap-3">
-                      {recipe.image && (
-                        <Image
-                          src={recipe.image}
+                      {recipe.image_path && (
+                        <CachedImage
+                          imagePath={recipe.image_path}
                           alt={recipe.name}
                           width={60}
                           height={60}

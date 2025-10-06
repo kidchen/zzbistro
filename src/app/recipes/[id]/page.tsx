@@ -2,20 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
+import { clearImageFromCache } from '@/lib/imageCache';
 import CustomDropdown from '@/components/CustomDropdown';
 import TagManager from '@/components/TagManager';
+import CachedImage from '@/components/CachedImage';
 
 export default function RecipeDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { data: session } = useSession();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [missingIngredients, setMissingIngredients] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [availableIngredients, setAvailableIngredients] = useState<Ingredient[]>([]);
   const [editData, setEditData] = useState({
     name: '',
@@ -24,7 +29,8 @@ export default function RecipeDetailPage() {
     ingredients: [''],
     instructions: [''],
     tags: [] as string[],
-    image: ''
+    image_path: '', // Supabase path
+    image_preview: '' // For preview during upload
   });
 
   useEffect(() => {
@@ -46,7 +52,8 @@ export default function RecipeDetailPage() {
             ingredients: foundRecipe.ingredients,
             instructions: foundRecipe.instructions,
             tags: foundRecipe.tags,
-            image: foundRecipe.image || ''
+            image_path: foundRecipe.image_path || '',
+            image_preview: '' // Will be set during upload
           });
           
           // Load available ingredients for editing
@@ -85,7 +92,7 @@ export default function RecipeDetailPage() {
       JSON.stringify(editData.ingredients.filter(ing => ing.trim() !== '')) !== JSON.stringify(recipe.ingredients) ||
       JSON.stringify(editData.instructions.filter(inst => inst.trim() !== '')) !== JSON.stringify(recipe.instructions) ||
       JSON.stringify(editData.tags) !== JSON.stringify(recipe.tags) ||
-      editData.image !== recipe.image
+      editData.image_path !== recipe.image_path
     );
 
     if (!hasChanges) {
@@ -101,7 +108,8 @@ export default function RecipeDetailPage() {
       ingredients: editData.ingredients.filter(ing => ing.trim() !== ''),
       instructions: editData.instructions.filter(inst => inst.trim() !== ''),
       tags: editData.tags,
-      image: editData.image || undefined
+      image_path: editData.image_path || undefined,
+      image_version: editData.image_path ? Date.now().toString() : recipe.image_version
     };
 
     try {
@@ -170,86 +178,60 @@ export default function RecipeDetailPage() {
     }));
   };
 
-  const compressImage = (file: File, maxSizeMB: number = 3): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      // Validate file type before processing
-      if (!file.type.startsWith('image/')) {
-        reject(new Error('Invalid file type'));
-        return;
-      }
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d')!;
-      const img = document.createElement('img');
-      
-      img.onload = () => {
-        const maxWidth = 1200;
-        const maxHeight = 1200;
-        let { width, height } = img;
-        
-        if (width > height) {
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width = (width * maxHeight) / height;
-            height = maxHeight;
-          }
-        }
-        
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0, width, height);
-        
-        let quality = 0.9;
-        let compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        
-        while (compressedDataUrl.length > maxSizeMB * 1024 * 1024 * 1.37 && quality > 0.1) {
-          quality -= 0.1;
-          compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        }
-        
-        resolve(compressedDataUrl);
-      };
-      
-      const objectUrl = URL.createObjectURL(file);
-      
-      // Validate the object URL format for security
-      if (!objectUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(objectUrl);
-        reject(new Error('Invalid object URL'));
-        return;
-      }
-      
-      // Use setAttribute for safer URL assignment
-      img.setAttribute('src', objectUrl);
-      
-      // Clean up object URL after use
-      img.onload = () => {
-        URL.revokeObjectURL(objectUrl);
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(objectUrl);
-        reject(new Error('Failed to load image'));
-      };
-    });
-  };
-
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      try {
-        const compressedImage = await compressImage(file, 3);
-        setEditData(prev => ({
-          ...prev,
-          image: compressedImage
-        }));
-      } catch (error) {
-        console.error('Error compressing image:', error);
-        alert('Failed to process image. Please try a different image.');
+    console.log('Edit page - File selected:', file?.name, file?.size);
+    console.log('Edit page - Session:', session);
+    console.log('Edit page - User email:', session?.user?.email);
+    
+    if (!file) {
+      console.log('Edit page - No file selected');
+      return;
+    }
+    
+    if (!session?.user?.email) {
+      console.log('Edit page - No session or email found');
+      alert('Please sign in to upload images');
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+      console.log('Edit page - Starting upload...');
+      
+      // Dynamic import to reduce initial bundle size
+      const { uploadRecipeImage } = await import('@/lib/imageUpload');
+      
+      // Use current recipe ID or create temp one
+      const recipeId = recipe?.id || crypto.randomUUID();
+      console.log('Edit page - Recipe ID:', recipeId);
+      
+      // Upload to Supabase
+      const result = await uploadRecipeImage(
+        file, 
+        recipeId, 
+        session.user.email
+      );
+      
+      console.log('Edit page - Upload result:', result);
+      
+      // Clear old image from cache if it exists
+      if (recipe?.image_path) {
+        clearImageFromCache(recipe.image_path);
       }
+      
+      setEditData(prev => ({
+        ...prev,
+        image_path: result.imagePath,
+        image_preview: result.imageUrl
+      }));
+      
+      console.log('Edit page - Form data updated');
+    } catch (error) {
+      console.error('Edit page - Error uploading image:', error);
+      alert('Failed to upload image: ' + error);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -507,15 +489,16 @@ export default function RecipeDetailPage() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
+                disabled={uploadingImage}
+                className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer disabled:opacity-50"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Images will be automatically compressed to under 3MB
+                {uploadingImage ? 'Uploading and compressing...' : 'Images will be automatically compressed to 400x400 and stored securely'}
               </p>
-              {editData.image && (
+              {(editData.image_preview || editData.image_path) && (
                 <div className="mt-4">
                   <Image
-                    src={editData.image}
+                    src={editData.image_preview || editData.image_path}
                     alt="Recipe preview"
                     width={128}
                     height={128}
@@ -530,10 +513,10 @@ export default function RecipeDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Image */}
-        {recipe.image && (
+        {recipe.image_path && (
           <div className="lg:col-span-1">
-            <Image
-              src={recipe.image}
+            <CachedImage
+              imagePath={recipe.image_path}
               alt={recipe.name}
               width={400}
               height={300}
@@ -542,9 +525,10 @@ export default function RecipeDetailPage() {
           </div>
         )}
 
-        {/* Ingredients */}
-        <div className={`${recipe.image ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6 mb-6">
+        {/* Content Container */}
+        <div className={`${recipe.image_path ? 'lg:col-span-2' : 'lg:col-span-3'} space-y-6`}>
+          {/* Ingredients */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Ingredients</h2>
             <ul className="space-y-2">
               {recipe.ingredients.map((ingredient, index) => {

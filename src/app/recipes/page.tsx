@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe } from '@/types';
 import CustomDropdown from '@/components/CustomDropdown';
+import CachedImage from '@/components/CachedImage';
 
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -119,9 +119,9 @@ export default function RecipesPage() {
           <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRecipes.map((recipe) => (
               <div key={recipe.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-2 border-gray-200 dark:border-gray-600">
-                {recipe.image && (
-                  <Image
-                    src={recipe.image}
+                {recipe.image_path && (
+                  <CachedImage
+                    imagePath={recipe.image_path}
                     alt={recipe.name}
                     width={400}
                     height={192}
@@ -167,13 +167,13 @@ export default function RecipesPage() {
             {filteredRecipes.map((recipe, index) => (
               <div key={recipe.id} className={`p-3 ${index < filteredRecipes.length - 1 ? 'border-b border-gray-200' : ''}`}>
                 <div className="flex gap-3">
-                  {recipe.image && (
-                    <Image
-                      src={recipe.image}
+                  {recipe.image_path && (
+                    <CachedImage
+                      imagePath={recipe.image_path}
                       alt={recipe.name}
                       width={60}
                       height={60}
-                      className="w-15 h-15 object-cover rounded-lg flex-shrink-0"
+                      className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
                     />
                   )}
                   <div className="flex-1 min-w-0">

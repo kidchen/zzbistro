@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
+import CachedImage from '@/components/CachedImage';
 
 export default function LuckyPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -213,10 +213,10 @@ export default function LuckyPage() {
               <div className="p-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Recipe Image */}
-                  {suggestedRecipe.image && (
+                  {suggestedRecipe.image_path && (
                     <div>
-                      <Image
-                        src={suggestedRecipe.image}
+                      <CachedImage
+                        imagePath={suggestedRecipe.image_path}
                         alt={suggestedRecipe.name}
                         width={400}
                         height={300}
@@ -226,7 +226,7 @@ export default function LuckyPage() {
                   )}
                   
                   {/* Recipe Details */}
-                  <div className={suggestedRecipe.image ? '' : 'lg:col-span-2'}>
+                  <div className={suggestedRecipe.image_path ? '' : 'lg:col-span-2'}>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{suggestedRecipe.name}</h3>
                       <div className={`px-4 py-2 rounded-full text-sm font-medium ${

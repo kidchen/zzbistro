@@ -13,7 +13,11 @@ A modern Next.js web application designed as a private family cooking companion 
 - **Create & Edit Recipes** - Add detailed recipes with ingredients, instructions, and metadata
 - **Recipe Categories** - Organize recipes by type, difficulty, and tags
 - **Cooking Time & Servings** - Track preparation time, cooking time, and serving sizes
-- **Image Support** - Add photos to your recipes with transparent logo processing
+- **Private Image Storage** - Secure recipe photos with automatic compression and caching
+  - Images stored in private Supabase storage buckets
+  - Automatic 400x400 compression with center crop
+  - 20-hour client-side caching for optimal performance
+  - Server-side signed URL generation for secure access
 
 ### 🥫 Ingredient Tracking
 - **Pantry Management** - Keep track of ingredients you have in stock
@@ -102,7 +106,8 @@ A modern Next.js web application designed as a private family cooking companion 
 - Recipe details, ingredients, instructions
 - Cooking metadata (time, servings, difficulty)
 - Tags and categorization
-- Image support with optimized storage
+- Private image storage with automatic compression
+- Image path and version tracking for cache management
 
 ### Ingredients
 - Pantry inventory tracking
@@ -183,12 +188,19 @@ src/
 │   ├── help/              # Help and support
 │   ├── privacy/           # Privacy policy
 │   ├── terms/             # Terms of service
-│   └── api/auth/          # NextAuth API routes
+│   └── api/               # API routes
+│       ├── auth/          # NextAuth API routes
+│       ├── upload-image/  # Image upload endpoint
+│       └── get-image-url/ # Secure image URL generation
 ├── components/            # Reusable React components
+│   ├── CachedImage.tsx   # Optimized image display with caching
+│   └── ImageModal.tsx    # Image modal with zoom functionality
 ├── lib/                   # Utility libraries
 │   ├── auth.ts           # NextAuth configuration
 │   ├── supabase.ts       # Supabase client with optimizations
 │   ├── storage.ts        # Data layer abstraction with caching
+│   ├── imageUpload.ts    # Image upload and URL generation
+│   ├── imageCache.ts     # Client-side image caching system
 │   └── cache.ts          # Advanced caching system
 ├── styles/               # CSS and styling
 │   └── colors.css        # Custom color system
