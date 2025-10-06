@@ -1,7 +1,7 @@
 export const uploadRecipeImage = async (
   file: File, 
   recipeId: string, 
-  userId: string
+  familyId: string
 ): Promise<{ imagePath: string; imageUrl: string }> => {
   try {
     const compressedFile = await compressImage(file);
@@ -9,7 +9,7 @@ export const uploadRecipeImage = async (
     const formData = new FormData();
     formData.append('file', compressedFile);
     formData.append('recipeId', recipeId);
-    formData.append('userId', userId);
+    formData.append('familyId', familyId);
     
     const response = await fetch('/api/upload-image', {
       method: 'POST',

@@ -1,6 +1,23 @@
-import { Recipe, Ingredient } from '@/types';
+import { Recipe, Ingredient, Family, FamilyMembership } from '@/types';
 import { supabase } from './supabase';
 import { dataCache } from './cache';
+
+// Helper function to get user's family ID
+export const getUserFamilyId = async (userEmail: string): Promise<string | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('family_memberships')
+      .select('family_id')
+      .eq('user_email', userEmail)
+      .single();
+
+    if (error || !data) return null;
+    return data.family_id;
+  } catch (error) {
+    console.error('Error getting user family ID:', error);
+    return null;
+  }
+};
 
 // Optimized storage with caching and reduced database calls
 export const storage = {
@@ -73,7 +90,8 @@ export const storage = {
             image_version: recipe.image_version,
             cooking_time: recipe.cookingTime,
             servings: recipe.servings,
-            tags: recipe.tags
+            tags: recipe.tags,
+            family_id: recipe.family_id
           })
           .select()
           .single();
@@ -121,7 +139,8 @@ export const storage = {
             image_version: updatedRecipe.image_version,
             cooking_time: updatedRecipe.cookingTime,
             servings: updatedRecipe.servings,
-            tags: updatedRecipe.tags
+            tags: updatedRecipe.tags,
+            family_id: updatedRecipe.family_id
           })
           .eq('id', id);
 
@@ -219,7 +238,8 @@ export const storage = {
             quantity: ingredient.quantity,
             category: ingredient.category,
             expiry_date: ingredient.expiryDate?.toISOString().split('T')[0],
-            in_stock: ingredient.inStock
+            in_stock: ingredient.inStock,
+            family_id: ingredient.family_id
           })
           .select()
           .single();
@@ -339,6 +359,204 @@ export const storage = {
         
       } catch (error) {
         console.error('Error batch updating ingredients:', error);
+        throw error;
+      }
+    }
+  },
+
+  // Family management functions
+  families: {
+    // Create a new family
+    create: async (ownerEmail: string, name?: string): Promise<Family> => {
+      try {
+        const defaultName = name || `${ownerEmail.split('@')[0]}'s family`;
+        
+        const { data, error } = await supabase
+          .from('families')
+          .insert({
+            name: defaultName,
+            owner_email: ownerEmail
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Add owner as first member
+        await supabase
+          .from('family_memberships')
+          .insert({
+            family_id: data.id,
+            user_email: ownerEmail
+          });
+
+        return {
+          id: data.id,
+          name: data.name,
+          owner_email: data.owner_email,
+          created_at: data.created_at,
+          updated_at: data.updated_at
+        };
+      } catch (error) {
+        console.error('Error creating family:', error);
+        throw error;
+      }
+    },
+
+    // Get family by user email
+    getByUserEmail: async (userEmail: string): Promise<Family | null> => {
+      const cacheKey = `family-${userEmail}`;
+      
+      const cached = dataCache.get<Family>(cacheKey);
+      if (cached) return cached;
+
+      try {
+        const { data, error } = await supabase
+          .from('family_memberships')
+          .select(`
+            family_id,
+            families (
+              id,
+              name,
+              owner_email,
+              created_at,
+              updated_at
+            )
+          `)
+          .eq('user_email', userEmail)
+          .single();
+
+        if (error || !data?.families) return null;
+
+        const family = Array.isArray(data.families) ? data.families[0] : data.families;
+        const result = {
+          id: family.id,
+          name: family.name,
+          owner_email: family.owner_email,
+          created_at: family.created_at,
+          updated_at: family.updated_at
+        };
+
+        dataCache.set(cacheKey, result, 5 * 60 * 1000); // 5 min cache
+        return result;
+      } catch (error) {
+        console.error('Error getting family by user email:', error);
+        return null;
+      }
+    },
+
+    // Update family name (owner only)
+    updateName: async (familyId: string, name: string): Promise<void> => {
+      try {
+        const { error } = await supabase
+          .from('families')
+          .update({ name })
+          .eq('id', familyId);
+
+        if (error) throw error;
+        
+        // Invalidate family cache
+        dataCache.invalidatePattern('family-');
+      } catch (error) {
+        console.error('Error updating family name:', error);
+        throw error;
+      }
+    },
+
+    // Add member to family (owner only)
+    addMember: async (familyId: string, userEmail: string): Promise<void> => {
+      try {
+        const { error } = await supabase
+          .from('family_memberships')
+          .insert({
+            family_id: familyId,
+            user_email: userEmail
+          });
+
+        if (error) throw error;
+        
+        // Invalidate family cache for the new member
+        dataCache.invalidate(`family-${userEmail}`);
+      } catch (error) {
+        console.error('Error adding family member:', error);
+        throw error;
+      }
+    },
+
+    // Remove member from family (owner only)
+    removeMember: async (familyId: string, userEmail: string): Promise<void> => {
+      try {
+        const { error } = await supabase
+          .from('family_memberships')
+          .delete()
+          .eq('family_id', familyId)
+          .eq('user_email', userEmail);
+
+        if (error) throw error;
+        
+        // Invalidate family cache for the removed member
+        dataCache.invalidate(`family-${userEmail}`);
+      } catch (error) {
+        console.error('Error removing family member:', error);
+        throw error;
+      }
+    },
+
+    // Get all family members
+    getMembers: async (familyId: string): Promise<FamilyMembership[]> => {
+      try {
+        const { data, error } = await supabase
+          .from('family_memberships')
+          .select('*')
+          .eq('family_id', familyId)
+          .order('joined_at', { ascending: true });
+
+        if (error) throw error;
+
+        return data.map(member => ({
+          id: member.id,
+          family_id: member.family_id,
+          user_email: member.user_email,
+          joined_at: member.joined_at
+        }));
+      } catch (error) {
+        console.error('Error getting family members:', error);
+        throw error;
+      }
+    },
+
+    // Leave family (any member)
+    leave: async (userEmail: string): Promise<void> => {
+      try {
+        const { error } = await supabase
+          .from('family_memberships')
+          .delete()
+          .eq('user_email', userEmail);
+
+        if (error) throw error;
+        
+        // Invalidate family cache for the user leaving
+        dataCache.invalidate(`family-${userEmail}`);
+      } catch (error) {
+        console.error('Error leaving family:', error);
+        throw error;
+      }
+    },
+
+    // Delete family (owner only)
+    delete: async (familyId: string): Promise<void> => {
+      try {
+        const { error } = await supabase
+          .from('families')
+          .delete()
+          .eq('id', familyId);
+
+        if (error) throw error;
+        
+        // Invalidate all family cache since family is deleted
+        dataCache.invalidatePattern('family-');
+      } catch (error) {
+        console.error('Error deleting family:', error);
         throw error;
       }
     }

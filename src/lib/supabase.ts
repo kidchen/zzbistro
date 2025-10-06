@@ -38,6 +38,9 @@ export interface Database {
           tags: string[];
           created_at: string;
           updated_at: string;
+          image_path?: string;
+          image_version?: string;
+          family_id?: string; // New field
         };
         Insert: {
           id?: string;
@@ -50,17 +53,23 @@ export interface Database {
           tags: string[];
           created_at?: string;
           updated_at?: string;
+          image_path?: string;
+          image_version?: string;
+          family_id?: string; // New field
         };
         Update: {
           id?: string;
           name?: string;
-          ingredients?: string[];
+          recipe_ingredients?: { name: string; optional: boolean }[];
           instructions?: string[];
           image?: string;
           cooking_time?: number;
           servings?: number;
           tags?: string[];
           updated_at?: string;
+          image_path?: string;
+          image_version?: string;
+          family_id?: string; // New field
         };
       };
       ingredients: {
@@ -74,6 +83,7 @@ export interface Database {
           in_stock: boolean;
           created_at: string;
           updated_at: string;
+          family_id?: string; // New field
         };
         Insert: {
           id?: string;
@@ -85,6 +95,7 @@ export interface Database {
           in_stock: boolean;
           created_at?: string;
           updated_at?: string;
+          family_id?: string; // New field
         };
         Update: {
           id?: string;
@@ -95,6 +106,44 @@ export interface Database {
           expiry_date?: string;
           in_stock?: boolean;
           updated_at?: string;
+          family_id?: string; // New field
+        };
+      };
+      families: {
+        Row: {
+          id: string;
+          name?: string;
+          owner_email: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name?: string;
+          owner_email: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          owner_email?: string;
+        };
+      };
+      family_memberships: {
+        Row: {
+          id: string;
+          family_id: string;
+          user_email: string;
+          joined_at: string;
+        };
+        Insert: {
+          id?: string;
+          family_id: string;
+          user_email: string;
+        };
+        Update: {
+          id?: string;
+          family_id?: string;
+          user_email?: string;
         };
       };
     };

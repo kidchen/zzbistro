@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,6 +49,14 @@ export default function UserDropdown() {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
           <div className="py-1">
+            <Link
+              href="/family"
+              onClick={() => setIsOpen(false)}
+              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              Family Settings
+            </Link>
+            <div className="border-t border-gray-100 dark:border-gray-600"></div>
             <button
               onClick={handleSignOut}
               className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"

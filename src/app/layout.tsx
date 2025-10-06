@@ -7,6 +7,7 @@ import "../styles/colors.css";
 import SessionProvider from "@/components/SessionProvider";
 import AuthWrapper from "@/components/AuthWrapper";
 import ConditionalLayout from "@/components/ConditionalLayout";
+import FamilyProvider from "@/components/FamilyProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,9 +46,11 @@ export default function RootLayout({
       >
         <SessionProvider>
           <AuthWrapper>
-            <ConditionalLayout>
-              {children}
-            </ConditionalLayout>
+            <FamilyProvider>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
+            </FamilyProvider>
           </AuthWrapper>
         </SessionProvider>
         <SpeedInsights />

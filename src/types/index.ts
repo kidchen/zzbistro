@@ -9,6 +9,7 @@ export interface Recipe {
   servings: number;
   tags: string[];
   createdAt: Date;
+  family_id?: string; // New field
 }
 
 export interface RecipeIngredient {
@@ -23,10 +24,27 @@ export interface Ingredient {
   category: string;
   expiryDate?: Date;
   inStock: boolean;
+  family_id?: string; // New field
 }
 
 export interface MenuFilter {
   availableOnly: boolean;
   tags: string[];
   maxCookingTime?: number;
+}
+
+// New family-related interfaces
+export interface Family {
+  id: string;
+  name?: string;
+  owner_email: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FamilyMembership {
+  id: string;
+  family_id: string;
+  user_email: string;
+  joined_at: string;
 }

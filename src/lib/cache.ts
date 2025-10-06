@@ -44,6 +44,16 @@ class DataCache {
     this.cache.delete(key);
   }
 
+  // Invalidate all keys matching a pattern
+  invalidatePattern(pattern: string): void {
+    const keys = Array.from(this.cache.keys());
+    keys.forEach(key => {
+      if (key.includes(pattern)) {
+        this.cache.delete(key);
+      }
+    });
+  }
+
   // Update existing cache entry with fresh data
   refresh<T>(key: string, data: T): void {
     const entry = this.cache.get(key);

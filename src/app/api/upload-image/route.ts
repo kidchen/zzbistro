@@ -18,14 +18,14 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const recipeId = formData.get('recipeId') as string;
-    const userId = formData.get('userId') as string;
+    const familyId = formData.get('familyId') as string;
 
-    if (!file || !recipeId || !userId) {
+    if (!file || !recipeId || !familyId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Upload to Supabase using admin client
-    const filePath = `${userId}/${recipeId}.jpg`;
+    // Upload to Supabase using family-based path
+    const filePath = `${familyId}/${recipeId}.jpg`;
     
     
     const { error } = await supabaseAdmin.storage

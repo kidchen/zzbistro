@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useFamily } from '@/components/FamilyProvider';
 import Link from 'next/link';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
@@ -15,6 +16,7 @@ export default function RecipeDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { data: session } = useSession();
+  const { family } = useFamily();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [missingIngredients, setMissingIngredients] = useState<string[]>([]);
@@ -198,8 +200,8 @@ export default function RecipeDetailPage() {
       return;
     }
     
-    if (!session?.user?.email) {
-      alert('Please sign in to upload images');
+    if (!session?.user?.email || !family?.id) {
+      alert('Please sign in and ensure you have a family to upload images');
       return;
     }
 
@@ -216,7 +218,7 @@ export default function RecipeDetailPage() {
       const result = await uploadRecipeImage(
         file, 
         recipeId, 
-        session.user.email
+        family.id
       );
       
       
@@ -555,9 +557,31 @@ export default function RecipeDetailPage() {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Ingredients</h2>
             <ul className="space-y-2">
               {recipe.recipe_ingredients
-                .sort((a, b) => (a.optional ? 1 : 0) - (b.optional ? 1 : 0))
+                .sort((a, b) => {
+                  // Helper function to check if ingredient is in stock
+                  const isInStock = (ingredient: { name: string; optional: boolean }) => availableIngredients.some(stockIngredient => 
+                    stockIngredient.inStock && (
+                      stockIngredient.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
+                      ingredient.name.toLowerCase().includes(stockIngredient.name.toLowerCase())
+                    )
+                  );
+                  
+                  // 1. Required ingredients first (0), optional second (1)
+                  const requiredSort = (a.optional ? 1 : 0) - (b.optional ? 1 : 0);
+                  if (requiredSort !== 0) return requiredSort;
+                  
+                  // 2. Within same required/optional group, out of stock first (0), in stock second (1)
+                  return (isInStock(a) ? 1 : 0) - (isInStock(b) ? 1 : 0);
+                })
                 .map((ingredient, index) => {
                 const isMissing = missingIngredients.includes(ingredient.name);
+                // Check actual stock status for all ingredients (required and optional)
+                const isInStock = availableIngredients.some(stockIngredient => 
+                  stockIngredient.inStock && (
+                    stockIngredient.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
+                    ingredient.name.toLowerCase().includes(stockIngredient.name.toLowerCase())
+                  )
+                );
                 return (
                   <li
                     key={index}
@@ -566,7 +590,7 @@ export default function RecipeDetailPage() {
                     } ${ingredient.optional ? 'opacity-75' : ''}`}
                   >
                     <span className="mr-2">
-                      {isMissing ? '❌' : '✅'}
+                      {isInStock ? '✅' : '❌'}
                     </span>
                     <span className={ingredient.optional ? 'italic' : ''}>
                       {ingredient.name}

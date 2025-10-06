@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useFamily } from '@/components/FamilyProvider';
 import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
@@ -12,6 +13,7 @@ import CustomDropdown from '@/components/CustomDropdown';
 export default function NewRecipePage() {
   const router = useRouter();
   const { data: session } = useSession();
+  const { family } = useFamily();
   const [availableIngredients, setAvailableIngredients] = useState<Ingredient[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
@@ -123,8 +125,8 @@ export default function NewRecipePage() {
       return;
     }
     
-    if (!session?.user?.email) {
-      alert('Please sign in to upload images');
+    if (!session?.user?.email || !family?.id) {
+      alert('Please sign in and ensure you have a family to upload images');
       return;
     }
 
@@ -141,7 +143,7 @@ export default function NewRecipePage() {
       const result = await uploadRecipeImage(
         file, 
         tempRecipeId, 
-        session.user.email
+        family.id
       );
       
       
