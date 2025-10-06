@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
     // Upload to Supabase using admin client
     const filePath = `${userId}/${recipeId}.jpg`;
     
-    console.log('Uploading to path:', filePath);
     
     const { error } = await supabaseAdmin.storage
       .from('recipe-images')

@@ -1,7 +1,7 @@
 export interface Recipe {
   id: string;
   name: string;
-  ingredients: string[];
+  recipe_ingredients: RecipeIngredient[];
   instructions: string[];
   image_path?: string; // Supabase storage path
   image_version?: string; // For cache invalidation
@@ -9,6 +9,11 @@ export interface Recipe {
   servings: number;
   tags: string[];
   createdAt: Date;
+}
+
+export interface RecipeIngredient {
+  name: string;
+  optional: boolean;
 }
 
 export interface Ingredient {

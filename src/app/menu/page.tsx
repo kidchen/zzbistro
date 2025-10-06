@@ -33,26 +33,31 @@ export default function MenuPage() {
           setShowPartial(false); // Show only available recipes
         }
 
-        // Find recipes we can make completely
+        // Find recipes we can make completely (all required ingredients available)
         const available = allRecipes.filter(recipe => 
-          recipe.ingredients.every(recipeIngredient => 
-            inStockIngredients.some(stockIngredient => 
-              stockIngredient.name.toLowerCase().includes(recipeIngredient.toLowerCase()) ||
-              recipeIngredient.toLowerCase().includes(stockIngredient.name.toLowerCase())
+          recipe.recipe_ingredients
+            .filter(ingredient => !ingredient.optional) // Only check required ingredients
+            .every(recipeIngredient => 
+              inStockIngredients.some(stockIngredient => 
+                stockIngredient.name.toLowerCase().includes(recipeIngredient.name.toLowerCase()) ||
+                recipeIngredient.name.toLowerCase().includes(stockIngredient.name.toLowerCase())
+              )
             )
-          )
         );
 
         // Find recipes we can partially make (missing 1-3 ingredients)
         const partial = allRecipes
           .filter(recipe => !available.includes(recipe))
           .map(recipe => {
-            const missing = recipe.ingredients.filter(recipeIngredient => 
-              !inStockIngredients.some(stockIngredient => 
-                stockIngredient.name.toLowerCase().includes(recipeIngredient.toLowerCase()) ||
-                recipeIngredient.toLowerCase().includes(stockIngredient.name.toLowerCase())
+            const missing = recipe.recipe_ingredients
+              .filter(ingredient => !ingredient.optional) // Only count required ingredients as missing
+              .filter(recipeIngredient => 
+                !inStockIngredients.some(stockIngredient => 
+                  stockIngredient.name.toLowerCase().includes(recipeIngredient.name.toLowerCase()) ||
+                  recipeIngredient.name.toLowerCase().includes(stockIngredient.name.toLowerCase())
+                )
               )
-            );
+              .map(ingredient => ingredient.name); // Extract just the name
             return { recipe, missing };
           })
           .filter(({ missing }) => missing.length <= 3 && missing.length > 0)

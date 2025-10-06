@@ -18,7 +18,7 @@ export default function NewRecipePage() {
     name: '',
     cookingTime: 30,
     servings: 4,
-    ingredients: [''],
+    recipe_ingredients: [{ name: '', optional: false }],
     instructions: [''],
     tags: [] as string[],
     image_path: '',
@@ -44,7 +44,7 @@ export default function NewRecipePage() {
     const recipe: Recipe = {
       id: crypto.randomUUID(),
       name: formData.name,
-      ingredients: formData.ingredients.filter(ing => ing.trim() !== ''),
+      recipe_ingredients: formData.recipe_ingredients.filter(ing => ing.name.trim() !== ''),
       instructions: formData.instructions.filter(inst => inst.trim() !== ''),
       image_path: formData.image_path || undefined,
       image_version: formData.image_path ? Date.now().toString() : undefined,
@@ -66,21 +66,32 @@ export default function NewRecipePage() {
   const addIngredient = () => {
     setFormData(prev => ({
       ...prev,
-      ingredients: [...prev.ingredients, '']
+      recipe_ingredients: [...prev.recipe_ingredients, { name: '', optional: false }]
     }));
   };
 
   const removeIngredient = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      ingredients: prev.ingredients.filter((_, i) => i !== index)
+      recipe_ingredients: prev.recipe_ingredients.filter((_, i) => i !== index)
     }));
   };
 
-  const updateIngredient = (index: number, value: string) => {
+  const updateIngredient = (index: number, name: string) => {
     setFormData(prev => ({
       ...prev,
-      ingredients: prev.ingredients.map((ing, i) => i === index ? value : ing)
+      recipe_ingredients: prev.recipe_ingredients.map((ing, i) => 
+        i === index ? { ...ing, name } : ing
+      )
+    }));
+  };
+
+  const toggleIngredientOptional = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      recipe_ingredients: prev.recipe_ingredients.map((ing, i) => 
+        i === index ? { ...ing, optional: !ing.optional } : ing
+      )
     }));
   };
 
@@ -107,31 +118,24 @@ export default function NewRecipePage() {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log('File selected:', file?.name, file?.size);
-    console.log('Session:', session);
-    console.log('User email:', session?.user?.email);
     
     if (!file) {
-      console.log('No file selected');
       return;
     }
     
     if (!session?.user?.email) {
-      console.log('No session or email found');
       alert('Please sign in to upload images');
       return;
     }
 
     try {
       setUploadingImage(true);
-      console.log('Starting upload...');
       
       // Dynamic import to reduce initial bundle size
       const { uploadRecipeImage } = await import('@/lib/imageUpload');
       
       // Create temporary recipe ID for upload
       const tempRecipeId = crypto.randomUUID();
-      console.log('Temp recipe ID:', tempRecipeId);
       
       // Upload to Supabase
       const result = await uploadRecipeImage(
@@ -140,7 +144,6 @@ export default function NewRecipePage() {
         session.user.email
       );
       
-      console.log('Upload result:', result);
       
       setFormData(prev => ({
         ...prev,
@@ -148,7 +151,6 @@ export default function NewRecipePage() {
         image_preview: result.imageUrl
       }));
       
-      console.log('Form data updated');
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Failed to upload image: ' + error);
@@ -230,10 +232,10 @@ export default function NewRecipePage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {formData.ingredients.map((ingredient, index) => (
-                <div key={index} className="flex gap-2">
+              {formData.recipe_ingredients.map((ingredient, index) => (
+                <div key={index} className="flex gap-2 items-center">
                   <CustomDropdown
-                    value={ingredient}
+                    value={ingredient.name}
                     onChange={(value) => updateIngredient(index, value)}
                     options={availableIngredients.map((ing) => ({
                       value: ing.name,
@@ -242,7 +244,16 @@ export default function NewRecipePage() {
                     placeholder="Select an ingredient..."
                     className="flex-1"
                   />
-                  {formData.ingredients.length > 1 && (
+                  <label className="flex items-center gap-1 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={ingredient.optional}
+                      onChange={() => toggleIngredientOptional(index)}
+                      className="rounded"
+                    />
+                    Optional
+                  </label>
+                  {formData.recipe_ingredients.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeIngredient(index)}

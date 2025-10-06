@@ -31,7 +31,7 @@ export default function RecipesPage() {
   const filteredRecipes = useMemo(() => {
     return recipes.filter(recipe => {
       const matchesSearch = recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm.toLowerCase()));
+                           recipe.recipe_ingredients.some(ing => ing.name.toLowerCase().includes(searchTerm.toLowerCase()));
       const matchesTag = !selectedTag || recipe.tags.includes(selectedTag);
       return matchesSearch && matchesTag;
     });

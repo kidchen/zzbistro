@@ -4,13 +4,12 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { storage } from '@/lib/storage';
 import { Recipe, Ingredient } from '@/types';
 import { clearImageFromCache } from '@/lib/imageCache';
+import CachedImage from '@/components/CachedImage';
 import CustomDropdown from '@/components/CustomDropdown';
 import TagManager from '@/components/TagManager';
-import CachedImage from '@/components/CachedImage';
 
 export default function RecipeDetailPage() {
   const params = useParams();
@@ -26,7 +25,7 @@ export default function RecipeDetailPage() {
     name: '',
     cookingTime: 30,
     servings: 4,
-    ingredients: [''],
+    recipe_ingredients: [{ name: '', optional: false }],
     instructions: [''],
     tags: [] as string[],
     image_path: '', // Supabase path
@@ -49,7 +48,7 @@ export default function RecipeDetailPage() {
             name: foundRecipe.name,
             cookingTime: foundRecipe.cookingTime,
             servings: foundRecipe.servings,
-            ingredients: foundRecipe.ingredients,
+            recipe_ingredients: foundRecipe.recipe_ingredients,
             instructions: foundRecipe.instructions,
             tags: foundRecipe.tags,
             image_path: foundRecipe.image_path || '',
@@ -61,14 +60,17 @@ export default function RecipeDetailPage() {
           setAvailableIngredients(allIngredients);
           
           // Check ingredient availability
-          const missing = foundRecipe.ingredients.filter(recipeIngredient => 
-            !allIngredients.some(stockIngredient => 
-              stockIngredient.inStock && (
-                stockIngredient.name.toLowerCase().includes(recipeIngredient.toLowerCase()) ||
-                recipeIngredient.toLowerCase().includes(stockIngredient.name.toLowerCase())
+          const missing = foundRecipe.recipe_ingredients
+            .filter(ingredient => !ingredient.optional) // Only check required ingredients
+            .filter(recipeIngredient => 
+              !allIngredients.some(stockIngredient => 
+                stockIngredient.inStock && (
+                  stockIngredient.name.toLowerCase().includes(recipeIngredient.name.toLowerCase()) ||
+                  recipeIngredient.name.toLowerCase().includes(stockIngredient.name.toLowerCase())
+                )
               )
             )
-          );
+            .map(ingredient => ingredient.name); // Extract names for display
           setMissingIngredients(missing);
         }
       } catch (error) {
@@ -89,7 +91,7 @@ export default function RecipeDetailPage() {
       editData.name !== recipe.name ||
       editData.cookingTime !== recipe.cookingTime ||
       editData.servings !== recipe.servings ||
-      JSON.stringify(editData.ingredients.filter(ing => ing.trim() !== '')) !== JSON.stringify(recipe.ingredients) ||
+      JSON.stringify(editData.recipe_ingredients.filter(ing => ing.name.trim() !== '')) !== JSON.stringify(recipe.recipe_ingredients) ||
       JSON.stringify(editData.instructions.filter(inst => inst.trim() !== '')) !== JSON.stringify(recipe.instructions) ||
       JSON.stringify(editData.tags) !== JSON.stringify(recipe.tags) ||
       editData.image_path !== recipe.image_path
@@ -105,7 +107,7 @@ export default function RecipeDetailPage() {
       name: editData.name,
       cookingTime: editData.cookingTime,
       servings: editData.servings,
-      ingredients: editData.ingredients.filter(ing => ing.trim() !== ''),
+      recipe_ingredients: editData.recipe_ingredients.filter(ing => ing.name.trim() !== ''),
       instructions: editData.instructions.filter(inst => inst.trim() !== ''),
       tags: editData.tags,
       image_path: editData.image_path || undefined,
@@ -139,21 +141,32 @@ export default function RecipeDetailPage() {
   const addIngredient = () => {
     setEditData(prev => ({
       ...prev,
-      ingredients: [...prev.ingredients, '']
+      recipe_ingredients: [...prev.recipe_ingredients, { name: '', optional: false }]
     }));
   };
 
   const removeIngredient = (index: number) => {
     setEditData(prev => ({
       ...prev,
-      ingredients: prev.ingredients.filter((_, i) => i !== index)
+      recipe_ingredients: prev.recipe_ingredients.filter((_, i) => i !== index)
     }));
   };
 
-  const updateIngredient = (index: number, value: string) => {
+  const updateIngredient = (index: number, name: string) => {
     setEditData(prev => ({
       ...prev,
-      ingredients: prev.ingredients.map((ing, i) => i === index ? value : ing)
+      recipe_ingredients: prev.recipe_ingredients.map((ing, i) => 
+        i === index ? { ...ing, name } : ing
+      )
+    }));
+  };
+
+  const toggleIngredientOptional = (index: number) => {
+    setEditData(prev => ({
+      ...prev,
+      recipe_ingredients: prev.recipe_ingredients.map((ing, i) => 
+        i === index ? { ...ing, optional: !ing.optional } : ing
+      )
     }));
   };
 
@@ -180,31 +193,24 @@ export default function RecipeDetailPage() {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log('Edit page - File selected:', file?.name, file?.size);
-    console.log('Edit page - Session:', session);
-    console.log('Edit page - User email:', session?.user?.email);
     
     if (!file) {
-      console.log('Edit page - No file selected');
       return;
     }
     
     if (!session?.user?.email) {
-      console.log('Edit page - No session or email found');
       alert('Please sign in to upload images');
       return;
     }
 
     try {
       setUploadingImage(true);
-      console.log('Edit page - Starting upload...');
       
       // Dynamic import to reduce initial bundle size
       const { uploadRecipeImage } = await import('@/lib/imageUpload');
       
       // Use current recipe ID or create temp one
       const recipeId = recipe?.id || crypto.randomUUID();
-      console.log('Edit page - Recipe ID:', recipeId);
       
       // Upload to Supabase
       const result = await uploadRecipeImage(
@@ -213,7 +219,6 @@ export default function RecipeDetailPage() {
         session.user.email
       );
       
-      console.log('Edit page - Upload result:', result);
       
       // Clear old image from cache if it exists
       if (recipe?.image_path) {
@@ -226,7 +231,6 @@ export default function RecipeDetailPage() {
         image_preview: result.imageUrl
       }));
       
-      console.log('Edit page - Form data updated');
     } catch (error) {
       console.error('Edit page - Error uploading image:', error);
       alert('Failed to upload image: ' + error);
@@ -408,8 +412,8 @@ export default function RecipeDetailPage() {
               </button>
             </div>
             <div className="space-y-3">
-              {editData.ingredients.map((ingredient, index) => (
-                <div key={index} className="flex gap-2">
+              {editData.recipe_ingredients.map((ingredient, index) => (
+                <div key={index} className="flex gap-2 items-center">
                   <CustomDropdown
                     options={[
                       { value: '', label: 'Select an ingredient...' },
@@ -418,12 +422,21 @@ export default function RecipeDetailPage() {
                         label: `${ing.name} (${ing.inStock ? 'In Stock' : 'Out of Stock'})`
                       }))
                     ]}
-                    value={ingredient}
+                    value={ingredient.name}
                     onChange={(value) => updateIngredient(index, value)}
                     placeholder="Select an ingredient..."
                     className="flex-1"
                   />
-                  {editData.ingredients.length > 1 && (
+                  <label className="flex items-center gap-1 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={ingredient.optional}
+                      onChange={() => toggleIngredientOptional(index)}
+                      className="rounded"
+                    />
+                    Optional
+                  </label>
+                  {editData.recipe_ingredients.length > 1 && (
                     <button
                       onClick={() => removeIngredient(index)}
                       className="text-error hover:text-error px-2"
@@ -497,13 +510,23 @@ export default function RecipeDetailPage() {
               </p>
               {(editData.image_preview || editData.image_path) && (
                 <div className="mt-4">
-                  <Image
-                    src={editData.image_preview || editData.image_path}
-                    alt="Recipe preview"
-                    width={128}
-                    height={128}
-                    className="w-32 h-32 object-cover rounded-lg"
-                  />
+                  {editData.image_preview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={editData.image_preview}
+                      alt="Recipe preview"
+                      className="w-32 h-32 object-cover rounded-lg"
+                    />
+                  ) : editData.image_path ? (
+                    <CachedImage
+                      imagePath={editData.image_path}
+                      alt="Recipe preview"
+                      width={128}
+                      height={128}
+                      className="w-32 h-32 object-cover rounded-lg"
+                      lazy={false}
+                    />
+                  ) : null}
                 </div>
               )}
             </div>
@@ -531,19 +554,26 @@ export default function RecipeDetailPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Ingredients</h2>
             <ul className="space-y-2">
-              {recipe.ingredients.map((ingredient, index) => {
-                const isMissing = missingIngredients.includes(ingredient);
+              {recipe.recipe_ingredients
+                .sort((a, b) => (a.optional ? 1 : 0) - (b.optional ? 1 : 0))
+                .map((ingredient, index) => {
+                const isMissing = missingIngredients.includes(ingredient.name);
                 return (
                   <li
                     key={index}
                     className={`flex items-center ${
                       isMissing ? 'text-error' : 'text-gray-700 dark:text-gray-300'
-                    }`}
+                    } ${ingredient.optional ? 'opacity-75' : ''}`}
                   >
                     <span className="mr-2">
                       {isMissing ? '❌' : '✅'}
                     </span>
-                    {ingredient}
+                    <span className={ingredient.optional ? 'italic' : ''}>
+                      {ingredient.name}
+                    </span>
+                    {ingredient.optional && (
+                      <span className="ml-2 text-xs text-gray-500">(optional)</span>
+                    )}
                   </li>
                 );
               })}

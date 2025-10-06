@@ -12,12 +12,13 @@ A modern Next.js web application designed as a private family cooking companion 
 ### 🍽️ Recipe Management
 - **Create & Edit Recipes** - Add detailed recipes with ingredients, instructions, and metadata
 - **Recipe Categories** - Organize recipes by type, difficulty, and tags
+- **Optional Ingredients** - Mark ingredients as optional with visual indicators and smart filtering
 - **Cooking Time & Servings** - Track preparation time, cooking time, and serving sizes
 - **Private Image Storage** - Secure recipe photos with automatic compression and caching
   - Images stored in private Supabase storage buckets
   - Automatic 400x400 compression with center crop
-  - 20-hour client-side caching for optimal performance
-  - Server-side signed URL generation for secure access
+  - Client-side caching with lazy loading for optimal performance
+  - Optimized image display with regular img tags for data URL compatibility
 
 ### 🥫 Ingredient Tracking
 - **Pantry Management** - Keep track of ingredients you have in stock
@@ -28,10 +29,11 @@ A modern Next.js web application designed as a private family cooking companion 
 
 ### 🎲 Smart Features
 - **"I'm Feeling Lucky"** - Get random meal suggestions when you need inspiration
-- **Menu Planning** - See what you can cook with current ingredients
+- **Menu Planning** - See what you can cook with current ingredients (only considers required ingredients)
 - **Recipe Discovery** - Browse and filter your recipe collection
 - **Smart Filtering** - Filter by cooking time, tags, and ingredient availability
-- **Partial Recipe Matching** - Find recipes you can almost make (missing 1-3 ingredients)
+- **Partial Recipe Matching** - Find recipes you can almost make (missing 1-3 required ingredients)
+- **Ingredient Prioritization** - Required ingredients displayed first, optional ingredients shown with italic styling
 
 ### 🎨 User Experience
 - **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
@@ -244,7 +246,15 @@ This is a private family application, but we welcome feedback and suggestions th
 
 ## Recent Updates
 
-### Performance Enhancements (Latest)
+### Optional Ingredients & Image Optimization (Latest)
+- **Optional Ingredients Feature** - Mark ingredients as optional with visual indicators
+- **Smart Recipe Filtering** - Only required ingredients count for availability checks
+- **Ingredient Display Priority** - Required ingredients shown first, optional in italic
+- **Image Display Optimization** - Fixed Next.js Image compatibility with data URLs
+- **Enhanced Recipe Editing** - Existing photos now preview immediately in edit forms
+- **Database Migration** - Migrated from ingredients array to recipe_ingredients JSONB structure
+
+### Performance Enhancements
 - Advanced caching system with stale-while-revalidate
 - Optimized Supabase client with connection pooling
 - Selective field loading for faster list views

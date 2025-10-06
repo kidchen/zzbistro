@@ -36,12 +36,15 @@ export default function LuckyPage() {
 
   const checkRecipeAvailability = (recipe: Recipe) => {
     const inStockIngredients = ingredients.filter(i => i.inStock);
-    const missing = recipe.ingredients.filter(recipeIngredient => 
-      !inStockIngredients.some(stockIngredient => 
-        stockIngredient.name.toLowerCase().includes(recipeIngredient.toLowerCase()) ||
-        recipeIngredient.toLowerCase().includes(stockIngredient.name.toLowerCase())
+    const missing = recipe.recipe_ingredients
+      .filter(ingredient => !ingredient.optional) // Only check required ingredients
+      .filter(recipeIngredient => 
+        !inStockIngredients.some(stockIngredient => 
+          stockIngredient.name.toLowerCase().includes(recipeIngredient.name.toLowerCase()) ||
+          recipeIngredient.name.toLowerCase().includes(stockIngredient.name.toLowerCase())
+        )
       )
-    );
+      .map(ingredient => ingredient.name); // Extract names for display
     
     setMissingIngredients(missing);
     setCanMake(missing.length === 0);
@@ -59,12 +62,14 @@ export default function LuckyPage() {
       if (preferAvailable) {
         const inStockIngredients = ingredients.filter(i => i.inStock);
         const cookableRecipes = recipes.filter(recipe => 
-          recipe.ingredients.every(recipeIngredient => 
-            inStockIngredients.some(stockIngredient => 
-              stockIngredient.name.toLowerCase().includes(recipeIngredient.toLowerCase()) ||
-              recipeIngredient.toLowerCase().includes(stockIngredient.name.toLowerCase())
+          recipe.recipe_ingredients
+            .filter(ingredient => !ingredient.optional) // Only check required ingredients
+            .every(recipeIngredient => 
+              inStockIngredients.some(stockIngredient => 
+                stockIngredient.name.toLowerCase().includes(recipeIngredient.name.toLowerCase()) ||
+                recipeIngredient.name.toLowerCase().includes(stockIngredient.name.toLowerCase())
+              )
             )
-          )
         );
         
         // If we have cookable recipes, prefer them, otherwise use all recipes

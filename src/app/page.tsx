@@ -20,14 +20,16 @@ export default function Home() {
         const ingredients = await storage.ingredients.getAll();
         const inStock = ingredients.filter(i => i.inStock);
         
-        // Calculate available recipes (recipes where all ingredients are in stock)
+        // Calculate available recipes (recipes where all required ingredients are in stock)
         const availableRecipes = recipes.filter(recipe => 
-          recipe.ingredients.every(ingredient => 
-            inStock.some(stock => 
-              stock.name.toLowerCase().includes(ingredient.toLowerCase()) ||
-              ingredient.toLowerCase().includes(stock.name.toLowerCase())
+          recipe.recipe_ingredients
+            .filter(ingredient => !ingredient.optional) // Only check required ingredients
+            .every(ingredient => 
+              inStock.some(stock => 
+                stock.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
+                ingredient.name.toLowerCase().includes(stock.name.toLowerCase())
+              )
             )
-          )
         );
 
         setStats({

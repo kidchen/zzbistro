@@ -30,7 +30,7 @@ export interface Database {
         Row: {
           id: string;
           name: string;
-          ingredients: string[];
+          recipe_ingredients: { name: string; optional: boolean }[];
           instructions: string[];
           image?: string;
           cooking_time: number;
@@ -42,7 +42,7 @@ export interface Database {
         Insert: {
           id?: string;
           name: string;
-          ingredients: string[];
+          recipe_ingredients: { name: string; optional: boolean }[];
           instructions: string[];
           image?: string;
           cooking_time: number;

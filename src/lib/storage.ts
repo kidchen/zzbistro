@@ -27,7 +27,7 @@ export const storage = {
         const recipes = (data as any[]).map((recipe) => ({
           id: recipe.id,
           name: recipe.name,
-          ingredients: recipe.ingredients,
+          recipe_ingredients: recipe.recipe_ingredients,
           instructions: recipe.instructions,
           image_path: recipe.image_path,
           image_version: recipe.image_version,
@@ -67,7 +67,7 @@ export const storage = {
           .from('recipes')
           .insert({
             name: recipe.name,
-            ingredients: recipe.ingredients,
+            recipe_ingredients: recipe.recipe_ingredients,
             instructions: recipe.instructions,
             image_path: recipe.image_path,
             image_version: recipe.image_version,
@@ -83,7 +83,7 @@ export const storage = {
         const newRecipe = {
           id: data.id,
           name: data.name,
-          ingredients: data.ingredients,
+          recipe_ingredients: data.recipe_ingredients,
           instructions: data.instructions,
           image_path: data.image_path,
           image_version: data.image_version,
@@ -115,7 +115,7 @@ export const storage = {
           .from('recipes')
           .update({
             name: updatedRecipe.name,
-            ingredients: updatedRecipe.ingredients,
+            recipe_ingredients: updatedRecipe.recipe_ingredients,
             instructions: updatedRecipe.instructions,
             image_path: updatedRecipe.image_path,
             image_version: updatedRecipe.image_version,
