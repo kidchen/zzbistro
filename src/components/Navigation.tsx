@@ -4,11 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 import UserDropdown from './UserDropdown';
 
 const Navigation = () => {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [isScrolled, setIsScrolled] = useState(false);
   
   const navItems = [
     { href: '/', label: 'Home', icon: '🏠' },
@@ -18,8 +20,17 @@ const Navigation = () => {
     { href: '/lucky', label: "I'm Feeling Lucky", icon: '🎲' },
   ];
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center flex-shrink-0">
@@ -31,7 +42,13 @@ const Navigation = () => {
                 height={40}
                 className="w-8 h-8 md:w-10 md:h-10"
               />
-              <span className="text-xl md:text-2xl font-bold text-[#C63721] dark:text-[#C63721]">ZZBistro</span>
+              <span 
+                className={`text-xl md:text-2xl font-bold text-[#C63721] dark:text-[#C63721] transition-all duration-300 overflow-hidden ${
+                  isScrolled ? 'w-0 opacity-0 sm:w-auto sm:opacity-100' : 'w-auto opacity-100'
+                }`}
+              >
+                ZZBistro
+              </span>
             </Link>
           </div>
           
