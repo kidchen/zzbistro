@@ -246,6 +246,15 @@ This is a private family application, but we welcome feedback and suggestions th
 
 ## Recent Updates
 
+### Bug Fixes & UI Improvements (October 2025)
+- **Recipe Edit Image Upload Fix** - Images now only upload when "Save Changes" is clicked, not immediately upon selection
+- **Mobile Responsiveness Improvements** - Fixed input field sizing inconsistencies across mobile devices:
+  - Pantry/ingredients page: Standardized expiry date input field size
+  - Family settings page: Improved button and input sizing, fixed overlapping text issues
+  - Added responsive layouts and proper spacing for mobile devices
+- **Email Validation** - Added real-time email format validation for "Add Family Member" functionality
+- **Code Quality** - Fixed JavaScript parsing errors and improved code structure
+
 ### Optional Ingredients & Image Optimization (Latest)
 - **Optional Ingredients Feature** - Mark ingredients as optional with visual indicators
 - **Smart Recipe Filtering** - Only required ingredients count for availability checks

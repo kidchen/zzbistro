@@ -31,7 +31,8 @@ export default function RecipeDetailPage() {
     instructions: [''],
     tags: [] as string[],
     image_path: '', // Supabase path
-    image_preview: '' // For preview during upload
+    image_preview: '', // For preview during upload
+    pendingImageFile: null as File | null // Store file until save
   });
 
   useEffect(() => {
@@ -54,7 +55,8 @@ export default function RecipeDetailPage() {
             instructions: foundRecipe.instructions,
             tags: foundRecipe.tags,
             image_path: foundRecipe.image_path || '',
-            image_preview: '' // Will be set during upload
+            image_preview: '', // Will be set during upload
+            pendingImageFile: null
           });
           
           // Load available ingredients for editing
@@ -85,44 +87,84 @@ export default function RecipeDetailPage() {
     loadRecipeData();
   }, [params?.id]);
 
+  // Cleanup object URL on unmount
+  useEffect(() => {
+    return () => {
+      if (editData.image_preview && editData.pendingImageFile) {
+        URL.revokeObjectURL(editData.image_preview);
+      }
+    };
+  }, [editData.image_preview, editData.pendingImageFile]);
+
   const handleSave = async () => {
     if (!recipe) return;
     
-    // Check if there are any changes
-    const hasChanges = (
-      editData.name !== recipe.name ||
-      editData.cookingTime !== recipe.cookingTime ||
-      editData.servings !== recipe.servings ||
-      JSON.stringify(editData.recipe_ingredients.filter(ing => ing.name.trim() !== '')) !== JSON.stringify(recipe.recipe_ingredients) ||
-      JSON.stringify(editData.instructions.filter(inst => inst.trim() !== '')) !== JSON.stringify(recipe.instructions) ||
-      JSON.stringify(editData.tags) !== JSON.stringify(recipe.tags) ||
-      editData.image_path !== recipe.image_path
-    );
-
-    if (!hasChanges) {
-      setIsEditing(false);
-      return;
-    }
-    
-    const updatedRecipe: Recipe = {
-      ...recipe,
-      name: editData.name,
-      cookingTime: editData.cookingTime,
-      servings: editData.servings,
-      recipe_ingredients: editData.recipe_ingredients.filter(ing => ing.name.trim() !== ''),
-      instructions: editData.instructions.filter(inst => inst.trim() !== ''),
-      tags: editData.tags,
-      image_path: editData.image_path || undefined,
-      image_version: editData.image_path ? Date.now().toString() : recipe.image_version
-    };
-
     try {
+      // Handle image upload if there's a pending file
+      let finalImagePath = editData.image_path;
+      if (editData.pendingImageFile) {
+        if (!session?.user?.email || !family?.id) {
+          alert('Please sign in and ensure you have a family to upload images');
+          return;
+        }
+
+        setUploadingImage(true);
+        
+        // Dynamic import to reduce initial bundle size
+        const { uploadRecipeImage } = await import('@/lib/imageUpload');
+        
+        // Upload to Supabase
+        const result = await uploadRecipeImage(
+          editData.pendingImageFile, 
+          recipe.id, 
+          family.id
+        );
+        
+        // Clear old image from cache if it exists
+        if (recipe.image_path) {
+          clearImageFromCache(recipe.image_path);
+        }
+        
+        finalImagePath = result.imagePath;
+        setUploadingImage(false);
+      }
+
+      // Check if there are any changes
+      const hasChanges = (
+        editData.name !== recipe.name ||
+        editData.cookingTime !== recipe.cookingTime ||
+        editData.servings !== recipe.servings ||
+        JSON.stringify(editData.recipe_ingredients.filter(ing => ing.name.trim() !== '')) !== JSON.stringify(recipe.recipe_ingredients) ||
+        JSON.stringify(editData.instructions.filter(inst => inst.trim() !== '')) !== JSON.stringify(recipe.instructions) ||
+        JSON.stringify(editData.tags) !== JSON.stringify(recipe.tags) ||
+        finalImagePath !== recipe.image_path ||
+        editData.pendingImageFile !== null
+      );
+
+      if (!hasChanges) {
+        setIsEditing(false);
+        return;
+      }
+      
+      const updatedRecipe: Recipe = {
+        ...recipe,
+        name: editData.name,
+        cookingTime: editData.cookingTime,
+        servings: editData.servings,
+        recipe_ingredients: editData.recipe_ingredients.filter(ing => ing.name.trim() !== ''),
+        instructions: editData.instructions.filter(inst => inst.trim() !== ''),
+        tags: editData.tags,
+        image_path: finalImagePath || undefined,
+        image_version: finalImagePath ? Date.now().toString() : recipe.image_version
+      };
+
       await storage.recipes.update(recipe.id, updatedRecipe);
       setRecipe(updatedRecipe);
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating recipe:', error);
       alert('Failed to update recipe. Please try again.');
+      setUploadingImage(false);
     }
   };
 
@@ -193,6 +235,28 @@ export default function RecipeDetailPage() {
     }));
   };
 
+  const handleCancel = () => {
+    // Clean up any object URL to prevent memory leaks
+    if (editData.image_preview && editData.pendingImageFile) {
+      URL.revokeObjectURL(editData.image_preview);
+    }
+    
+    // Reset edit data to original recipe values
+    setEditData({
+      name: recipe?.name || '',
+      cookingTime: recipe?.cookingTime || 30,
+      servings: recipe?.servings || 4,
+      recipe_ingredients: recipe?.recipe_ingredients || [{ name: '', optional: false }],
+      instructions: recipe?.instructions || [''],
+      tags: recipe?.tags || [],
+      image_path: recipe?.image_path || '',
+      image_preview: '',
+      pendingImageFile: null
+    });
+    
+    setIsEditing(false);
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     
@@ -200,45 +264,14 @@ export default function RecipeDetailPage() {
       return;
     }
     
-    if (!session?.user?.email || !family?.id) {
-      alert('Please sign in and ensure you have a family to upload images');
-      return;
-    }
-
-    try {
-      setUploadingImage(true);
-      
-      // Dynamic import to reduce initial bundle size
-      const { uploadRecipeImage } = await import('@/lib/imageUpload');
-      
-      // Use current recipe ID or create temp one
-      const recipeId = recipe?.id || crypto.randomUUID();
-      
-      // Upload to Supabase
-      const result = await uploadRecipeImage(
-        file, 
-        recipeId, 
-        family.id
-      );
-      
-      
-      // Clear old image from cache if it exists
-      if (recipe?.image_path) {
-        clearImageFromCache(recipe.image_path);
-      }
-      
-      setEditData(prev => ({
-        ...prev,
-        image_path: result.imagePath,
-        image_preview: result.imageUrl
-      }));
-      
-    } catch (error) {
-      console.error('Edit page - Error uploading image:', error);
-      alert('Failed to upload image: ' + error);
-    } finally {
-      setUploadingImage(false);
-    }
+    // Create a local preview URL
+    const previewUrl = URL.createObjectURL(file);
+    
+    setEditData(prev => ({
+      ...prev,
+      image_preview: previewUrl,
+      pendingImageFile: file
+    }));
   };
 
   // Function to convert URLs in text to clickable links
@@ -247,7 +280,7 @@ export default function RecipeDetailPage() {
     const parts = text.split(urlRegex);
     
     return parts.map((part, index) => {
-      if (urlRegex.test(part)) {
+      if (/(https?:\/\/[^\s]+)/.test(part)) {
         return (
           <a
             key={index}
@@ -355,7 +388,7 @@ export default function RecipeDetailPage() {
                 Save Changes
               </button>
               <button
-                onClick={() => setIsEditing(false)}
+                onClick={handleCancel}
                 className="bg-secondary text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-secondary cursor-pointer text-sm md:text-base"
               >
                 Cancel
@@ -508,7 +541,7 @@ export default function RecipeDetailPage() {
                 className="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white cursor-pointer disabled:opacity-50"
               />
               <p className="text-xs text-gray-500 mt-1">
-                {uploadingImage ? 'Uploading and compressing...' : 'Images will be automatically compressed to 400x400 and stored securely'}
+                {uploadingImage ? 'Uploading and compressing...' : 'Image will be uploaded when you save changes'}
               </p>
               {(editData.image_preview || editData.image_path) && (
                 <div className="mt-4">
@@ -535,8 +568,7 @@ export default function RecipeDetailPage() {
           </div>
         </div>
       ) : (
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Image */}
         {recipe.image_path && (
           <div className="lg:col-span-1">
