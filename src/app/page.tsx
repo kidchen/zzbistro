@@ -82,7 +82,7 @@ export default function Home() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Header */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-6 md:mb-12">
         <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
           Welcome to ZZBistro! 👨‍🍳👩‍🍳
         </h1>
@@ -92,7 +92,7 @@ export default function Home() {
       </div>
 
       {/* Stats Cards - Desktop: Cards, Mobile: Table */}
-      <div className="mb-8">
+      <div className="mb-4 md:mb-8">
         {/* Desktop Cards */}
         <div className="hidden md:grid md:grid-cols-4 gap-6">
           <Link href="/recipes" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">

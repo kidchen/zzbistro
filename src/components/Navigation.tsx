@@ -13,11 +13,10 @@ const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   
   const navItems = [
-    { href: '/', label: 'Home', icon: '🏠' },
     { href: '/recipes', label: 'Recipes', icon: '📖' },
     { href: '/ingredients', label: 'Pantry', icon: '🥫' },
     { href: '/menu', label: 'Menu', icon: '🍽️' },
-    { href: '/lucky', label: "I'm Feeling Lucky", icon: '🎲' },
+    { href: '/lucky', label: 'Lucky', fullLabel: "I'm Feeling Lucky", icon: '🎲' },
   ];
 
   useEffect(() => {
@@ -43,7 +42,7 @@ const Navigation = () => {
                 className="w-8 h-8 md:w-10 md:h-10"
               />
               <span 
-                className={`text-xl md:text-2xl font-bold text-[#C63721] dark:text-[#C63721] transition-all duration-300 overflow-hidden ${
+                className={`text-xl md:text-2xl font-bold text-[#C63721] dark:text-[#C63721] transition-all duration-300 overflow-hidden hidden sm:block ${
                   isScrolled ? 'w-0 opacity-0 sm:w-auto sm:opacity-100' : 'w-auto opacity-100'
                 }`}
               >
@@ -53,20 +52,24 @@ const Navigation = () => {
           </div>
           
           {/* Mobile: Scrollable navigation */}
-          <div className="flex items-center min-w-0 flex-1 ml-4 sm:ml-8">
-            <div className="flex items-center space-x-4 overflow-x-auto scrollbar-hide pb-1 sm:space-x-8 sm:overflow-visible">
+          <div className="flex items-center min-w-0 flex-1 ml-2 sm:ml-8">
+            <div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide pb-1 sm:space-x-8 sm:overflow-visible">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`inline-flex items-center px-2 pt-1 text-sm font-medium whitespace-nowrap flex-shrink-0 ${
+                  className={`inline-flex items-center px-1 pt-1 text-sm font-medium whitespace-nowrap flex-shrink-0 sm:px-2 ${
                     pathname === item.href
                       ? 'text-[#C63721] dark:text-[#C63721] border-b-2 border-[#C63721] dark:border-[#C63721]'
                       : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
                 >
-                  <span className="mr-1 sm:mr-2">{item.icon}</span>
-                  <span className="hidden sm:inline">{item.label}</span>
+                  {/* Mobile: text only, Desktop: icon + text */}
+                  <span className="sm:hidden">{item.label}</span>
+                  <span className="hidden sm:inline-flex items-center">
+                    <span className="mr-2">{item.icon}</span>
+                    {item.fullLabel || item.label}
+                  </span>
                 </Link>
               ))}
             </div>
@@ -74,7 +77,7 @@ const Navigation = () => {
             
           {/* User section - always on the right */}
           {session && (
-            <div className="flex items-center ml-4 pl-4 border-l border-gray-200 dark:border-gray-700 flex-shrink-0">
+            <div className="flex items-center ml-2 sm:ml-4 sm:pl-4 sm:border-l sm:border-gray-200 sm:dark:border-gray-700 flex-shrink-0">
               <UserDropdown />
             </div>
           )}

@@ -324,9 +324,9 @@ export default function RecipeDetailPage() {
   const canCook = missingIngredients.length === 0;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
       {/* Header */}
-      <div className="mb-4 sm:mb-6">
+      <div className="mb-3 md:mb-6">
         <Link href="/recipes" className="text-[#C63721] hover:text-primary-brand mb-2 inline-block">
           ← Back to recipes
         </Link>
@@ -364,7 +364,7 @@ export default function RecipeDetailPage() {
 
       {/* Tags */}
       {!isEditing && recipe.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
+        <div className="flex flex-wrap gap-2 mb-3 md:mb-6">
           {recipe.tags.map(tag => (
             <span
               key={tag}
@@ -378,8 +378,8 @@ export default function RecipeDetailPage() {
 
       {/* Edit Form */}
       {isEditing ? (
-        <div className="space-y-3">
-          <div className="flex justify-between items-center mb-6">
+        <div className="space-y-2 md:space-y-3">
+          <div className="flex justify-between items-center mb-4 md:mb-6">
             <div className="flex gap-4">
               <button
                 onClick={handleSave}
@@ -437,7 +437,7 @@ export default function RecipeDetailPage() {
 
           {/* Ingredients */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-3 md:mb-4">
               <h3 className="text-lg font-semibold">Ingredients</h3>
               <button
                 onClick={addIngredient}
@@ -446,7 +446,7 @@ export default function RecipeDetailPage() {
                 Add Ingredient
               </button>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               {editData.recipe_ingredients.map((ingredient, index) => (
                 <div key={index} className="flex gap-2 items-center">
                   <CustomDropdown
@@ -486,7 +486,7 @@ export default function RecipeDetailPage() {
 
           {/* Instructions */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-3 md:mb-4">
               <h3 className="text-lg font-semibold">Instructions</h3>
               <button
                 onClick={addInstruction}
@@ -495,7 +495,7 @@ export default function RecipeDetailPage() {
                 Add Step
               </button>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               {editData.instructions.map((instruction, index) => (
                 <div key={index} className="flex gap-2">
                   <span className="text-gray-500 mt-2 min-w-[2rem]">{index + 1}.</span>
@@ -528,7 +528,7 @@ export default function RecipeDetailPage() {
 
           {/* Image Upload */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
-            <h3 className="text-lg font-semibold mb-4">Recipe Photo</h3>
+            <h3 className="text-lg font-semibold mb-3 md:mb-4">Recipe Photo</h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Upload Image
@@ -568,7 +568,7 @@ export default function RecipeDetailPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
         {/* Image */}
         {recipe.image_path && (
           <div className="lg:col-span-1">
@@ -583,10 +583,10 @@ export default function RecipeDetailPage() {
         )}
 
         {/* Content Container */}
-        <div className={`${recipe.image_path ? 'lg:col-span-2' : 'lg:col-span-3'} space-y-6`}>
+        <div className={`${recipe.image_path ? 'lg:col-span-2' : 'lg:col-span-3'} space-y-3 md:space-y-6`}>
           {/* Ingredients */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Ingredients</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 md:mb-4">Ingredients</h2>
             <ul className="space-y-2">
               {recipe.recipe_ingredients
                 .sort((a, b) => {
@@ -638,8 +638,8 @@ export default function RecipeDetailPage() {
 
           {/* Instructions */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Instructions</h2>
-            <ol className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 md:mb-4">Instructions</h2>
+            <ol className="space-y-2 md:space-y-4">
               {recipe.instructions.map((instruction, index) => (
                 <li key={index} className="flex">
                   <span className="bg-[#C63721] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mr-3 mt-0.5 flex-shrink-0">

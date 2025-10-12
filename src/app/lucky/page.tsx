@@ -116,7 +116,7 @@ export default function LuckyPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-      <div className="text-center mb-12">
+      <div className="text-center mb-6 md:mb-12">
         <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">I&apos;m Feeling Lucky! 🎲</h1>
         <p className="text-base md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           Can&apos;t decide what to cook? Let us surprise you with a random recipe suggestion!
@@ -145,7 +145,7 @@ export default function LuckyPage() {
       ) : (
         <>
           {/* Main Lucky Button */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-6 md:mb-12">
             <div className="mb-6">
               <label className="flex items-center justify-center space-x-2">
                 <input
@@ -186,9 +186,9 @@ export default function LuckyPage() {
           </div>
 
           {/* Mood-based suggestions */}
-          <div className="mb-12">
+          <div className="mb-6 md:mb-12">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-4 sm:mb-6">Or choose your mood...</h2>
-            <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-4">
               {moodSuggestions.map((suggestion) => (
                 <button
                   key={suggestion.mood}
@@ -200,8 +200,8 @@ export default function LuckyPage() {
                       : 'border-orange-200 bg-white dark:bg-gray-800 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-gray-700 cursor-pointer'
                   }`}
                 >
-                  <div className="text-2xl md:text-3xl mb-1 md:mb-2">{suggestion.emoji}</div>
-                  <div className="font-medium text-gray-900 dark:text-white text-sm md:text-base">{suggestion.mood}</div>
+                  <div className="text-xl md:text-3xl mb-1 md:mb-2">{suggestion.emoji}</div>
+                  <div className="font-medium text-gray-900 dark:text-white text-xs md:text-base">{suggestion.mood}</div>
                 </button>
               ))}
             </div>
@@ -210,13 +210,13 @@ export default function LuckyPage() {
           {/* Recipe Suggestion */}
           {suggestedRecipe && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-              <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 text-center">
-                <h2 className="text-2xl font-bold mb-2">🎉 Your Lucky Pick!</h2>
-                <p className="opacity-90">Here&apos;s what the universe suggests for you today</p>
+              <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-3 md:p-6 text-center">
+                <h2 className="text-lg md:text-2xl font-bold mb-1 md:mb-2">🎉 Your Lucky Pick!</h2>
+                <p className="opacity-90 text-sm md:text-base">Here&apos;s what the universe suggests for you today</p>
               </div>
               
-              <div className="p-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="p-4 md:p-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
                   {/* Recipe Image */}
                   {suggestedRecipe.image_path && (
                     <div>
@@ -232,8 +232,8 @@ export default function LuckyPage() {
                   
                   {/* Recipe Details */}
                   <div className={suggestedRecipe.image_path ? '' : 'lg:col-span-2'}>
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-3xl font-bold text-gray-900 dark:text-white">{suggestedRecipe.name}</h3>
+                    <div className="flex items-center justify-between mb-2 md:mb-4">
+                      <h3 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">{suggestedRecipe.name}</h3>
                       <div className={`px-4 py-2 rounded-full text-sm font-medium ${
                         canMake 
                           ? 'bg-success-subtle text-success' 
@@ -243,14 +243,14 @@ export default function LuckyPage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center text-gray-600 dark:text-gray-300 mb-6">
+                    <div className="flex items-center text-gray-600 dark:text-gray-300 mb-3 md:mb-6 text-sm md:text-base">
                       <span className="mr-6">⏱️ {suggestedRecipe.cookingTime} minutes</span>
                       <span className="mr-6">👥 {suggestedRecipe.servings} servings</span>
                       <span>📅 Added {new Date(suggestedRecipe.createdAt).toLocaleDateString()}</span>
                     </div>
                     
                     {suggestedRecipe.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-6">
+                      <div className="flex flex-wrap gap-2 mb-3 md:mb-6">
                         {suggestedRecipe.tags.map(tag => (
                           <span
                             key={tag}
@@ -263,7 +263,7 @@ export default function LuckyPage() {
                     )}
                     
                     {!canMake && missingIngredients.length > 0 && (
-                      <div className="bg-[#E2B210] border border-[#E2B210] rounded-lg p-4 mb-6">
+                      <div className="bg-[#E2B210] border border-[#E2B210] rounded-lg p-3 md:p-4 mb-3 md:mb-6">
                         <h4 className="font-medium text-warning mb-2">Missing ingredients:</h4>
                         <ul className="text-[#B8940D] text-sm">
                           {missingIngredients.map((ingredient, index) => (
@@ -273,32 +273,35 @@ export default function LuckyPage() {
                       </div>
                     )}
                     
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-row gap-2 md:flex-col md:gap-4">
                       <Link
                         href={`/recipes/${suggestedRecipe.id}`}
-                        className={`flex-1 text-center py-3 px-6 rounded-lg font-medium transition-colors ${
+                        className={`flex-1 text-center py-2 px-3 md:py-3 md:px-6 rounded-lg font-medium transition-colors text-sm md:text-base ${
                           canMake
                             ? 'bg-primary text-white hover:bg-primary'
                             : 'bg-[#C63721] text-white hover:bg-[#A52E1A]'
                         }`}
                       >
-                        {canMake ? "Let's Cook This! 🍳" : 'View Recipe 📖'}
+                        <span className="md:hidden">{canMake ? "Cook! 🍳" : 'View 📖'}</span>
+                        <span className="hidden md:inline">{canMake ? "Let's Cook This! 🍳" : 'View Recipe 📖'}</span>
                       </Link>
                       
                       {!canMake && (
                         <Link
                           href="/ingredients"
-                          className="flex-1 text-center py-3 px-6 bg-warning text-white rounded-lg font-medium hover:bg-warning transition-colors cursor-pointer"
+                          className="flex-1 text-center py-2 px-3 md:py-3 md:px-6 bg-warning text-white rounded-lg font-medium hover:bg-warning transition-colors cursor-pointer text-sm md:text-base"
                         >
-                          Add Missing Items 🛒
+                          <span className="md:hidden">Add 🛒</span>
+                          <span className="hidden md:inline">Add Missing Items 🛒</span>
                         </Link>
                       )}
                       
                       <button
                         onClick={getRandomRecipe}
-                        className="flex-1 py-3 px-6 bg-primary text-white rounded-lg font-medium hover:bg-primary transition-colors cursor-pointer"
+                        className="flex-1 py-2 px-3 md:py-3 md:px-6 bg-primary text-white rounded-lg font-medium hover:bg-primary transition-colors cursor-pointer text-sm md:text-base"
                       >
-                        Try Again 🎲
+                        <span className="md:hidden">Again 🎲</span>
+                        <span className="hidden md:inline">Try Again 🎲</span>
                       </button>
                     </div>
                   </div>

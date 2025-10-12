@@ -55,22 +55,29 @@ export default function RecipesPage() {
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="md:bg-white md:dark:bg-gray-800 md:rounded-lg md:shadow md:p-3 sm:md:p-4 md:md:p-6 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-4">
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="hidden md:block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Search Recipes
             </label>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search recipes..."
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm md:hidden"
+            />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by name or ingredient..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              className="hidden md:block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
             />
           </div>
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="hidden md:block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Filter by Tag
             </label>
             <CustomDropdown

@@ -19,7 +19,7 @@ export default function NewRecipePage() {
   const [formData, setFormData] = useState({
     name: '',
     cookingTime: 30,
-    servings: 4,
+    servings: 2,
     recipe_ingredients: [{ name: '', optional: false }],
     instructions: [''],
     tags: [] as string[],
@@ -163,13 +163,13 @@ export default function NewRecipePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Add New Recipe 📝</h1>
+      <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 md:mb-6">Add New Recipe 📝</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
         {/* Basic Info */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Basic Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 md:mb-3">Basic Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Recipe Name *
@@ -215,8 +215,8 @@ export default function NewRecipePage() {
         </div>
 
         {/* Ingredients */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-          <div className="flex justify-between items-center mb-3">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-4">
+          <div className="flex justify-between items-center mb-2 md:mb-3">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Ingredients</h2>
             <button
               type="button"
@@ -233,7 +233,7 @@ export default function NewRecipePage() {
               <p className="text-sm">Add ingredients to your pantry first to create recipes.</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2 md:space-y-2">
               {formData.recipe_ingredients.map((ingredient, index) => (
                 <div key={index} className="flex gap-2 items-center">
                   <CustomDropdown
@@ -271,8 +271,8 @@ export default function NewRecipePage() {
         </div>
 
         {/* Instructions */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-          <div className="flex justify-between items-center mb-3">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-4">
+          <div className="flex justify-between items-center mb-2 md:mb-3">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Instructions</h2>
             <button
               type="button"
@@ -282,7 +282,7 @@ export default function NewRecipePage() {
               Add Step
             </button>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 md:space-y-2">
             {formData.instructions.map((instruction, index) => (
               <div key={index} className="flex gap-2">
                 <span className="text-gray-500 font-medium pt-1.5 min-w-[2rem]">
@@ -310,8 +310,8 @@ export default function NewRecipePage() {
         </div>
 
         {/* Image Upload */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recipe Photo</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 md:p-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 md:mb-3">Recipe Photo</h2>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Upload Image
@@ -327,7 +327,7 @@ export default function NewRecipePage() {
               {uploadingImage ? 'Uploading and compressing...' : 'Images will be automatically compressed to 400x400 and stored securely'}
             </p>
             {formData.image_preview && (
-              <div className="mt-3">
+              <div className="mt-2 md:mt-3">
                 <Image
                   src={formData.image_preview}
                   alt="Recipe preview"

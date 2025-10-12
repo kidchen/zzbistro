@@ -548,8 +548,9 @@ export default function IngredientsPage() {
                 : ''
             }`}
           >
-            <div className="text-lg font-bold text-green-600">{inStockCount}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">In Stock</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300">
+              <span className="font-bold text-green-600">{inStockCount}</span> In Stock
+            </div>
           </button>
           <button
             onClick={() => setActiveFilter(activeFilter === 'outofstock' ? null : 'outofstock')}
@@ -559,8 +560,9 @@ export default function IngredientsPage() {
                 : ''
             }`}
           >
-            <div className="text-lg font-bold text-error">{outOfStockCount}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Out of Stock</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300">
+              <span className="font-bold text-error">{outOfStockCount}</span> Out of Stock
+            </div>
           </button>
           <button
             onClick={() => setActiveFilter(activeFilter === 'expiring' ? null : 'expiring')}
@@ -570,8 +572,9 @@ export default function IngredientsPage() {
                 : ''
             }`}
           >
-            <div className="text-lg font-bold text-[#B8940D]">{expiringCount}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Expiring</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300">
+              <span className="font-bold text-[#B8940D]">{expiringCount}</span> Expiring
+            </div>
           </button>
         </div>
       </div>
@@ -609,7 +612,7 @@ export default function IngredientsPage() {
                   />
                   <button
                     onClick={addCategory}
-                    className="bg-primary text-white px-3 py-1.5 md:px-4 md:py-2 rounded-md hover:bg-primary cursor-pointer text-sm md:text-base"
+                    className="bg-primary text-white px-3 py-2 md:px-4 md:py-2 rounded-md hover:bg-primary cursor-pointer text-sm md:text-base"
                   >
                     Add
                   </button>
@@ -760,20 +763,27 @@ export default function IngredientsPage() {
       )}
 
       {/* Search and Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="md:bg-white md:dark:bg-gray-800 md:rounded-lg md:shadow md:p-3 sm:md:p-4 md:md:p-6 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-4">
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
+            <label className="hidden md:block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search..."
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm md:hidden"
+            />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search ingredients..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              className="hidden md:block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
             />
           </div>
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Category</label>
+            <label className="hidden md:block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Category</label>
             <CustomDropdown
               options={[
                 { value: '', label: 'All Categories' },
