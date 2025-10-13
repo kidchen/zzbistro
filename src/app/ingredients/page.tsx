@@ -732,7 +732,7 @@ export default function IngredientsPage() {
                 onChange={(e) => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
                 disabled={!formData.inStock}
                 title={!formData.inStock ? "Expiry date is not applicable for out-of-stock items" : ""}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-sm"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-sm [&::-webkit-calendar-picker-indicator]:opacity-100"
               />
             </div>
             <div className="md:col-span-2 flex items-center justify-between">
@@ -947,7 +947,7 @@ export default function IngredientsPage() {
                             type="date"
                             value={currentData.expiryDate ? new Date(currentData.expiryDate).toISOString().split('T')[0] : ''}
                             onChange={(e) => updateBulkData(ingredient.id, 'expiryDate', e.target.value ? new Date(e.target.value) : undefined)}
-                            className="px-2 py-1 text-xs border-2 border-dotted border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white w-full max-w-[120px]"
+                            className="px-2 py-1 text-xs border-2 border-dotted border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white max-w-[120px]"
                           />
                         ) : isBulkEdit && !currentData.inStock ? (
                           <span 
