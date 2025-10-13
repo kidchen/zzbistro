@@ -709,7 +709,7 @@ export default function IngredientsPage() {
                 onChange={(e) => setFormData(prev => ({ ...prev, quantity: parseFloat(e.target.value) }))}
                 disabled={!formData.inStock}
                 title={!formData.inStock ? "Quantity is automatically set to 0 for out-of-stock items" : ""}
-                className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600 disabled:cursor-not-allowed [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
             </div>
             <div>
@@ -732,7 +732,7 @@ export default function IngredientsPage() {
                 onChange={(e) => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
                 disabled={!formData.inStock}
                 title={!formData.inStock ? "Expiry date is not applicable for out-of-stock items" : ""}
-                className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-sm"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-sm"
               />
             </div>
             <div className="md:col-span-2 flex items-center justify-between">
@@ -911,7 +911,7 @@ export default function IngredientsPage() {
                             step="1"
                             value={currentData.quantity}
                             onChange={(e) => updateBulkData(ingredient.id, 'quantity', parseInt(e.target.value) || 0)}
-                            className="w-20 px-2 py-1 text-sm border-2 border-dotted border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="w-20 px-2 py-1 text-sm border-2 border-dotted border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                         ) : isBulkEdit && !currentData.inStock ? (
                           <span 
@@ -947,7 +947,7 @@ export default function IngredientsPage() {
                             type="date"
                             value={currentData.expiryDate ? new Date(currentData.expiryDate).toISOString().split('T')[0] : ''}
                             onChange={(e) => updateBulkData(ingredient.id, 'expiryDate', e.target.value ? new Date(e.target.value) : undefined)}
-                            className="px-2 py-1 text-xs border-2 border-dotted border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white w-full"
+                            className="px-2 py-1 text-xs border-2 border-dotted border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white w-full max-w-[120px]"
                           />
                         ) : isBulkEdit && !currentData.inStock ? (
                           <span 
