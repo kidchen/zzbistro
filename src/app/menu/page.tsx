@@ -276,7 +276,7 @@ export default function MenuPage() {
           <div>
             <button
               onClick={() => setShowPartial(!showPartial)}
-              className="w-full text-left"
+              className="w-full text-left hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
             >
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center justify-between">
                 Almost Ready ⚠️

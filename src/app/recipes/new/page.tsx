@@ -221,7 +221,7 @@ export default function NewRecipePage() {
             <button
               type="button"
               onClick={addIngredient}
-              className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary"
+              className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary cursor-pointer"
             >
               Add Ingredient
             </button>
@@ -259,7 +259,7 @@ export default function NewRecipePage() {
                     <button
                       type="button"
                       onClick={() => removeIngredient(index)}
-                      className="text-error hover:text-error px-2"
+                      className="text-error hover:text-error px-2 cursor-pointer"
                     >
                       Remove
                     </button>
@@ -277,7 +277,7 @@ export default function NewRecipePage() {
             <button
               type="button"
               onClick={addInstruction}
-              className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary"
+              className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary cursor-pointer"
             >
               Add Step
             </button>
@@ -299,7 +299,7 @@ export default function NewRecipePage() {
                   <button
                     type="button"
                     onClick={() => removeInstruction(index)}
-                    className="text-error hover:text-error px-2"
+                    className="text-error hover:text-error px-2 cursor-pointer"
                   >
                     Remove
                   </button>
@@ -345,13 +345,13 @@ export default function NewRecipePage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-3 py-1 md:px-6 md:py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 text-sm md:text-base"
+            className="px-3 py-1 md:px-6 md:py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 text-sm md:text-base cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-3 py-1 md:px-6 md:py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52E1A] text-sm md:text-base"
+            className="px-3 py-1 md:px-6 md:py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52E1A] text-sm md:text-base cursor-pointer"
           >
             Save Recipe
           </button>

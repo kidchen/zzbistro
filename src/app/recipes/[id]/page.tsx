@@ -396,7 +396,7 @@ export default function RecipeDetailPage() {
             </div>
             <button
               onClick={handleDelete}
-              className="bg-[#1A2F50] text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-[#C63721] cursor-pointer text-sm md:text-base transition-colors"
+              className="bg-error text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-red-700 cursor-pointer text-sm md:text-base transition-colors"
             >
               Delete Recipe
             </button>
@@ -474,7 +474,7 @@ export default function RecipeDetailPage() {
                   {editData.recipe_ingredients.length > 1 && (
                     <button
                       onClick={() => removeIngredient(index)}
-                      className="text-error hover:text-error px-2"
+                      className="text-error hover:text-error px-2 cursor-pointer"
                     >
                       Remove
                     </button>
@@ -508,7 +508,7 @@ export default function RecipeDetailPage() {
                   {editData.instructions.length > 1 && (
                     <button
                       onClick={() => removeInstruction(index)}
-                      className="text-error hover:text-error px-2"
+                      className="text-error hover:text-error px-2 cursor-pointer"
                     >
                       Remove
                     </button>

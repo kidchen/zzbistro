@@ -202,7 +202,7 @@ export default function FamilyPage() {
                     <button
                       onClick={handleUpdateName}
                       disabled={isLoading}
-                      className="px-3 py-1.5 sm:px-4 sm:py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52A1A] disabled:opacity-50 text-sm sm:text-base"
+                      className="px-3 py-1.5 sm:px-4 sm:py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52A1A] disabled:opacity-50 text-sm sm:text-base cursor-pointer"
                     >
                       Save
                     </button>
@@ -211,7 +211,7 @@ export default function FamilyPage() {
                         setIsEditing(false);
                         setEditedName(family.name || '');
                       }}
-                      className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 text-sm sm:text-base"
+                      className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 text-sm sm:text-base cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -219,7 +219,7 @@ export default function FamilyPage() {
                 ) : (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 text-sm sm:text-base"
+                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 text-sm sm:text-base cursor-pointer"
                   >
                     Edit Name
                   </button>
@@ -265,7 +265,7 @@ export default function FamilyPage() {
                   <button
                     onClick={() => handleRemoveMember(member.user_email)}
                     disabled={isLoading}
-                    className="px-3 py-1.5 text-xs sm:text-sm bg-[#C63721] text-white rounded-md hover:bg-[#A52A1A] disabled:opacity-50 self-start sm:self-center flex-shrink-0"
+                    className="px-3 py-1.5 text-xs sm:text-sm bg-[#C63721] text-white rounded-md hover:bg-[#A52A1A] disabled:opacity-50 self-start sm:self-center flex-shrink-0 cursor-pointer"
                   >
                     Remove
                   </button>
@@ -332,7 +332,7 @@ export default function FamilyPage() {
             <button
               onClick={handleLeaveFamily}
               disabled={isLoading}
-              className="px-3 py-2 sm:px-4 sm:py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52A1A] disabled:opacity-50 text-sm sm:text-base"
+              className="px-3 py-2 sm:px-4 sm:py-2 bg-[#C63721] text-white rounded-md hover:bg-[#A52A1A] disabled:opacity-50 text-sm sm:text-base cursor-pointer"
             >
               Leave Family
             </button>
@@ -351,7 +351,7 @@ export default function FamilyPage() {
             <button
               onClick={handleDeleteFamily}
               disabled={isLoading}
-              className="px-3 py-2 sm:px-4 sm:py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 text-sm sm:text-base"
+              className="px-3 py-2 sm:px-4 sm:py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 text-sm sm:text-base cursor-pointer"
             >
               Delete Family
             </button>

@@ -161,9 +161,9 @@ export default function LuckyPage() {
             <button
               onClick={getRandomRecipe}
               disabled={isSpinning}
-              className={`text-6xl p-8 rounded-full transition-all duration-300 ${
+              className={`text-6xl p-8 rounded-full transition-all duration-300 cursor-pointer ${
                 isSpinning 
-                  ? 'animate-spin bg-orange-200' 
+                  ? 'animate-spin bg-orange-200 cursor-not-allowed' 
                   : 'bg-[#C63721] hover:bg-[#A52E1A] hover:scale-110'
               }`}
             >
@@ -174,10 +174,10 @@ export default function LuckyPage() {
               <button
                 onClick={getRandomRecipe}
                 disabled={isSpinning}
-                className={`text-2xl font-bold px-8 py-4 rounded-lg transition-colors ${
+                className={`text-2xl font-bold px-8 py-4 rounded-lg transition-colors cursor-pointer ${
                   isSpinning
                     ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                    : 'bg-[#C63721] text-white hover:bg-[#A52E1A] cursor-pointer'
+                    : 'bg-[#C63721] text-white hover:bg-[#A52E1A]'
                 }`}
               >
                 {isSpinning ? 'Rolling the dice...' : 'Surprise Me!'}
@@ -194,10 +194,10 @@ export default function LuckyPage() {
                   key={suggestion.mood}
                   onClick={() => getMoodSuggestion(suggestion.filter)}
                   disabled={isSpinning}
-                  className={`p-2 md:p-4 rounded-lg border-2 transition-all ${
+                  className={`p-2 md:p-4 rounded-lg border-2 transition-all cursor-pointer ${
                     isSpinning
                       ? 'border-gray-200 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
-                      : 'border-orange-200 bg-white dark:bg-gray-800 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-gray-700 cursor-pointer'
+                      : 'border-orange-200 bg-white dark:bg-gray-800 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   <div className="text-xl md:text-3xl mb-1 md:mb-2">{suggestion.emoji}</div>

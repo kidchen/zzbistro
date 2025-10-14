@@ -105,7 +105,7 @@ export default function FamilySetupPage() {
           <button
             onClick={handleCreateFamily}
             disabled={isCreating}
-            className="w-full bg-[#C63721] text-white py-3 px-4 rounded-md hover:bg-[#A52A1A] focus:outline-none focus:ring-2 focus:ring-[#C63721] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-[#C63721] text-white py-3 px-4 rounded-md hover:bg-[#A52A1A] focus:outline-none focus:ring-2 focus:ring-[#C63721] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
             {isCreating ? 'Creating Family...' : 'Create My Family'}
           </button>

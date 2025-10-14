@@ -470,7 +470,7 @@ export default function IngredientsPage() {
             onClick={toggleBulkEdit}
             className={`px-2 py-1 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base font-medium cursor-pointer whitespace-nowrap ${
               isBulkEdit 
-                ? 'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700' 
+                ? 'bg-primary text-white hover:bg-primary-hover' 
                 : 'bg-[#C63721] text-white hover:bg-[#A52E1A]'
             }`}
           >
@@ -1007,7 +1007,7 @@ export default function IngredientsPage() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-gray-900 dark:text-white cursor-pointer"
                 >
                   Previous
                 </button>
@@ -1017,7 +1017,7 @@ export default function IngredientsPage() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-gray-900 dark:text-white cursor-pointer"
                 >
                   Next
                 </button>

@@ -63,7 +63,7 @@ export default function TagManager({ selectedTags, onChange, className = '' }: T
           {selectedTags.map(tag => (
             <span
               key={tag}
-              className="inline-flex items-center px-3 py-1 bg-primary text-white text-sm rounded-full"
+              className="inline-flex items-center px-3 py-1 bg-accent dark:bg-orange-900 text-white dark:text-white text-sm rounded-full"
             >
               {tag}
               <button
@@ -115,7 +115,7 @@ export default function TagManager({ selectedTags, onChange, className = '' }: T
             <button
               type="button"
               onClick={addNewTag}
-              className="px-3 py-2 bg-primary text-white rounded-md hover:bg-primary text-sm"
+              className="px-3 py-2 bg-primary text-white rounded-md hover:bg-primary text-sm cursor-pointer"
             >
               Add
             </button>
@@ -125,7 +125,7 @@ export default function TagManager({ selectedTags, onChange, className = '' }: T
                 setShowInput(false);
                 setNewTag('');
               }}
-              className="px-3 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 text-sm"
+              className="px-3 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 text-sm cursor-pointer"
             >
               Cancel
             </button>
@@ -134,7 +134,7 @@ export default function TagManager({ selectedTags, onChange, className = '' }: T
           <button
             type="button"
             onClick={() => setShowInput(true)}
-            className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 text-sm cursor-pointer"
+            className="px-2 py-1 md:px-3 md:py-1 bg-primary text-white rounded text-xs md:text-sm hover:bg-primary cursor-pointer"
           >
             + Add New Tag
           </button>
