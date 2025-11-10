@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { storage } from '@/lib/storage';
 import { Recipe } from '@/types';
@@ -9,7 +8,6 @@ import CustomDropdown from '@/components/CustomDropdown';
 import CachedImage from '@/components/CachedImage';
 
 export default function MenuPage() {
-  const searchParams = useSearchParams();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [availableRecipes, setAvailableRecipes] = useState<Recipe[]>([]);
@@ -26,12 +24,6 @@ export default function MenuPage() {
         const inStockIngredients = allIngredients.filter(i => i.inStock);
         
         setRecipes(allRecipes);
-
-        // Handle filter parameter from URL
-        const filter = searchParams.get('filter');
-        if (filter === 'available') {
-          setShowPartial(false); // Show only available recipes
-        }
 
         // Find recipes we can make completely (all required ingredients available)
         const available = allRecipes.filter(recipe => 
@@ -73,7 +65,7 @@ export default function MenuPage() {
     };
 
     loadMenuData();
-  }, [searchParams]);
+  }, []);
 
   const allTags = useMemo(() => {
     return [...new Set(recipes.flatMap(recipe => recipe.tags))];
@@ -276,9 +268,9 @@ export default function MenuPage() {
           <div>
             <button
               onClick={() => setShowPartial(!showPartial)}
-              className="w-full text-left hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+              className="w-full text-left hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg p-2 transition-colors cursor-pointer mb-6"
             >
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center justify-between">
                 Almost Ready ⚠️
                 <span className="text-lg">{showPartial ? '▼' : '▶'}</span>
               </h2>

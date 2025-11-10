@@ -99,11 +99,11 @@ export default function Home() {
             <div className="text-3xl font-bold text-blue-600">{stats.totalRecipes}</div>
             <div className="text-gray-600 dark:text-gray-300">Total Recipes</div>
           </Link>
-          <Link href="/ingredients?filter=instock" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+          <Link href="/ingredients" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-green-600">{stats.inStockIngredients}</div>
             <div className="text-gray-600 dark:text-gray-300">In Stock</div>
           </Link>
-          <Link href="/menu?filter=available" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
+          <Link href="/menu" className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-3xl font-bold text-purple-600">{stats.availableRecipes}</div>
             <div className="text-gray-600 dark:text-gray-300">Ready to Cook</div>
           </Link>
@@ -119,11 +119,11 @@ export default function Home() {
             <div className="text-lg font-bold text-blue-600">{stats.totalRecipes}</div>
             <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Recipes</div>
           </Link>
-          <Link href="/ingredients?filter=instock" className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 text-center hover:shadow-lg transition-shadow">
+          <Link href="/ingredients" className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 text-center hover:shadow-lg transition-shadow">
             <div className="text-lg font-bold text-green-600">{stats.inStockIngredients}</div>
             <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">In Stock</div>
           </Link>
-          <Link href="/menu?filter=available" className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 text-center hover:shadow-lg transition-shadow">
+          <Link href="/menu" className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 text-center hover:shadow-lg transition-shadow">
             <div className="text-lg font-bold text-purple-600">{stats.availableRecipes}</div>
             <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">Ready</div>
           </Link>

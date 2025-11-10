@@ -1,13 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { storage } from '@/lib/storage';
 import { Ingredient } from '@/types';
 import CustomDropdown from '@/components/CustomDropdown';
 
 export default function IngredientsPage() {
-  const searchParams = useSearchParams();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -17,8 +15,8 @@ export default function IngredientsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [activeFilter, setActiveFilter] = useState<'instock' | 'outofstock' | 'expiring' | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 25;
+  const [displayCount, setDisplayCount] = useState(25);
+  const itemsPerLoad = 25;
   const [categories, setCategories] = useState([
     'Vegetables', 'Fruits', 'Meat', 'Poultry', 'Seafood', 'Dairy', 
     'Grains', 'Spices', 'Herbs', 'Condiments', 'Canned', 'Frozen', 
@@ -32,6 +30,8 @@ export default function IngredientsPage() {
   const [addFormExpanded, setAddFormExpanded] = useState(false);
   const [sortBy, setSortBy] = useState<'name' | 'quantity' | 'category' | 'expiryDate' | 'inStock' | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [highlightedIngredientId, setHighlightedIngredientId] = useState<string | null>(null);
+  const [warningMessage, setWarningMessage] = useState<string>('');
 
   // Category emoji mapping
   const getCategoryEmoji = (category: string): string => {
@@ -75,14 +75,6 @@ export default function IngredientsPage() {
       try {
         const ingredientsData = await storage.ingredients.getAll();
         setIngredients(ingredientsData);
-        
-        // Handle filter parameter from URL
-        const filter = searchParams.get('filter');
-        if (filter === 'instock') {
-          // Auto-filter to show only in-stock items
-          setSelectedCategory('');
-          setSearchTerm('');
-        }
       } catch (error) {
         console.error('Error loading ingredients:', error);
       } finally {
@@ -91,7 +83,7 @@ export default function IngredientsPage() {
     };
 
     loadIngredients();
-  }, [searchParams]);
+  }, []);
 
   const addCategory = () => {
     if (newCategory.trim() && !categories.includes(newCategory.trim())) {
@@ -138,10 +130,6 @@ export default function IngredientsPage() {
       const matchesSearch = ingredient.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = !selectedCategory || ingredient.category === selectedCategory;
       
-      // Handle URL filter parameter
-      const filter = searchParams.get('filter');
-      const matchesFilter = !filter || (filter === 'instock' && ingredient.inStock);
-      
       // Handle card filter
       const matchesCardFilter = !activeFilter || 
         (activeFilter === 'instock' && ingredient.inStock) ||
@@ -149,7 +137,7 @@ export default function IngredientsPage() {
         (activeFilter === 'expiring' && ingredient.expiryDate && 
           new Date(ingredient.expiryDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
       
-      return matchesSearch && matchesCategory && matchesFilter && matchesCardFilter;
+      return matchesSearch && matchesCategory && matchesCardFilter;
     });
 
     return filtered.sort((a, b) => {
@@ -182,17 +170,21 @@ export default function IngredientsPage() {
     
     return sortOrder === 'asc' ? comparison : -comparison;
     });
-  }, [ingredients, isBulkEdit, bulkEditData, searchTerm, selectedCategory, searchParams, activeFilter, sortBy, sortOrder]);
+  }, [ingredients, isBulkEdit, bulkEditData, searchTerm, selectedCategory, activeFilter, sortBy, sortOrder]);
 
-  // Pagination
-  const totalPages = Math.ceil(filteredIngredients.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedIngredients = filteredIngredients.slice(startIndex, startIndex + itemsPerPage);
+  // Load More logic
+  const displayedIngredients = filteredIngredients.slice(0, displayCount);
+  const remainingCount = filteredIngredients.length - displayCount;
+  const hasMore = remainingCount > 0;
 
-  // Reset to first page when filters change
+  // Reset display count when filters change
   useEffect(() => {
-    setCurrentPage(1);
+    setDisplayCount(25);
   }, [searchTerm, selectedCategory, activeFilter]);
+
+  const loadMore = () => {
+    setDisplayCount(prev => prev + itemsPerLoad);
+  };
 
   const hasUnsavedChanges = useCallback(() => {
     // Check if there are items selected for deletion
@@ -239,9 +231,15 @@ export default function IngredientsPage() {
   }, [isBulkEdit, hasUnsavedChanges]);
 
   const getSuggestions = (input: string) => {
-    if (input.length < 2) return [];
+    const trimmedInput = input.trim();
     
-    const normalizedInput = input.toLowerCase().trim();
+    // Detect if input contains CJK (Chinese/Japanese/Korean) characters
+    const hasCJK = /[\u4e00-\u9fff\u3400-\u4dbf]/.test(trimmedInput);
+    const minLength = hasCJK ? 1 : 2;
+    
+    if (trimmedInput.length < minLength) return [];
+    
+    const normalizedInput = trimmedInput.toLowerCase();
     return ingredients
       .filter(ingredient => 
         ingredient.name.toLowerCase().includes(normalizedInput)
@@ -251,12 +249,56 @@ export default function IngredientsPage() {
 
   const handleNameChange = (value: string) => {
     setFormData(prev => ({ ...prev, name: value }));
-    setShowSuggestions(value.length >= 2);
+    
+    // Detect if input contains CJK characters for dynamic threshold
+    const hasCJK = /[\u4e00-\u9fff\u3400-\u4dbf]/.test(value);
+    const minLength = hasCJK ? 1 : 2;
+    setShowSuggestions(value.trim().length >= minLength);
+    
+    // Clear warning message when user starts typing
+    if (warningMessage) {
+      setWarningMessage('');
+    }
   };
 
-  const selectSuggestion = () => {
+  const selectSuggestion = (ingredient: Ingredient) => {
+    // Show inline warning message
+    setWarningMessage(`"${ingredient.name}" already exists. Please edit it in the list below.`);
+    
+    // Clear the form input
+    setFormData({
+      name: '',
+      quantity: 1,
+      category: 'Other',
+      expiryDate: '',
+      inStock: true
+    });
+    
+    // Hide suggestions dropdown
     setShowSuggestions(false);
-    setShowAddForm(false);
+    
+    // Ensure the ingredient is loaded in the display
+    const ingredientIndex = filteredIngredients.findIndex(ing => ing.id === ingredient.id);
+    if (ingredientIndex !== -1 && ingredientIndex >= displayCount) {
+      // Load enough items to show the ingredient
+      setDisplayCount(ingredientIndex + 1);
+    }
+    
+    // Highlight the existing ingredient in the list
+    setHighlightedIngredientId(ingredient.id);
+    
+    // Scroll to the ingredient (with a delay to ensure page change and rendering)
+    setTimeout(() => {
+      const element = document.getElementById(`ingredient-${ingredient.id}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 200);
+    
+    // Remove highlight after 5 seconds
+    setTimeout(() => {
+      setHighlightedIngredientId(null);
+    }, 5000);
   };
 
   const checkForDuplicates = (newName: string): string | null => {
@@ -290,7 +332,48 @@ export default function IngredientsPage() {
     // Check for duplicates
     const duplicate = checkForDuplicates(formData.name);
     if (duplicate) {
-      alert(`Similar ingredient "${duplicate}" already exists. Please update the existing ingredient instead.`);
+      // Find the duplicate ingredient object
+      const duplicateIngredient = ingredients.find(
+        ing => ing.name.toLowerCase().trim() === duplicate.toLowerCase().trim()
+      );
+      
+      if (duplicateIngredient) {
+        // Show inline warning message
+        setWarningMessage(`"${duplicate}" already exists. Please edit it in the list below.`);
+        
+        // Clear the form input
+        setFormData({
+          name: '',
+          quantity: 1,
+          category: 'Other',
+          expiryDate: '',
+          inStock: true
+        });
+        
+        // Ensure the ingredient is loaded in the display
+        const ingredientIndex = filteredIngredients.findIndex(ing => ing.id === duplicateIngredient.id);
+        if (ingredientIndex !== -1 && ingredientIndex >= displayCount) {
+          // Load enough items to show the ingredient
+          setDisplayCount(ingredientIndex + 1);
+        }
+        
+        // Highlight the existing ingredient
+        setHighlightedIngredientId(duplicateIngredient.id);
+        
+        // Scroll to the ingredient
+        setTimeout(() => {
+          const element = document.getElementById(`ingredient-${duplicateIngredient.id}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 200);
+        
+        // Remove highlight after 5 seconds
+        setTimeout(() => {
+          setHighlightedIngredientId(null);
+        }, 5000);
+      }
+      
       return;
     }
     
@@ -670,9 +753,21 @@ export default function IngredientsPage() {
                   value={formData.name}
                   onChange={(e) => handleNameChange(e.target.value)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C63721] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className={`w-full h-10 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                    warningMessage 
+                      ? 'border-yellow-500 dark:border-yellow-600 focus:ring-yellow-500' 
+                      : 'border-gray-300 dark:border-gray-600 focus:ring-[#C63721]'
+                  }`}
                   placeholder="e.g., Tomatoes"
                 />
+                
+                {/* Warning message */}
+                {warningMessage && (
+                  <div className="mt-1 text-sm text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md px-3 py-2 flex items-start gap-2">
+                    <span className="flex-shrink-0">⚠️</span>
+                    <span>{warningMessage}</span>
+                  </div>
+                )}
                 
                 {/* Auto-suggest dropdown */}
                 {showSuggestions && getSuggestions(formData.name).length > 0 && (
@@ -684,8 +779,8 @@ export default function IngredientsPage() {
                       <button
                         key={ingredient.id}
                         type="button"
-                        onClick={() => selectSuggestion()}
-                        className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 cursor-pointer"
+                        onClick={() => selectSuggestion(ingredient)}
+                        className="w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-600 last:border-b-0 cursor-pointer"
                       >
                         <div className="flex justify-between items-center">
                           <span className="font-medium">{ingredient.name}</span>
@@ -882,14 +977,23 @@ export default function IngredientsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {paginatedIngredients.map((ingredient) => {
+                {displayedIngredients.map((ingredient) => {
                   const isExpiringSoon = ingredient.expiryDate && 
                     new Date(ingredient.expiryDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
                   const currentData = isBulkEdit ? (bulkEditData[ingredient.id] || ingredient) : ingredient;
                   const isSelected = selectedForDelete.has(ingredient.id);
                   
                   return (
-                    <tr key={ingredient.id} className={`${ingredient.inStock ? '' : 'bg-gray-50 dark:bg-gray-800'} ${isSelected ? 'line-through opacity-60' : ''}`}>
+                    <tr 
+                      key={ingredient.id} 
+                      id={`ingredient-${ingredient.id}`}
+                      className={`
+                        ${ingredient.inStock ? '' : 'bg-gray-50 dark:bg-gray-800'} 
+                        ${isSelected ? 'line-through opacity-60' : ''}
+                        ${highlightedIngredientId === ingredient.id ? 'bg-yellow-100 dark:bg-yellow-900/30 ring-2 ring-yellow-400 dark:ring-yellow-600' : ''}
+                        transition-all duration-300
+                      `}
+                    >
                       {isBulkEdit && (
                         <td className="px-6 py-2 whitespace-nowrap text-center">
                           <input
@@ -997,33 +1101,26 @@ export default function IngredientsPage() {
             </table>
           </div>
           
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <div className="text-sm text-gray-700 dark:text-gray-300">
-                Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredIngredients.length)} of {filteredIngredients.length} ingredients
-              </div>
-              <div className="flex space-x-2">
+          {/* Load More / Status */}
+          <div className="px-4 md:px-6 py-3 md:py-4 border-t border-gray-200 dark:border-gray-700">
+            {hasMore ? (
+              <div className="flex flex-col items-center gap-3">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Showing {displayedIngredients.length} of {filteredIngredients.length} ingredients
+                </div>
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-gray-900 dark:text-white cursor-pointer"
+                  onClick={loadMore}
+                  className="px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors font-medium cursor-pointer shadow-sm hover:shadow-md"
                 >
-                  Previous
-                </button>
-                <span className="px-3 py-1 text-sm text-gray-700 dark:text-gray-300">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-gray-900 dark:text-white cursor-pointer"
-                >
-                  Next
+                  Load More ({remainingCount} remaining)
                 </button>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+                Showing all {filteredIngredients.length} ingredient{filteredIngredients.length !== 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
